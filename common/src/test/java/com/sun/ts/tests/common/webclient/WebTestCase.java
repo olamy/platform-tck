@@ -25,11 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpState;
-
-import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.common.webclient.http.HttpRequest;
 import com.sun.ts.tests.common.webclient.http.HttpResponse;
 import com.sun.ts.tests.common.webclient.validation.ValidationFactory;
@@ -43,6 +40,8 @@ import com.sun.ts.tests.common.webclient.validation.TokenizedValidator;
  * the server.
  */
 public class WebTestCase implements TestCase {
+
+  private static final Logger LOGGER = Logger.getLogger(WebTestCase.class.getName());
 
   /**
    * Tokenized response validation strategy
@@ -71,12 +70,12 @@ public class WebTestCase implements TestCase {
   /**
    * Storage for headers that are expected in the response
    */
-  private Map<String, Header> _expected = null;
+  private Map<String, Map<String,String>> _expected = null;
 
   /**
    * Storage for headers that are not expected in the response
    */
-  private Map<String, Header> _unexpected = null;
+  private Map<String, Map<String,String>> _unexpected = null;
 
   /**
    * Expected response status code.
@@ -211,7 +210,7 @@ public class WebTestCase implements TestCase {
    */
   public void addExpectedHeader(String header) {
     if (_expected == null) {
-      _expected = new HashMap<String, Header>();
+      _expected = new HashMap<>();
     }
     addHeader(_expected, header);
   }
@@ -540,18 +539,16 @@ public class WebTestCase implements TestCase {
    *          String representation of a header in the form of
    *          <headername>:<value>
    */
-  private void addHeader(Map<String, Header> map, String headerString) {
-    TestUtil.logTrace(
-        "[WebTestCase] addHeader utility method called: " + headerString);
+  private void addHeader(Map<String,String> map, String headerString) {
+    LOGGER.fine("[WebTestCase] addHeader utility method called: " + headerString);
     StringTokenizer st = new StringTokenizer(headerString, "|");
     while (st.hasMoreTokens()) {
       String head = st.nextToken();
       int colIdx = head.indexOf(':');
       String name = head.substring(0, colIdx).trim();
       String value = head.substring(colIdx + 1).trim();
-      TestUtil
-          .logTrace("[WebTestCase] Adding test header: " + name + ", " + value);
-      Header header = map.get(name);
+      LOGGER.fine("[WebTestCase] Adding test header: " + name + ", " + value);
+      String header = map.get(name);
       if (header != null) {
         map.put(name, createNewHeader(value, header));
       } else {

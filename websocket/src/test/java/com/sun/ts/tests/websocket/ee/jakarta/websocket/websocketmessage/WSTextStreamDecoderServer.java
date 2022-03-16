@@ -23,7 +23,7 @@ import com.sun.ts.tests.websocket.common.stringbean.StringBean;
 import com.sun.ts.tests.websocket.common.stringbean.StringBeanTextStreamDecoder;
 import com.sun.ts.tests.websocket.common.util.IOUtil;
 
-import jakarta.websocket.OnError;
+import jakarta.websocketes.OnError;
 import jakarta.websocket.OnMessage;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
