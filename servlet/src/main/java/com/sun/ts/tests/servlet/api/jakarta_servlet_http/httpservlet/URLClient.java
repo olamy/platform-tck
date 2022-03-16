@@ -36,7 +36,8 @@ import java.util.Properties;
 @ExtendWith(ArquillianExtension.class)
 public class URLClient extends AbstractUrlClient {
 
-  @ArquillianResource URL url;
+  @ArquillianResource
+  private URL url;
 
   @BeforeEach
   public void setup() throws Exception {
