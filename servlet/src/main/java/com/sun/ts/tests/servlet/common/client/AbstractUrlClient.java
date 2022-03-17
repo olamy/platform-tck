@@ -29,7 +29,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.request.HttpRequest;
 import com.sun.ts.tests.servlet.common.request.WebTestCase;
 import com.sun.ts.tests.servlet.common.util.Data;
@@ -65,20 +64,6 @@ public abstract class AbstractUrlClient extends BaseUrlClient {
     cname = cname.replace('.', '_');
     cname = "/" + cname + "_web";
     setContextRoot(cname);
-  }
-
-  /**
-   * Convenience method for the common use case.
-   */
-  public void run(String[] args) {
-    Status s = run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
-
-  public Status run(String[] args, Writer out, Writer err) {
-    // FIXME really do something here
-    return new Status(200, "OK");
   }
 
   protected void setTestProperties(WebTestCase testCase) {

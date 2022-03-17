@@ -20,12 +20,20 @@
 
 package com.sun.ts.tests.servlet.common.client;
 
+import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.request.HttpRequest;
 import com.sun.ts.tests.servlet.common.request.WebTestCase;
 import org.apache.commons.httpclient.HttpState;
+import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintWriter;
+import java.net.URL;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -38,9 +46,29 @@ import java.util.Properties;
  * that particular technology.
  * </PRE>
  */
+@ExtendWith(ArquillianExtension.class)
 public abstract class BaseUrlClient {
 
   protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+  @ArquillianResource
+  protected URL url;
+
+  @BeforeEach
+  public void setup() throws Exception {
+    String ctxRoot = url.getPath();
+    setContextRoot(ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot);
+    Properties properties = new Properties();
+    properties.put(SERVLETHOSTPROP, url.getHost());
+    properties.put(SERVLETPORTPROP, Integer.toString(url.getPort()));
+    // TODO do we really need this??
+    properties.put(TSHOME, Files.createTempDirectory("tshome").toString());
+    setup(null, properties);
+  }
+
+  public Status run(String args[], PrintWriter out, PrintWriter err) {
+    return Status.passed("200");
+  }
 
   /**
    * Properties parameters

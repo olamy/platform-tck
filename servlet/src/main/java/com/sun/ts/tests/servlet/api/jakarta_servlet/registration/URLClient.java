@@ -19,35 +19,28 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.registration;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
+
+  @BeforeEach
+  public void setupServletName() throws Exception {
+    setServletName("TestServlet");
   }
 
   /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
+   * Deployment for the test
    */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
-    setContextRoot("/servlet_js_registration_web");
-    setServletName("TestServlet");
-
-    return super.run(args, out, err);
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_js_registration_web.xml"));
   }
 
   /*
@@ -83,6 +76,7 @@ public class URLClient extends AbstractUrlClient {
    * client send a request to another servlet to get the information Verify in
    * client that getMapping works
    */
+  @Test
   public void servletURLMappingTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "servletURLMappingTest");
     TEST_PROPS.setProperty(UNORDERED_SEARCH_STRING,
@@ -110,6 +104,7 @@ public class URLClient extends AbstractUrlClient {
    * request to another servlet to get the information Verify in client that
    * getServletNameMappings works
    */
+  @Test
   public void filterServletMappingTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "filterServletMappingTest");
     TEST_PROPS.setProperty(SEARCH_STRING,
@@ -136,6 +131,7 @@ public class URLClient extends AbstractUrlClient {
    * request to another servlet to get the information Verify in client that
    * getServletRegistrations works
    */
+  @Test
   public void servletRegistrationsTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletRegistrationsTest");
     TEST_PROPS.setProperty(UNORDERED_SEARCH_STRING,
@@ -161,6 +157,7 @@ public class URLClient extends AbstractUrlClient {
    * send a request to another servlet to get the information Verify in client
    * that getServletRegistration(String) works
    */
+  @Test
   public void getServletRegistrationTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletRegistrationTest");
     TEST_PROPS.setProperty(SEARCH_STRING,
@@ -187,6 +184,7 @@ public class URLClient extends AbstractUrlClient {
    * request to another servlet to get the information Verify in client that
    * getFilterRegistrations works
    */
+  @Test
   public void getFilterRegistrationsTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getFilterRegistrationsTest");
     TEST_PROPS.setProperty(UNORDERED_SEARCH_STRING,
@@ -212,6 +210,7 @@ public class URLClient extends AbstractUrlClient {
    * send a request to another servlet to get the information Verify in client
    * that getFilterRegistration(String) works
    */
+  @Test
   public void getFilterRegistrationTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getFilterRegistrationTest");
     TEST_PROPS.setProperty(SEARCH_STRING,
@@ -242,6 +241,7 @@ public class URLClient extends AbstractUrlClient {
    * send a request to another servlet to get the information Verify in client
    * that jakarta.servlet.Registration.getName() works
    */
+  @Test
   public void getRegistrationNameTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRegistrationNameTest");
     TEST_PROPS.setProperty(SEARCH_STRING,
@@ -273,6 +273,7 @@ public class URLClient extends AbstractUrlClient {
    * send a request to another servlet to get the information Verify in client
    * that jakarta.servlet.Registration.getClassName() works
    */
+  @Test
   public void getRegistrationClassNameTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRegistrationClassNameTest");
     TEST_PROPS.setProperty(SEARCH_STRING, "REGISTRATION_CLASS_NAME:"
@@ -310,6 +311,7 @@ public class URLClient extends AbstractUrlClient {
    * request to another servlet to get the information Verify in client that
    * jakarta.servlet.Registration.getInitParameter(String) works
    */
+  @Test
   public void getRegistrationInitParameterTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRegistrationInitParameterTest");
     TEST_PROPS.setProperty(SEARCH_STRING,
@@ -343,6 +345,7 @@ public class URLClient extends AbstractUrlClient {
    * another servlet to get the information Verify in client that
    * jakarta.servlet.Registration.getInitParameters() works
    */
+  @Test
   public void getRegistrationInitParametersTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRegistrationInitParametersTest");
     TEST_PROPS.setProperty(SEARCH_STRING,

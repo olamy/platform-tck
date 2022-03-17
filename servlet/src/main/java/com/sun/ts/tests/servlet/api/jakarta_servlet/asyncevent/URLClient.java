@@ -16,35 +16,27 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet.asyncevent;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
+  @BeforeEach
+  public void setupServletName() throws Exception {
+    setServletName("AsyncTestServlet");
   }
 
   /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
+   * Deployment for the test
    */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
-    setServletName("AsyncTestServlet");
-    setContextRoot("/servlet_js_asyncevent_web");
-
-    return super.run(args, out, err);
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_js_asyncevent_web.xml"));
   }
 
   /*
@@ -60,6 +52,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: test the constructor AsyncEvent( AsyncContext )
    */
+  @Test
   public void constructorTest1() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest1");
     invoke();
@@ -73,6 +66,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: test the constructor AsyncEvent(AsyncContext,
    * ServletRequest, ServletResponse)
    */
+  @Test
   public void constructorTest2() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest2");
     invoke();
@@ -85,6 +79,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: test the constructor AsyncEvent(AsyncContext, Throwable)
    */
+  @Test
   public void constructorTest3() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest3");
     invoke();
@@ -98,6 +93,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: test the constructor AsyncEvent(AsyncContext,
    * ServletRequest, ServletResponse, Throwable)
    */
+  @Test
   public void constructorTest4() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest4");
     invoke();
@@ -112,6 +108,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse) verify AsyncEvent.getSuplliedRequest()
    * works
    */
+  @Test
   public void getSuppliedRequestTest1() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSuppliedRequestTest1");
     invoke();
@@ -126,6 +123,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse, Throwable) verify
    * AsyncEvent.getSuplliedRequest() works
    */
+  @Test
   public void getSuppliedRequestTest2() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSuppliedRequestTest2");
     invoke();
@@ -140,6 +138,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse) verify AsyncEvent.getSuplliedResponse()
    * works
    */
+  @Test
   public void getSuppliedResponseTest1() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSuppliedResponseTest1");
     invoke();
@@ -154,6 +153,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse, Throwable) verify
    * AsyncEvent.getSuplliedResponse() works
    */
+  @Test
   public void getSuppliedResponseTest2() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSuppliedResponseTest2");
     invoke();
@@ -168,6 +168,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse, Throwable) verify
    * AsyncEvent.getThrowable() works
    */
+  @Test
   public void getThrowableTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getThrowableTest");
     invoke();

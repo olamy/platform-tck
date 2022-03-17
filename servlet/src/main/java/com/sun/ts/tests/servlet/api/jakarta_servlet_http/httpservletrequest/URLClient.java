@@ -20,12 +20,10 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest;
 
-import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Properties;
 
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.request.HttpRequestClient;
 import com.sun.ts.tests.servlet.common.util.Data;
 import org.jboss.arquillian.container.test.api.Deployment;

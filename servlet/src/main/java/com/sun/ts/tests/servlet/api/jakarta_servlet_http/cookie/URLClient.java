@@ -21,9 +21,11 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.cookie;
 
-import java.io.PrintWriter;
+import java.net.URL;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import java.util.TimeZone;
 
 import com.sun.ts.tests.servlet.common.request.HttpRequest;
@@ -33,33 +35,45 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.cookie.CookieSpec;
 
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.util.Data;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(ArquillianExtension.class)
 public class URLClient extends AbstractUrlClient {
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
+
+
+  @ArquillianResource
+  private URL url;
+
+  @BeforeEach
+  public void setup() throws Exception {
+    setServletName("TestServlet");
+    String contextRoot = url.getPath().endsWith("/")?url.getPath().substring(0, url.getPath().length()-1):url.getPath();
+    setContextRoot(contextRoot);
+    Properties properties = new Properties();
+    properties.put(SERVLETHOSTPROP, url.getHost());
+    properties.put(SERVLETPORTPROP, Integer.toString(url.getPort()));
+    // TODO do we really need this??
+    properties.put(TSHOME, Files.createTempDirectory("tshome").toString());
+    setup(null, properties);
   }
 
+
   /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
+   * Deployment for the test
    */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
-    setServletName("TestServlet");
-    setContextRoot("/servlet_jsh_cookie_web");
-
-    return super.run(args, out, err);
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_jsh_cookie_web.xml"));
   }
 
   /*
@@ -96,6 +110,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void cloneTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "cloneTest");
     invoke();
@@ -108,6 +123,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void constructorTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest");
     invoke();
@@ -120,9 +136,10 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void constructorIllegalArgumentExceptionTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
-        "GET /servlet_jsh_cookie_web/TestServlet?testname=constructorIllegalArgumentExceptionTest HTTP/1.1");
+        "GET "+ getContextRoot() + "/TestServlet?testname=constructorIllegalArgumentExceptionTest HTTP/1.1");
     TEST_PROPS.setProperty(UNEXPECTED_RESPONSE_MATCH, "Test FAILED");
     invoke();
   }
@@ -134,6 +151,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getCommentTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getCommentTest");
     invoke();
@@ -146,6 +164,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getCommentNullTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getCommentNullTest");
     invoke();
@@ -159,11 +178,12 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client sends a version 0 and 1 cookie to the servlet.
    * Servlet verifies values and returns result to client
    */
+  @Test
   public void getDomainTest() throws Exception {
     // version 1
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_jsh_cookie_web");
+            + "; $Path="+ getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getDomainTest");
     invoke();
 
@@ -176,6 +196,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getMaxAgeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getMaxAgeTest");
     invoke();
@@ -188,6 +209,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getNameTest() throws Exception {
     // version 0
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
@@ -197,7 +219,7 @@ public class URLClient extends AbstractUrlClient {
     // version 1
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_jsh_cookie_web");
+            + "; $Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getNameTest");
     invoke();
   }
@@ -209,10 +231,11 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getPathTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_jsh_cookie_web");
+            + "; $Path="+ getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getPathTest");
     invoke();
   }
@@ -224,6 +247,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getSecureTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSecureTest");
     invoke();
@@ -236,16 +260,17 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getValueTest() throws Exception {
     // version 0
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
-        + _hostname + "; Path=/servlet_jsh_cookie_web");
+        + _hostname + "; Path="+ getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getValueTest");
     invoke();
     // version 1
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_jsh_cookie_web");
+            + "; $Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getValueTest");
     invoke();
   }
@@ -257,16 +282,17 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getVersionTest() throws Exception {
     // version 0
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
-        + _hostname + "; Path=/servlet_jsh_cookie_web");
+        + _hostname + "; Path="+ getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getVersionVer0Test");
     invoke();
     // version 1
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_jsh_cookie_web");
+            + "; $Path="+ getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getVersionVer1Test");
     invoke();
   }
@@ -278,6 +304,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void setCommentTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setCommentVer0Test");
     invoke();
@@ -292,6 +319,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void setDomainTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setDomainVer0Test");
     invoke();
@@ -306,6 +334,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet sets values and client verifies them
    */
+  @Test
   public void setMaxAgePositiveTest() throws Exception {
     // version 0 cookie
     String testName = "setMaxAgeVer0PositiveTest";
@@ -384,6 +413,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet sets values and client verifies them
    */
+  @Test
   public void setMaxAgeZeroTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setMaxAgeZeroVer0Test");
     TEST_PROPS.setProperty(EXPECTED_HEADERS, "Set-Cookie:name1=value1");
@@ -402,6 +432,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet sets values and client verifies them
    */
+  @Test
   public void setMaxAgeNegativeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setMaxAgeNegativeVer0Test");
     TEST_PROPS.setProperty(EXPECTED_HEADERS,
@@ -420,14 +451,15 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void setPathTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setPathVer0Test");
     TEST_PROPS.setProperty(EXPECTED_HEADERS,
-        "Set-Cookie:Path=\"/servlet_jsh_cookie_web\"");
+        "Set-Cookie:Path=/"+ getContextRoot());
     invoke();
     TEST_PROPS.setProperty(APITEST, "setPathVer1Test");
     TEST_PROPS.setProperty(EXPECTED_HEADERS,
-        "Set-Cookie:name1=value1##Version=1##Path=\"/servlet_jsh_cookie_web\"");
+        "Set-Cookie:name1=value1##Version=1##Path=/" + getContextRoot());
     invoke();
   }
 
@@ -438,6 +470,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void setSecureTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setSecureVer0Test");
     invoke();
@@ -452,6 +485,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void setValueTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setValueVer0Test");
     invoke();
@@ -466,6 +500,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void setVersionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setVersionVer0Test");
     invoke();

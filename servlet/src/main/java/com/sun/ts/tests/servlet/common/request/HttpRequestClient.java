@@ -21,25 +21,30 @@
 package com.sun.ts.tests.servlet.common.request;
 
 import com.sun.ts.tests.servlet.common.util.Data;
+import org.junit.jupiter.api.Test;
 
 public class HttpRequestClient extends RequestClient {
 
+  @Test
   public void getAuthTypeWithoutProtectionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getAuthTypeWithoutProtectionTest");
     invoke();
   }
 
+  @Test
   public void getAuthTypeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getAuthTypeTest");
     invoke();
   }
 
+  @Test
   public void getContextPathTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getContextPathTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS, "result:" + getContextRoot());
     invoke();
   }
 
+  @Test
   public void getCookiesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getCookiesTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS,
@@ -47,11 +52,13 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getCookiesNoCookiesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getCookiesNoCookiesTest");
     invoke();
   }
 
+  @Test
   public void getDateHeaderTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getDateHeaderTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS,
@@ -59,11 +66,13 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getDateHeaderNoHeaderTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getDateHeaderNoHeaderTest");
     invoke();
   }
 
+  @Test
   public void getDateHeaderIllegalArgumentExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST,
         "getDateHeaderIllegalArgumentExceptionTest");
@@ -71,17 +80,20 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getHeaderTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeaderTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS, "User-Agent: Mozilla/4.0");
     invoke();
   }
 
+  @Test
   public void getHeaderNoHeaderTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeaderNoHeaderTest");
     invoke();
   }
 
+  @Test
   public void getHeaderNamesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeaderNamesTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS,
@@ -89,6 +101,7 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getHeaderNamesNoHeaderTest() throws Exception {
     String testName = "getHeaderNamesNoHeaderTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -98,6 +111,7 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getHeadersTest() throws Exception {
     String testName = "getHeadersTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -117,28 +131,33 @@ public class HttpRequestClient extends RequestClient {
 
   }
 
+  @Test
   public void getHeadersNoHeadersTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeadersNoHeadersTest");
     invoke();
   }
 
+  @Test
   public void getIntHeaderTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getIntHeaderTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS, "MyIntHeader:123");
     invoke();
   }
 
+  @Test
   public void getIntHeaderNumberFoundExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getIntHeaderNumberFoundExceptionTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS, "MyNonIntHeader:Java");
     invoke();
   }
 
+  @Test
   public void getIntHeaderNoHeaderTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getIntHeaderNoHeaderTest");
     invoke();
   }
 
+  @Test
   public void getMethodTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getMethod_GETTest");
     invoke();
@@ -156,6 +175,7 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getPathInfoTest() throws Exception {
     String testName = "getPathInfoTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -166,11 +186,13 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getPathInfoNullTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getPathInfoNullTest");
     invoke();
   }
 
+  @Test
   public void getPathTranslatedTest() throws Exception {
     String testName = "getPathTranslatedTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -180,11 +202,13 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getPathTranslatedNullTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getPathTranslatedNullTest");
     invoke();
   }
 
+  @Test
   public void getQueryStringTest() throws Exception {
     String testName = "getQueryStringTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -193,6 +217,7 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getQueryStringNullTest() throws Exception {
     String testName = "getQueryStringNullTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -201,11 +226,13 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getRequestedSessionIdNullTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRequestedSessionIdNullTest");
     invoke();
   }
 
+  @Test
   public void getRequestedSessionIdTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSessionTrueNoSessionTest");
     TEST_PROPS.setProperty(SAVE_STATE, "true");
@@ -220,6 +247,7 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getRequestedSessionIdTest1() throws Exception {
     String testName = "getRequestedSessionIdTest1";
     TEST_PROPS.setProperty(REQUEST,
@@ -231,6 +259,7 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getRequestedSessionIdTest2() throws Exception {
     String testName = "getRequestedSessionIdTest2";
     TEST_PROPS.setProperty(REQUEST,
@@ -242,22 +271,26 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getRemoteUserTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRemoteUserTest");
     invoke();
   }
 
+  @Test
   public void getRequestURITest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRequestURITest");
     TEST_PROPS.setProperty(REQUEST_HEADERS, "result:" + getContextRoot());
     invoke();
   }
 
+  @Test
   public void getServletPathTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletPathTest");
     invoke();
   }
 
+  @Test
   public void getServletPathEmptyStringTest() throws Exception {
     String testName = "getServletPathEmptyStringTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -267,6 +300,7 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void isRequestedSessionIdFromCookieTest() throws Exception {
     String testName = "isRequestedSessionIdFromCookieTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -276,6 +310,7 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void isRequestedSessionIdFromCookieTest1() throws Exception {
 
     TEST_PROPS.setProperty(APITEST, "getSessionTest");
@@ -293,16 +328,19 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void isRequestedSessionIdFromURLTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "isRequestedSessionIdFromURLTest");
     invoke();
   }
 
+  @Test
   public void isRequestedSessionIdValidTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "isRequestedSessionIdValidTest");
     invoke();
   }
 
+  @Test
   public void getSessionTrueTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSessionTrueNoSessionTest");
     TEST_PROPS.setProperty(SAVE_STATE, "true");
@@ -312,16 +350,19 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void getSessionFalseTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSessionFalseTest");
     invoke();
   }
 
+  @Test
   public void getSessionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSessionTest");
     invoke();
   }
 
+  @Test
   public void getRequestURLTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRequestURLTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS,
@@ -331,16 +372,19 @@ public class HttpRequestClient extends RequestClient {
     invoke();
   }
 
+  @Test
   public void sessionTimeoutTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "sessionTimeoutTest");
     invoke();
   }
 
+  @Test
   public void changeSessionIDTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "changeSessionIDTest");
     invoke();
   }
 
+  @Test
   public void changeSessionIDTest1() throws Exception {
     TEST_PROPS.setProperty(APITEST, "changeSessionIDTest1");
     invoke();

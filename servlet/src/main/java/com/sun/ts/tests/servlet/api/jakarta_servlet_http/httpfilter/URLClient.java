@@ -21,10 +21,22 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpfilter;
 
 import java.io.PrintWriter;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.Properties;
 
 import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(ArquillianExtension.class)
 public class URLClient extends AbstractUrlClient {
 
   /**
@@ -50,6 +62,31 @@ public class URLClient extends AbstractUrlClient {
     return super.run(args, out, err);
   }
 
+  @ArquillianResource
+  private URL url;
+
+  @BeforeEach
+  public void setup() throws Exception {
+    String ctxRoot = url.getPath();
+    setContextRoot(ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot);
+    Properties properties = new Properties();
+    properties.put(SERVLETHOSTPROP, url.getHost());
+    properties.put(SERVLETPORTPROP, Integer.toString(url.getPort()));
+    // TODO do we really need this??
+    properties.put(TSHOME, Files.createTempDirectory("tshome").toString());
+    setup(null, properties);
+  }
+
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_jsh_httpfilter_web.xml"));
+  }
+
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
    */
@@ -63,7 +100,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client attempts to access a servlet and both filters
    * extending HttpFilter configured for that servlet should be invoked.
    */
-
+  @Test
   public void dofilterTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "HttpFilterTest");
     invoke();
