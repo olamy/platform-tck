@@ -43,6 +43,7 @@ public class URLClient extends AbstractUrlClient {
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
             .setWebXML(URLClient.class.getResource("servlet_js_filterrequestdispatcher_web.xml"));
   }
+
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
    */
