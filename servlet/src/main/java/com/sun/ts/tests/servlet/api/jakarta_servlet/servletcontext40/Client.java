@@ -20,64 +20,28 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext40;
 
-import java.net.InetAddress;
-import java.util.Properties;
-
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
+
+import java.net.InetAddress;
 
 public class Client extends AbstractUrlClient {
-
-  private static final String CONTEXT_ROOT = "/servlet_js_servletcontext40_web";
-
-  private static final String PROTOCOL = "http";
-
-  private static final String WEBSERVERHOSTPROP = "webServerHost";
-
-  private static final String WEBSERVERPORTPROP = "webServerPort";
-
-  private String hostname;
-
-  private int portnum;
-
+  
   private WebUtil.Response response = null;
 
   private String request = null;
 
-  /*
-   * @class.setup_props: webServerHost; webServerPort;
+  /**
+   * Deployment for the test
    */
-  public void setup(String[] args, Properties p) throws Exception {
-    boolean pass = true;
-
-    try {
-      hostname = p.getProperty(WEBSERVERHOSTPROP);
-      if (hostname == null)
-        pass = false;
-      else if (hostname.equals(""))
-        pass = false;
-      try {
-        portnum = Integer.parseInt(p.getProperty(WEBSERVERPORTPROP));
-      } catch (Exception e) {
-        pass = false;
-      }
-    } catch (Exception e) {
-      throw new Exception("setup failed:", e);
-    }
-    if (!pass) {
-      logErr(
-          "Please specify host & port of web server " + "in config properties: "
-              + WEBSERVERHOSTPROP + ", " + WEBSERVERPORTPROP);
-      throw new Exception("setup failed:");
-    }
-
-    System.out.println(hostname);
-    System.out.println(portnum);
-    logMsg("setup ok");
-  }
-
-  public void cleanup() throws Exception {
-    logTrace("cleanup");
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(Client.class.getResource("servlet_js_servletcontext40_web.xml"));
   }
 
   /*
@@ -87,13 +51,14 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy:
    */
+  @Test
   public void addJspTest() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/servlet/addJspFile";
+      request = getContextRoot() + "/servlet/addJspFile";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -123,13 +88,14 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy:
    */
+  @Test
   public void changeSessionTimeoutTest() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet";
+      request = getContextRoot() + "/TestServlet";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -159,13 +125,14 @@ public class Client extends AbstractUrlClient {
    * @test_Strategy: IllegalStateException - if this ServletContext has already
    * been initialized
    */
+  @Test
   public void addJspContextInitialized() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet2";
+      request = getContextRoot() + "/TestServlet2";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -198,13 +165,14 @@ public class Client extends AbstractUrlClient {
    * @test_Strategy: IllegalStateException - if this ServletContext has already
    * been initialized
    */
+  @Test
   public void setSessionTimeoutContextInitialized() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet2";
+      request = getContextRoot() + "/TestServlet2";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -239,13 +207,14 @@ public class Client extends AbstractUrlClient {
    * ServletContextEvent) method of a ServletContextListener that was neither
    * declared in web.xml or web-fragment.xml, nor annotated with WebListener
    */
+  @Test
   public void addJspContextListenerInTLD() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet";
+      request = getContextRoot() + "/TestServlet";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -279,13 +248,14 @@ public class Client extends AbstractUrlClient {
    * ServletContextEvent) method of a ServletContextListener that was neither
    * declared in web.xml or web-fragment.xml, nor annotated with WebListener
    */
+  @Test
   public void setSessionTimeoutContextListenerInTLD() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet";
+      request = getContextRoot() + "/TestServlet";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -317,13 +287,14 @@ public class Client extends AbstractUrlClient {
    * @test_Strategy: IllegalArgumentException - if servletName is null or an
    * empty String
    */
+  @Test
   public void addJspEmptyAndNullName() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet";
+      request = getContextRoot() + "/TestServlet";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -362,13 +333,14 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: NullPointerException - if name is null
    */
+  @Test
   public void getAttributeWithNullName() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet2";
+      request = getContextRoot() + "/TestServlet2";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -400,13 +372,14 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: NullPointerException - if name is null
    */
+  @Test
   public void getInitParameterWithNullName() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet2";
+      request = getContextRoot() + "/TestServlet2";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -438,13 +411,14 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: NullPointerException - if name is null
    */
+  @Test
   public void setAttributeWithNullName() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet2";
+      request = getContextRoot() + "/TestServlet2";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -476,13 +450,14 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: NullPointerException - if name is null
    */
+  @Test
   public void setInitParameterWithNullName() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet2";
+      request = getContextRoot() + "/TestServlet2";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);
@@ -515,13 +490,14 @@ public class Client extends AbstractUrlClient {
    * @test_Strategy: with no setEffectiveSesssionTrackingModes, default is in
    * effective
    */
+  @Test
   public void getEffectiveSessionTrackingModes() throws Exception {
     try {
-      request = CONTEXT_ROOT + "/TestServlet2";
+      request = getContextRoot() + "/TestServlet2";
       logMsg("Sending request \"" + request + "\"");
 
-      response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
-          portnum, getRequest(request), null, null);
+      response = WebUtil.sendRequest("GET", InetAddress.getByName(_hostname),
+          _port, getRequest(request), null, null);
 
       logMsg("response.statusToken:" + response.statusToken);
       logMsg("response.content:" + response.content);

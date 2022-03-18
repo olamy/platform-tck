@@ -19,36 +19,29 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext306;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
-
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
-    setContextRoot("/servlet_js_servletcontext306_web");
+  @BeforeEach
+  public void setupServletName() throws Exception {
     setServletName("TestServlet");
-
-    return super.run(args, out, err);
   }
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_js_servletcontext306_web.xml"));
+  }
+
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -64,6 +57,7 @@ public class URLClient extends AbstractUrlClient {
    * Create a Servlet, call ServletContext.addServlet(String, String) Verify the
    * expected IllegalStateException is thrown.
    */
+  @Test
   public void addServletStringTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "addServletStringTest");
     invoke();
@@ -78,6 +72,7 @@ public class URLClient extends AbstractUrlClient {
    * Create a Servlet, call ServletContext.addServlet(String, Class) Verify the
    * expected IllegalStateException is thrown.
    */
+  @Test
   public void addServletClassTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "addServletClassTest");
     invoke();
@@ -92,6 +87,7 @@ public class URLClient extends AbstractUrlClient {
    * Servlet) Create a Servlet, call ServletContext.addServlet(String, Servlet)
    * Verify the expected IllegalStateException is thrown.
    */
+  @Test
   public void addServletTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "addServletTest");
     invoke();
@@ -106,6 +102,7 @@ public class URLClient extends AbstractUrlClient {
    * Create a Servlet, call ServletContext.addFilter(String, String) Verify the
    * expected IllegalStateException is thrown.
    */
+  @Test
   public void addFilterStringTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "addFilterStringTest");
     invoke();
@@ -120,6 +117,7 @@ public class URLClient extends AbstractUrlClient {
    * Create a Servlet, call ServletContext.addFilter(String, Class) Verify the
    * expected IllegalStateException is thrown.
    */
+  @Test
   public void addFilterClassTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "addFilterClassTest");
     invoke();
@@ -134,6 +132,7 @@ public class URLClient extends AbstractUrlClient {
    * Create a Servlet, call ServletContext.addFilter(String, Filter) Verify the
    * expected IllegalStateException is thrown.
    */
+  @Test
   public void addFilterTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "addFilterTest");
     invoke();
@@ -148,6 +147,7 @@ public class URLClient extends AbstractUrlClient {
    * String) Create a Servlet, call ServletContext.setInitParameter(String,
    * String) Verify the expected IllegalStateException is thrown.
    */
+  @Test
   public void setInitParameterTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setInitParameterTest");
     invoke();
