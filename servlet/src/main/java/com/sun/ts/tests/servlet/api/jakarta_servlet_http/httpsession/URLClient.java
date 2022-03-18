@@ -20,35 +20,29 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpsession;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
 
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
+  @BeforeEach
+  public void setupServletName() throws Exception {
     setServletName("TestServlet");
-    setContextRoot("/servlet_jsh_httpsession_web");
-
-    return super.run(args, out, err);
   }
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_jsh_httpsession_web.xml"));
+  }
+
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -64,6 +58,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getCreationTimeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getCreationTimeTest");
     invoke();
@@ -76,6 +71,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet starts session, invalidates it then calls method
    */
+  @Test
   public void getCreationTimeIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getCreationTimeIllegalStateExceptionTest");
     invoke();
@@ -88,6 +84,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getIdTestServlet() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getIdTestServlet");
     invoke();
@@ -101,6 +98,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Create a HttpSession; invalidate it; Verify that no
    * IllegalStateException is thrown when getId is called.
    */
+  @Test
   public void getIdIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getIdIllegalStateExceptionTest");
     invoke();
@@ -113,6 +111,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getLastAccessedTimeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getLastAccessedTimeTest");
     invoke();
@@ -125,6 +124,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet does a get/set operation
    */
+  @Test
   public void getLastAccessedTimeSetGetTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getLastAccessedTimeSetGetTest");
     invoke();
@@ -156,7 +156,7 @@ public class URLClient extends AbstractUrlClient {
    * resume the session by calling request.getSession(false). Verify that no
    * session is returned this time
    */
-
+  @Test
   public void expireHttpSessionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSessionMax");
     TEST_PROPS.setProperty(SAVE_STATE, "true");
@@ -208,6 +208,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet verifies exception is generated
    */
+  @Test
   public void getLastAccessedTimeIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSession");
     TEST_PROPS.setProperty(SAVE_STATE, "true");
@@ -225,6 +226,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getMaxInactiveIntervalTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getMaxInactiveIntervalTest");
     invoke();
@@ -237,6 +239,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getAttributeNamesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getAttributeNamesTest");
     invoke();
@@ -249,6 +252,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getAttributeNamesIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST,
         "getAttributeNamesIllegalStateExceptionTest");
@@ -262,6 +266,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getAttributeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getAttributeTest");
     invoke();
@@ -274,6 +279,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getAttributeIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getAttributeIllegalStateExceptionTest");
     invoke();
@@ -286,6 +292,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void getServletContextTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletContextTest");
     invoke();
@@ -298,6 +305,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void invalidateTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "invalidateTest");
     invoke();
@@ -310,6 +318,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void invalidateIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "invalidateIllegalStateExceptionTest");
     invoke();
@@ -322,6 +331,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void isNewTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "isNewTest");
     invoke();
@@ -334,6 +344,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void isNewIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "isNewIllegalStateExceptionTest");
     invoke();
@@ -346,6 +357,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void removeAttributeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "removeAttributeTest");
     invoke();
@@ -359,6 +371,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Servlet removes non-existant attribute then tries to tries
    * to get it.
    */
+  @Test
   public void removeAttributeDoNothingTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "removeAttributeDoNothingTest");
     invoke();
@@ -371,6 +384,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void removeAttributeIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "removeAttributeIllegalStateExceptionTest");
     invoke();
@@ -383,6 +397,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void setAttributeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setAttributeTest");
     invoke();
@@ -395,6 +410,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet passes null to setAttribute
    */
+  @Test
   public void setAttributeNullTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setAttributeNullTest");
     invoke();
@@ -407,6 +423,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void setAttributeIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setAttributeIllegalStateExceptionTest");
     invoke();
@@ -419,6 +436,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  @Test
   public void setMaxInactiveIntervalTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setMaxInactiveIntervalTest");
     invoke();

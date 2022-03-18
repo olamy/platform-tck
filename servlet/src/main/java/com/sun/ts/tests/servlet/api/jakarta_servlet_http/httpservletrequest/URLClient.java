@@ -20,12 +20,13 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest;
 
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.request.HttpRequestClient;
 import com.sun.ts.tests.servlet.common.util.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class URLClient extends HttpRequestClient {
+public class URLClient extends AbstractUrlClient {
 
   @BeforeEach
   public void setupServletName() throws Exception {

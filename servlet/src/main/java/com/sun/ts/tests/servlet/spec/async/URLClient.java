@@ -23,6 +23,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.Properties;
 
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.request.RequestClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit5.ArquillianExtension;
@@ -30,28 +31,11 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ArquillianExtension.class)
-public class URLClient extends RequestClient {
-
-  private static final String CONTEXT_ROOT = "/servlet_spec_async_web";
-
-  @ArquillianResource
-  private URL url;
-
-  @BeforeEach
-  public void setup() throws Exception {
-    String ctxRoot = url.getPath();
-    setContextRoot(ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot);
-    Properties properties = new Properties();
-    properties.put(SERVLETHOSTPROP, url.getHost());
-    properties.put(SERVLETPORTPROP, Integer.toString(url.getPort()));
-    // TODO do we really need this??
-    properties.put(TSHOME, Files.createTempDirectory("tshome").toString());
-    setup(null, properties);
-  }
-
+public class URLClient extends AbstractUrlClient {
 
   /**
    * Deployment for the test
@@ -76,6 +60,7 @@ public class URLClient extends RequestClient {
    * async-supported=true in web.xml; verifies in Servlet1 that
    * request.isAsyncSupported()=true.
    */
+  @Test
   public void AsyncSupportedTrueTest1() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet1?testname=direct HTTP/1.1");
@@ -94,6 +79,7 @@ public class URLClient extends RequestClient {
    * with it which is also declared async-supported=true in web.xml; verifies in
    * Servlet4 that request.isAsyncSupported()=true.
    */
+  @Test
   public void AsyncSupportedTrueTest2() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet4?testname=direct HTTP/1.1");
@@ -114,6 +100,7 @@ public class URLClient extends RequestClient {
    * Servlet1 from Servlet4, Servlet1 is declared async-supported=true in
    * web.xml; verifies in Servlet1 that request.isAsyncSupported()=true.
    */
+  @Test
   public void AsyncSupportedTrueTest3() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=testdirect&id=1 HTTP/1.1");
@@ -135,6 +122,7 @@ public class URLClient extends RequestClient {
    * declared async-supported=true in web.xml; verifies in Servlet10 that
    * request.isAsyncSupported()=true.
    */
+  @Test
   public void AsyncSupportedTrueTest4() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=testdirect&id=10 HTTP/1.1");
@@ -153,6 +141,7 @@ public class URLClient extends RequestClient {
    * async-supported in web.xml; verifies in Servlet2 that
    * request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest1() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet2?testname=direct HTTP/1.1");
@@ -169,6 +158,7 @@ public class URLClient extends RequestClient {
    * async-supported=false in web.xml; verifies in Servlet3 that
    * request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest2() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet3?testname=direct HTTP/1.1");
@@ -187,6 +177,7 @@ public class URLClient extends RequestClient {
    * which is declared async-supported=false in web.xml; verifies in Servlet5
    * that request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest3() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet5?testname=direct HTTP/1.1");
@@ -206,6 +197,7 @@ public class URLClient extends RequestClient {
    * which is not declared async-supported wise in web.xml; verifies in Servlet6
    * that request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest4() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet6?testname=direct HTTP/1.1");
@@ -225,6 +217,7 @@ public class URLClient extends RequestClient {
    * which is declared async-supported=true in web.xml; verifies in Servlet7
    * that request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest5() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet7?testname=direct HTTP/1.1");
@@ -244,6 +237,7 @@ public class URLClient extends RequestClient {
    * which is declared async-supported=false in web.xml; verifies in Servlet8
    * that request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest6() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet8?testname=direct HTTP/1.1");
@@ -263,6 +257,7 @@ public class URLClient extends RequestClient {
    * which is not declared async-supported wise in web.xml; verifies in Servlet9
    * that request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest7() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet9?testname=direct HTTP/1.1");
@@ -283,6 +278,7 @@ public class URLClient extends RequestClient {
    * in Servlet4; Servlet2 is not declared async-supported wise in web.xml;
    * verifies in Servlet2 that request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest8() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=testdirect&id=2 HTTP/1.1");
@@ -302,6 +298,7 @@ public class URLClient extends RequestClient {
    * in Servlet4; Servlet3 is declared async-supported=false in web.xml;
    * verifies in Servlet3 that request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest9() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=testdirect&id=3 HTTP/1.1");
@@ -322,6 +319,7 @@ public class URLClient extends RequestClient {
    * is also associated with Filter5; which is declared async-supported=false in
    * web.xml; verifies in Servlet5 that request.isAsyncSupported()=false.
    */
+  @Test
   public void AsyncSupportedFalseTest10() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=testdirect&id=5 HTTP/1.1");
@@ -339,6 +337,7 @@ public class URLClient extends RequestClient {
    * async-supported=true in web.xml; call startAsync() in Servlet1, verifies
    * that AsyncContext start and complete.
    */
+  @Test
   public void StartAsyncTest1() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet1?testname=startA HTTP/1.1");
@@ -356,6 +355,7 @@ public class URLClient extends RequestClient {
    * async-supported=false in web.xml; call startAsync() in Servlet2, verifies
    * that startAsync causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest2() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet2?testname=startA HTTP/1.1");
@@ -373,6 +373,7 @@ public class URLClient extends RequestClient {
    * web.xml about support for async; call startAsync() in Servlet3, verifies
    * that startAsync causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest3() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet3?testname=startA HTTP/1.1");
@@ -391,6 +392,7 @@ public class URLClient extends RequestClient {
    * with it which is also declared async-supported=true in web.xml; call
    * startAsync() in Servlet4, verifies that AsyncContext start and complete.
    */
+  @Test
   public void StartAsyncTest4() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet4?testname=startA HTTP/1.1");
@@ -411,6 +413,7 @@ public class URLClient extends RequestClient {
    * startAsync() in Servlet5, verifies that startAsync causes
    * IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest5() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet5?testname=startA HTTP/1.1");
@@ -431,6 +434,7 @@ public class URLClient extends RequestClient {
    * startAsync() in Servlet6, verifies that startAsync causes
    * IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest6() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet6?testname=startA HTTP/1.1");
@@ -451,6 +455,7 @@ public class URLClient extends RequestClient {
    * startAsync() in Servlet7, verifies that startAsync causes
    * IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest7() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/Servlet7?testname=startA HTTP/1.1");
@@ -472,6 +477,7 @@ public class URLClient extends RequestClient {
    * Servlet1 in Servlet4; Servlet1 is declared async-supported=true in web.xml;
    * verifies in Servlet1 that startAsync and complete runs.
    */
+  @Test
   public void StartAsyncTest8() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=teststartA&id=1 HTTP/1.1");
@@ -492,6 +498,7 @@ public class URLClient extends RequestClient {
    * web.xml; verifiy in Servlet2 that startAsync causes IllegalStateException
    * thrown.
    */
+  @Test
   public void StartAsyncTest9() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=teststartA&id=2 HTTP/1.1");
@@ -512,6 +519,7 @@ public class URLClient extends RequestClient {
    * web.xml; verifies in Servlet3 that startAsync causes IllegalStateException
    * thrown.
    */
+  @Test
   public void StartAsyncTest10() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=teststartA&id=3 HTTP/1.1");
@@ -533,6 +541,7 @@ public class URLClient extends RequestClient {
    * declared async-supported=true in web.xml; verifies in Servlet10 that
    * startAsync and complete run.
    */
+  @Test
   public void StartAsyncTest11() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=teststartA&id=10 HTTP/1.1");
@@ -554,6 +563,7 @@ public class URLClient extends RequestClient {
    * async-supported=false in web.xml; verifies in Servlet5 that startAsync
    * causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest12() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=teststartA&id=5 HTTP/1.1");
@@ -576,6 +586,7 @@ public class URLClient extends RequestClient {
    * async-supported=true in web.xml; verifies in Servlet6 that startAsync
    * causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest13() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=teststartA&id=6 HTTP/1.1");
@@ -598,6 +609,7 @@ public class URLClient extends RequestClient {
    * async-supported=true in web.xml; verifies in Servlet7 that startAsync
    * causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest14() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=teststartA&id=7 HTTP/1.1");
@@ -620,6 +632,7 @@ public class URLClient extends RequestClient {
    * async-supported=false in web.xml; verifies in Servlet8 that startAsync
    * causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest15() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=teststartA&id=8 HTTP/1.1");
@@ -642,6 +655,7 @@ public class URLClient extends RequestClient {
    * undeclared async-supported wise in web.xml; verifies in Servlet9 that
    * startAsync causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest16() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet4?testname=teststartA&id=9 HTTP/1.1");
@@ -662,6 +676,7 @@ public class URLClient extends RequestClient {
    * Servlet1 in Servlet5; Servlet1 is declared async-supported=true in web.xml;
    * verifies in Servlet1 startAsync causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest17() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet5?testname=teststartA&id=1 HTTP/1.1");
@@ -682,6 +697,7 @@ public class URLClient extends RequestClient {
    * web.xml; verifiy in Servlet2 that startAsync causes IllegalStateException
    * thrown.
    */
+  @Test
   public void StartAsyncTest18() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet5?testname=teststartA&id=2 HTTP/1.1");
@@ -702,6 +718,7 @@ public class URLClient extends RequestClient {
    * web.xml; verifies in Servlet3 that startAsync causes IllegalStateException
    * thrown.
    */
+  @Test
   public void StartAsyncTest19() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet5?testname=teststartA&id=3 HTTP/1.1");
@@ -723,6 +740,7 @@ public class URLClient extends RequestClient {
    * async-supported=true in web.xml; verifies in Servlet4 that
    * IllegalStateException is thrown.
    */
+  @Test
   public void StartAsyncTest20() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet5?testname=teststartA&id=4 HTTP/1.1");
@@ -745,6 +763,7 @@ public class URLClient extends RequestClient {
    * async-supported=false in web.xml; verifies in Servlet6 that startAsync
    * causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest21() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet5?testname=teststartA&id=6 HTTP/1.1");
@@ -767,6 +786,7 @@ public class URLClient extends RequestClient {
    * async-supported=true in web.xml; verifies in Servlet7 that startAsync
    * causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest22() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet5?testname=teststartA&id=7 HTTP/1.1");
@@ -789,6 +809,7 @@ public class URLClient extends RequestClient {
    * async-supported=false in web.xml; verifies in Servlet8 that startAsync
    * causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest23() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet5?testname=teststartA&id=8 HTTP/1.1");
@@ -811,6 +832,7 @@ public class URLClient extends RequestClient {
    * undeclared async-supported wise in web.xml; verifies in Servlet9 that
    * startAsync causes IllegalStateException thrown.
    */
+  @Test
   public void StartAsyncTest24() throws Exception {
     TEST_PROPS.setProperty(REQUEST, "GET " + getContextRoot()
         + "/Servlet5?testname=teststartA&id=9 HTTP/1.1");
@@ -829,7 +851,7 @@ public class URLClient extends RequestClient {
    * async-supported=true in web.xml; verifies in TestServlet that startAsync
    * completes fine.
    */
-
+  @Test
   public void StartAsyncTest25() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/TestServlet?testname=test1 HTTP/1.1");
