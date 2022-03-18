@@ -19,74 +19,38 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletresponse40;
 
+import com.sun.ts.lib.util.TestUtil;
+import com.sun.ts.lib.util.WebUtil;
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
-import java.util.Properties;
 
-import com.sun.ts.lib.util.TestUtil;
-import com.sun.ts.lib.util.WebUtil;
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import static com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest40.Client.DELIMITER;
+import static com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest40.Client.ENCODING;
 
 public class Client extends AbstractUrlClient {
 
-  private static final String CONTEXT_ROOT = "/servlet_jsh_httpservletresponse40_web";
-
-  private static final String PROTOCOL = "http";
-
-  private static final String WEBSERVERHOSTPROP = "webServerHost";
-
-  private static final String WEBSERVERPORTPROP = "webServerPort";
-
-  public static final String DELIMITER = "\r\n";
-
-  public static final String ENCODING = "ISO-8859-1";
-
-  private String hostname;
-
-  private int portnum;
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(Client.class.getResource("servlet_jsh_httpservletresponse40_web.xml"));
+  }
 
   private WebUtil.Response response = null;
 
   private String request = null;
 
-  /*
-   * @class.setup_props: webServerHost; webServerPort;
-   */
-  public void setup(String[] args, Properties p) throws Exception {
-    boolean pass = true;
-
-    try {
-      hostname = p.getProperty(WEBSERVERHOSTPROP);
-      if (hostname == null)
-        pass = false;
-      else if (hostname.equals(""))
-        pass = false;
-      try {
-        portnum = Integer.parseInt(p.getProperty(WEBSERVERPORTPROP));
-      } catch (Exception e) {
-        pass = false;
-      }
-    } catch (Exception e) {
-      throw new Exception("setup failed:", e);
-    }
-    if (!pass) {
-      TestUtil.logErr(
-          "Please specify host & port of web server " + "in config properties: "
-              + WEBSERVERHOSTPROP + ", " + WEBSERVERPORTPROP);
-      throw new Exception("setup failed:");
-    }
-
-    System.out.println(hostname);
-    System.out.println(portnum);
-    logMsg("setup ok");
-  }
-
-  public void cleanup() throws Exception {
-    TestUtil.logTrace("cleanup");
-  }
 
   /*
    * @testName: TrailerTestWithHTTP10
@@ -95,6 +59,7 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy:
    */
+  @Test
   public void TrailerTestWithHTTP10() throws Exception {
 
     String response = simpleTest("TrailerTestWithHTTP10", "HTTP/1.0",
@@ -115,6 +80,7 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy:
    */
+  @Test
   public void TrailerTestResponseCommitted() throws Exception {
 
     String response = simpleTest("TrailerTestResponseCommitted", "HTTP/1.1",
@@ -135,6 +101,7 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy:
    */
+  @Test
   public void TrailerTest() throws Exception {
     String content = simpleTest("TrailerTest", "HTTP/1.1",
         "/TrailerTestServlet");
@@ -166,6 +133,7 @@ public class Client extends AbstractUrlClient {
 
   }
 
+
   private String simpleTest(String testName, String protocol,
       String servletPath) throws Exception {
     URL url;
@@ -175,7 +143,7 @@ public class Client extends AbstractUrlClient {
 
     try {
       url = new URL(
-          "http://" + hostname + ":" + portnum + CONTEXT_ROOT + servletPath);
+          "http://" + _hostname + ":" + _port + getContextRoot() + servletPath);
       TestUtil.logMsg("access " + url.toString());
       socket = new Socket(url.getHost(), url.getPort());
       socket.setKeepAlive(true);
