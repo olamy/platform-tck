@@ -25,32 +25,31 @@ import java.util.Properties;
 
 import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
   private static final String CTHREADS = "ServletClientThreads";
 
+  // NTHREADS = new Integer(p.getProperty(CTHREADS)).intValue();
   private static int NTHREADS = 0;
+//
+//  @BeforeEach
+//  public void setupServletName() throws Exception {
+//    setServletName("TestServlet");
+//  }
 
   /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
+   * Deployment for the test
    */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
-
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
-    return super.run(args, out, err);
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_js_singlethreadmodel_web.xml"));
   }
 
   /*
@@ -61,34 +60,6 @@ public class URLClient extends AbstractUrlClient {
 
   /* Run test */
 
-  /**
-   * <code>setup</code> is by the test harness to initialize the tests.
-   *
-   * @param args
-   *          a <code>String[]</code> value
-   * @param p
-   *          a <code>Properties</code> value
-   * @exception Fault
-   *              if an error occurs
-   */
-  public void setup(String[] args, Properties p) throws Exception {
-    boolean pass = true;
-    StringBuffer sb = new StringBuffer(100);
-
-    try {
-
-      try {
-        NTHREADS = new Integer(p.getProperty(CTHREADS)).intValue();
-      } catch (Throwable t) {
-        sb.append("\nUnable to set the number of client threads!\nReason: ");
-        sb.append(t.toString());
-        pass = false;
-      }
-    } catch (Throwable t) {
-      throw new Exception("Unexpected Exception - Setup failed:" + t.toString());
-    }
-    super.setup(args, p);
-  }
 
   /*
    * @testName: singleModelTest
@@ -115,10 +86,10 @@ public class URLClient extends AbstractUrlClient {
    * will be the same, however by configuring the threads, we can validate
    * implementations which pool these type of servlets.
    */
-
+  @Test
   public void singleModelTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
-        "GET /servlet_js_singlethreadmodel_web/STMClient?count=" + NTHREADS
+        "GET /" + getContextRoot() + "/STMClient?count=" + NTHREADS
             + " HTTP/1.1");
     TEST_PROPS.setProperty(STATUS_CODE, OK);
     invoke();
