@@ -20,50 +20,43 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.part;
 
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import com.sun.javatest.Status;
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
-
 public class URLClient extends AbstractUrlClient {
 
   private static final String CRLF = "\r\n";
 
   String dir;
-
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
+  @BeforeEach
+  public void setupServletName() throws Exception {
+    setServletName("TestServlet");
   }
 
   /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
+   * Deployment for the test
    */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-    setContextRoot("/servlet_jsh_part_web");
-    setServletName("TestServlet");
-
-    return super.run(args, out, err);
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_jsh_part_web.xml"));
   }
 
   /*
@@ -81,6 +74,7 @@ public class URLClient extends AbstractUrlClient {
    * form without file Verify that the data is received correctly Verify all
    * relevant API works correctly
    */
+  @Test
   public void getPartTest() throws Exception {
     dir = _tsHome
         + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
@@ -182,6 +176,7 @@ public class URLClient extends AbstractUrlClient {
    * non-multi-part form data request with a form data Verify
    * HttpServletRequest.getPart(String name) throw ServletException
    */
+  @Test
   public void getPartTest1() throws Exception {
     dir = _tsHome
         + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
@@ -282,6 +277,7 @@ public class URLClient extends AbstractUrlClient {
    * non-multi-part form data request with a few form data Verify
    * HttpServletRequest.getParts() throw ServletException
    */
+  @Test
   public void getPartsTest() throws Exception {
     dir = _tsHome
         + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
@@ -389,6 +385,7 @@ public class URLClient extends AbstractUrlClient {
    * form with several parts, with and without file Verify that the data is
    * received correctly Verify all relevant API works correctly
    */
+  @Test
   public void getPartsTest1() throws Exception {
     dir = _tsHome
         + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
@@ -498,6 +495,7 @@ public class URLClient extends AbstractUrlClient {
    * form with several parts, with and without file Verify that
    * Part.getHeader(String) works correctly
    */
+  @Test
   public void getHeaderTest() throws Exception {
     dir = _tsHome
         + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
@@ -607,6 +605,7 @@ public class URLClient extends AbstractUrlClient {
    * form with several parts, with and without file Verify that
    * Part.getHeaders(String) works correctly
    */
+  @Test
   public void getHeadersTest() throws Exception {
     dir = _tsHome
         + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
@@ -715,6 +714,7 @@ public class URLClient extends AbstractUrlClient {
    * form with several parts, with and without file Verify that
    * Part.getInputStream() works correctly
    */
+  @Test
   public void getInputStreamTest() throws Exception {
     dir = _tsHome
         + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";

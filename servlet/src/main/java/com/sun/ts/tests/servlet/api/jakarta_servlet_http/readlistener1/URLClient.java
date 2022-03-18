@@ -32,6 +32,8 @@ import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
 
 public class URLClient extends AbstractUrlClient {
 
+  // TOFIX
+
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
    * servlet_async_wait;

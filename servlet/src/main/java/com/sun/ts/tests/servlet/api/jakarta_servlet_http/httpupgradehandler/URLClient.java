@@ -17,47 +17,39 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpupgradehandler;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.URL;
-import java.net.UnknownHostException;
-
-import com.sun.javatest.Status;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.URL;
 
 public class URLClient extends AbstractUrlClient {
 
   private static final String CRLF = "\r\n";
 
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
-
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
-    setContextRoot("/servlet_jsh_upgradehandler_web");
+  @BeforeEach
+  public void setupServletName() throws Exception {
     setServletName("TestServlet");
-
-    return super.run(args, out, err);
   }
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_jsh_upgradehandler_web.xml"));
+  }
+
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -76,6 +68,7 @@ public class URLClient extends AbstractUrlClient {
    * request accordingly; Create a ReadListener; Verify all message received;
    * Verify UpgradeHandler accordingly Verify ReadListener works accordingly
    */
+  @Test
   public void upgradeTest() throws Exception {
     Boolean passed1 = false;
     Boolean passed2 = false;
@@ -152,10 +145,6 @@ public class URLClient extends AbstractUrlClient {
           break;
         }
       }
-    } catch (MalformedURLException mue) {
-      TestUtil.logErr("exception caught: " + mue.getMessage(), mue);
-    } catch (UnknownHostException uhe) {
-      TestUtil.logErr("exception caught: " + uhe.getMessage(), uhe);
     } catch (IOException ex2) {
       TestUtil.logErr("exception caught: " + ex2.getMessage(), ex2);
     } catch (Exception ex) {
