@@ -21,51 +21,31 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.cookie;
 
-import java.net.URL;
-import java.nio.file.Files;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
-import java.util.TimeZone;
-
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.request.HttpRequest;
 import com.sun.ts.tests.servlet.common.request.HttpResponse;
+import com.sun.ts.tests.servlet.common.util.Data;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.cookie.CookieSpec;
-
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import com.sun.ts.tests.servlet.common.util.Data;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit5.ArquillianExtension;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith(ArquillianExtension.class)
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 public class URLClient extends AbstractUrlClient {
 
 
-  @ArquillianResource
-  private URL url;
-
   @BeforeEach
-  public void setup() throws Exception {
+  public void setupServletName() throws Exception {
     setServletName("TestServlet");
-    String contextRoot = url.getPath().endsWith("/")?url.getPath().substring(0, url.getPath().length()-1):url.getPath();
-    setContextRoot(contextRoot);
-    Properties properties = new Properties();
-    properties.put(SERVLETHOSTPROP, url.getHost());
-    properties.put(SERVLETPORTPROP, Integer.toString(url.getPort()));
-    // TODO do we really need this??
-    properties.put(TSHOME, Files.createTempDirectory("tshome").toString());
-    setup(null, properties);
   }
-
 
   /**
    * Deployment for the test
