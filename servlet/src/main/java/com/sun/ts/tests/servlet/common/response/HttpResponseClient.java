@@ -21,9 +21,11 @@
 package com.sun.ts.tests.servlet.common.response;
 
 import com.sun.ts.tests.servlet.common.util.Data;
+import org.junit.jupiter.api.Test;
 
 public class HttpResponseClient extends ResponseClient {
 
+  @Test
   public void addCookieTest() throws Exception {
     String testName = "addCookieTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -34,6 +36,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void addDateHeaderTest() throws Exception {
     String testName = "addDateHeaderTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -44,6 +47,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void addHeaderTest() throws Exception {
     String testName = "addHeaderTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -54,6 +58,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void addIntHeaderTest() throws Exception {
     String testName = "addIntHeaderTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -64,11 +69,13 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void containsHeaderTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "containsHeaderTest");
     invoke();
   }
 
+  @Test
   public void sendErrorClearBufferTest() throws Exception {
     String testName = "sendErrorClearBufferTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -80,6 +87,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void sendErrorIllegalStateExceptionTest() throws Exception {
     String testName = "sendErrorIllegalStateExceptionTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -90,6 +98,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void sendError_StringTest() throws Exception {
     String testName = "sendError_StringTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -104,6 +113,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void sendError_StringIllegalStateExceptionTest() throws Exception {
     String testName = "sendError_StringIllegalStateExceptionTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -114,6 +124,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void sendError_StringErrorPageTest() throws Exception {
     String testName = "sendError_StringErrorPageTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -126,6 +137,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void sendRedirectWithLeadingSlashTest() throws Exception {
     String testName = "sendRedirectWithLeadingSlashTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -137,6 +149,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void sendRedirectWithoutLeadingSlashTest() throws Exception {
     String testName = "sendRedirectWithoutLeadingSlashTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -148,11 +161,13 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void sendRedirectIllegalStateExceptionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "sendRedirectIllegalStateExceptionTest");
     invoke();
   }
 
+  @Test
   public void setDateHeaderTest() throws Exception {
     String testName = "setDateHeaderTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -163,6 +178,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void setDateHeaderOverrideTest() throws Exception {
     String testName = "setDateHeaderOverrideTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -173,6 +189,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void setHeaderTest() throws Exception {
     String testName = "setHeaderTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -182,6 +199,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void setHeaderOverrideTest() throws Exception {
     String testName = "setHeaderOverrideTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -191,6 +209,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void setMultiHeaderTest() throws Exception {
     String testName = "setMultiHeaderTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -200,6 +219,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void setIntHeaderTest() throws Exception {
     String testName = "setIntHeaderTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -209,6 +229,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void setStatusTest() throws Exception {
     String testName = "setStatusTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -218,6 +239,7 @@ public class HttpResponseClient extends ResponseClient {
     invoke();
   }
 
+  @Test
   public void setStatusTest1() throws Exception {
     String testName = "setStatusTest1";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -230,21 +252,25 @@ public class HttpResponseClient extends ResponseClient {
   /*
    * Servlet 3.0 tests
    */
+  @Test
   public void getHeadersTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeadersTest");
     invoke();
   }
 
+  @Test
   public void getHeaderTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeaderTest");
     invoke();
   }
 
+  @Test
   public void getHeaderNamesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeaderNamesTest");
     invoke();
   }
 
+  @Test
   public void getStatusTest() throws Exception {
     String testName = "getStatusTest";
     TEST_PROPS.setProperty(APITEST, testName);

@@ -52,7 +52,7 @@ public abstract class BaseUrlClient {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   @ArquillianResource
-  protected URL url;
+  public URL url;
 
   @BeforeEach
   public void setup() throws Exception {
