@@ -24,34 +24,30 @@ import java.io.PrintWriter;
 import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.request.HttpRequestClient;
 import com.sun.ts.tests.servlet.common.util.Data;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends HttpRequestClient {
 
-  private static final String CONTEXT_ROOT = "/servlet_pluh_httpservletrequest_web";
 
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
-
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
+  @BeforeEach
+  public void setupServletName() throws Exception {
     setServletName("TestServlet");
-    setContextRoot(CONTEXT_ROOT);
-
-    return super.run(args, out, err);
   }
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_pluh_httpservletrequest_web.xml"));
+  }
+
+
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -67,6 +63,7 @@ public class URLClient extends HttpRequestClient {
    * @test_Strategy: Servlet verifies attributes
    *
    */
+  @Test
   public void getAttributeNamesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getAttributeNamesTest");
     invoke();
@@ -82,6 +79,7 @@ public class URLClient extends HttpRequestClient {
    * @test_Strategy: Servlet verifies attribute
    *
    */
+  @Test
   public void getAttributeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getAttributeTest");
     invoke();
@@ -96,6 +94,7 @@ public class URLClient extends HttpRequestClient {
    * 
    * @test_Strategy: Servlet verifies encoding
    */
+  @Test
   public void getCharacterEncodingTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getCharacterEncodingTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS,
@@ -148,6 +147,7 @@ public class URLClient extends HttpRequestClient {
    * 
    * @test_Strategy: Servlet sends back locale to client.
    */
+  @Test
   public void getLocaleTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getLocaleTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Accept-Language:en-US");
@@ -163,6 +163,7 @@ public class URLClient extends HttpRequestClient {
    * 
    * @test_Strategy: Servlet sends back locale(s) to client.
    */
+  @Test
   public void getLocalesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getLocalesTest");
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Accept-Language:en-US,en-GB");
@@ -187,6 +188,7 @@ public class URLClient extends HttpRequestClient {
    * 
    * @test_Strategy: Servlet attempts to access parameters.
    */
+  @Test
   public void getParameterNamesTest() throws Exception {
     String testName = "getParameterNamesTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -210,6 +212,7 @@ public class URLClient extends HttpRequestClient {
    * 
    * @test_Strategy: Client sets a parameter and servlet retrieves it.
    */
+  @Test
   public void getParameterTest() throws Exception {
     String testName = "getParameterTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -229,6 +232,7 @@ public class URLClient extends HttpRequestClient {
    * 
    * @test_Strategy: Servlet verifies values
    */
+  @Test
   public void getParameterValuesTest() throws Exception {
     String testName = "getParameterValuesTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -708,6 +712,7 @@ public class URLClient extends HttpRequestClient {
    * @test_Strategy: Send an HttpServletRequest to server; Verify that
    * getServletContext return the same as stored in ServletConfig
    */
+  @Test
   public void getServletContextTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET " + getContextRoot() + "/getServletContextTest HTTP/1.1");

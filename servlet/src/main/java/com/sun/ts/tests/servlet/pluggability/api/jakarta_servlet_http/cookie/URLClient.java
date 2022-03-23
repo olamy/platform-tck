@@ -20,49 +20,42 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet_http.cookie;
 
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
+import com.sun.ts.lib.util.TestUtil;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.cookie.TestServlet;
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.request.HttpRequest;
 import com.sun.ts.tests.servlet.common.request.HttpResponse;
+import com.sun.ts.tests.servlet.common.util.Data;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.cookie.CookieSpec;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import com.sun.javatest.Status;
-import com.sun.ts.lib.util.TestUtil;
-import com.sun.ts.tests.servlet.api.jakarta_servlet_http.cookie.TestServlet;
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import com.sun.ts.tests.servlet.common.util.Data;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class URLClient extends AbstractUrlClient {
 
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
-
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
+  @BeforeEach
+  public void setupServletName() throws Exception {
     setServletName("TestServlet");
-    setContextRoot("/servlet_pluh_cookie_web");
-
-    return super.run(args, out, err);
   }
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_pluh_cookie_web.xml"));
+  }
+
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -100,6 +93,7 @@ public class URLClient extends AbstractUrlClient {
    * Define everything in web-fragment.xml; Package everything in the fragment;
    * Servlet tests method Cookie.clone and verify it works;
    */
+  @Test
   public void cloneTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "cloneTest");
     invoke();
@@ -114,6 +108,7 @@ public class URLClient extends AbstractUrlClient {
    * Define everything in web-fragment.xml; Package everything in the fragment;
    * Servlet tests constructor method and verify it works;
    */
+  @Test
   public void constructorTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest");
     invoke();
@@ -129,9 +124,10 @@ public class URLClient extends AbstractUrlClient {
    * Servlet tests constructor method throws IllegalArgumentException when
    * invalid names are used(unsupported characters in name);
    */
+  @Test
   public void constructorIllegalArgumentExceptionTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
-        "GET /servlet_pluh_cookie_web/TestServlet?testname=constructorIllegalArgumentExceptionTest HTTP/1.1");
+        "GET /" + getContextRoot() + "/TestServlet?testname=constructorIllegalArgumentExceptionTest HTTP/1.1");
     TEST_PROPS.setProperty(UNEXPECTED_RESPONSE_MATCH, "Test FAILED");
     invoke();
   }
@@ -145,6 +141,7 @@ public class URLClient extends AbstractUrlClient {
    * Define everything in web-fragment.xml; Package everything in the fragment;
    * Servlet tests method getComment;
    */
+  @Test
   public void getCommentTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getCommentTest");
     invoke();
@@ -159,6 +156,7 @@ public class URLClient extends AbstractUrlClient {
    * Define everything in web-fragment.xml; Package everything in the fragment;
    * Servlet tests method getComment when there is no comment;
    */
+  @Test
   public void getCommentNullTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getCommentNullTest");
     invoke();
@@ -174,11 +172,12 @@ public class URLClient extends AbstractUrlClient {
    * Client sends a version 0 and 1 cookie to the servlet. Servlet verifies
    * values of the cookies;
    */
+  @Test
   public void getDomainTest() throws Exception {
     // version 1
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_pluh_cookie_web");
+            + "; $Path=/" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getDomainTest");
     invoke();
 
@@ -193,6 +192,7 @@ public class URLClient extends AbstractUrlClient {
    * Define everything in web-fragment.xml; Package everything in the fragment;
    * Servlet tests method getMaxAge;
    */
+  @Test
   public void getMaxAgeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getMaxAgeTest");
     invoke();
@@ -208,17 +208,18 @@ public class URLClient extends AbstractUrlClient {
    * Client sends a version 0 and 1 cookie to a servlet; Servlet tests method
    * Cookie.getName
    */
+  @Test
   public void getNameTest() throws Exception {
     // version 0 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
-        + _hostname + "; Path=/servlet_pluh_cookie_web");
+        + _hostname + "; Path=/" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getNameTest");
     invoke();
 
     // version 1 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_pluh_cookie_web");
+            + "; $Path=/" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getNameTest");
     invoke();
   }
@@ -233,10 +234,11 @@ public class URLClient extends AbstractUrlClient {
    * Client sends a version 1 cookie to a servlet; Servlet tests method getPath
    * using the received Cookie
    */
+  @Test
   public void getPathTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_pluh_cookie_web");
+            + "; $Path=/" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getPathTest");
     invoke();
   }
@@ -250,6 +252,7 @@ public class URLClient extends AbstractUrlClient {
    * Define everything in web-fragment.xml; Package everything in the fragment;
    * Servlet tests method Cookie.getSecure;
    */
+  @Test
   public void getSecureTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSecureTest");
     invoke();
@@ -265,16 +268,17 @@ public class URLClient extends AbstractUrlClient {
    * Client sends a version 0 and 1 cookie to a servlet; Servlet tests method
    * getValue and verify the right cookie received
    */
+  @Test
   public void getValueTest() throws Exception {
     // version 0 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
-        + _hostname + "; Path=/servlet_pluh_cookie_web");
+        + _hostname + "; Path=/" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getValueTest");
     invoke();
     // version 1 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_pluh_cookie_web");
+            + "; $Path=/" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getValueTest");
     invoke();
   }
@@ -289,16 +293,17 @@ public class URLClient extends AbstractUrlClient {
    * Client sends a version 0 and 1 cookie to a servlet; Servlet tests method
    * Cookie.getVersion and verify the right cookie received
    */
+  @Test
   public void getVersionTest() throws Exception {
     // version 0 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
-        + _hostname + "; Path=/servlet_pluh_cookie_web");
+        + _hostname + "; Path=/" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getVersionVer0Test");
     invoke();
     // version 1 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/servlet_pluh_cookie_web");
+            + "; $Path=/" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getVersionVer1Test");
     invoke();
   }
@@ -312,6 +317,7 @@ public class URLClient extends AbstractUrlClient {
    * Define everything in web-fragment.xml; Package everything in the fragment;
    * Servlet tests method Cookie.setComment
    */
+  @Test
   public void setCommentTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setCommentVer0Test");
     invoke();
@@ -328,6 +334,7 @@ public class URLClient extends AbstractUrlClient {
    * Define everything in web-fragment.xml; Package everything in the fragment;
    * Servlet tests method Cookie.setDomain
    */
+  @Test
   public void setDomainTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setDomainVer0Test");
     invoke();
@@ -345,6 +352,7 @@ public class URLClient extends AbstractUrlClient {
    * Servlet create Cookie and sets values using Cookie.setMaxAge(2) Cookie is
    * sent back to client and client verifies them
    */
+  @Test
   public void setMaxAgePositiveTest() throws Exception {
     // version 0 cookie
     String testName = "setMaxAgeVer0PositiveTest";
@@ -427,6 +435,7 @@ public class URLClient extends AbstractUrlClient {
    * Servlet create Cookie and sets values using Cookie.setMaxAge(0) Cookie is
    * sent back to client and client verifies them
    */
+  @Test
   public void setMaxAgeZeroTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setMaxAgeZeroVer0Test");
     TEST_PROPS.setProperty(EXPECTED_HEADERS, "Set-Cookie:name1=value1");
@@ -469,6 +478,7 @@ public class URLClient extends AbstractUrlClient {
    * Servlet create Version 0 and Version 1 Cookie and sets values using
    * Cookie.setSecure Cookie is sent back to client and client verifies them
    */
+  @Test
   public void setSecureTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setSecureVer0Test");
     invoke();
@@ -486,6 +496,7 @@ public class URLClient extends AbstractUrlClient {
    * Servlet create Version 0 and Version 1 Cookie and sets values using
    * Cookie.setValue Cookie is sent back to client and client verifies them
    */
+  @Test
   public void setValueTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setValueVer0Test");
     invoke();
@@ -503,6 +514,7 @@ public class URLClient extends AbstractUrlClient {
    * Servlet create Version 0 and Version 1 Cookie and sets values using
    * Cookie.setVersion Cookie is sent back to client and client verifies them
    */
+  @Test
   public void setVersionTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setVersionVer0Test");
     invoke();
