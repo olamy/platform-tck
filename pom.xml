@@ -135,6 +135,7 @@
         <module>websocket</module>
         <module>xa</module>
         <module>docker</module>
+        <module>junit5-extensions</module>
     </modules>
 
     <dependencyManagement>
@@ -642,4 +643,17 @@
             </plugin>
         </plugins>
     </build>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>oss.sonatype.org</id>
+            <name>Jetty Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/jetty-snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
