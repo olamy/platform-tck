@@ -19,36 +19,29 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.servletconfig;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
-
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
+  @BeforeEach
+  public void setupServletName() throws Exception {
     setServletName("TestServlet");
-    setContextRoot("/servlet_plu_servletconfig_web");
-
-    return super.run(args, out, err);
   }
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_plu_servletconfig_web.xml"));
+  }
+
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -64,6 +57,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Set init parameters in the web.xml file and check for the
    * enumerated values in the servlet.
    */
+  @Test
   public void getServletConfigInitParameterNamesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletConfigInitParameterNames");
     invoke();
@@ -77,6 +71,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Set init parameters in the web.xml file and check for the
    * value in the servlet.
    */
+  @Test
   public void getServletConfigInitParameterTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletConfigInitParameter");
     invoke();
@@ -91,6 +86,7 @@ public class URLClient extends AbstractUrlClient {
    * "Nothing_is_set_for_Negative_compatibility_test_only" anywhere and check
    * for the Verify that ServletConfig.getInitParameter(name) return null.
    */
+  @Test
   public void getServletConfigInitParameterTestNull() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletConfigInitParameterNull");
     invoke();
@@ -104,6 +100,7 @@ public class URLClient extends AbstractUrlClient {
    *
    * @test_Strategy: Try to get the ServletContext for this servlet itself
    */
+  @Test
   public void getServletContextTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletContext");
     invoke();
@@ -116,6 +113,7 @@ public class URLClient extends AbstractUrlClient {
    *
    * @test_Strategy: Try to get the ServletName for this servlet itself
    */
+  @Test
   public void getServletNameTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletName");
     invoke();

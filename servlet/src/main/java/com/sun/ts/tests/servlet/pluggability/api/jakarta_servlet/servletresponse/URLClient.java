@@ -27,7 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 public class URLClient extends ResponseClient {
 
-  private static final String CONTEXT_ROOT = "/";
   @BeforeEach
   public void setupServletName() throws Exception {
     setServletName("TestServlet");
