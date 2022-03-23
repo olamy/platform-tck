@@ -23,6 +23,7 @@ import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -49,6 +50,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client attempts to access a servlet and the filter
    * configured for that servlet should be invoked.
    */
+  @Test
   public void GetFilterNameTest() throws Exception {
     String testName = "GetFilterNameTest";
     TEST_PROPS.setProperty(APITEST, testName);
@@ -63,6 +65,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client attempts to access a servlet and the filter
    * configured for that servlet should be invoked.
    */
+  @Test
   public void GetInitParamNamesTest() throws Exception {
     String testName = "GetInitParamNamesTest";
     TEST_PROPS.setProperty(APITEST, testName);
@@ -77,6 +80,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client attempts to access a servlet and the filter
    * configured for that servlet should be invoked.
    */
+  @Test
   public void GetInitParamNamesNullTest() throws Exception {
     String testName = "GetInitParamNamesNullTest";
     TEST_PROPS.setProperty(APITEST, testName);
@@ -91,6 +95,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client attempts to access a servlet and the filter
    * configured for that servlet should be invoked.
    */
+  @Test
   public void GetInitParamTest() throws Exception {
     String testName = "GetInitParamTest";
     TEST_PROPS.setProperty(APITEST, testName);
@@ -105,6 +110,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client attempts to access a servlet and the filter
    * configured for that servlet should be invoked.
    */
+  @Test
   public void GetInitParamNullTest() throws Exception {
     String testName = "GetInitParamNullTest";
     TEST_PROPS.setProperty(APITEST, testName);
@@ -119,6 +125,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client attempts to access a servlet and the filter
    * configured for that servlet should be invoked.
    */
+  @Test
   public void GetServletContextTest() throws Exception {
     String testName = "GetServletContextTest";
     TEST_PROPS.setProperty(APITEST, testName);

@@ -24,6 +24,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -57,6 +58,7 @@ public class URLClient extends AbstractUrlClient {
    * destroy method
    *
    */
+  @Test
   public void destroyTest() throws Exception {
     String testName = "destroyTest";
     TEST_PROPS.setProperty(TEST_NAME, testName);
@@ -79,6 +81,7 @@ public class URLClient extends AbstractUrlClient {
    * object existence
    *
    */
+  @Test
   public void getServletConfigTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getServletConfigTest");
     invoke();

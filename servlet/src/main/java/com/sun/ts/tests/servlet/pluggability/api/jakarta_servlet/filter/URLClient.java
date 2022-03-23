@@ -19,14 +19,11 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.filter;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -53,6 +50,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client attempts to access a servlet and the filter
    * configured for that servlet should be invoked.
    */
+  @Test
   public void doFilterTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "DoFilterTest");
     invoke();
@@ -66,6 +64,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Client attempts to access a servlet and the filter
    * configured for that servlet.
    */
+  @Test
   public void initFilterConfigTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "InitFilterConfigTest");
     invoke();

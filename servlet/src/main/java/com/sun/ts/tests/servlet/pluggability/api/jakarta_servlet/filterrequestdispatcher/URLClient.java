@@ -25,6 +25,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -59,6 +60,7 @@ public class URLClient extends AbstractUrlClient {
    * url-pattern, as well as ERROR, FORWARD and INCLUDE. 3. Client try to access
    * all of them directly. 4. Verify that filter is properly invoked.
    */
+  @Test
   public void RequestTest() throws Exception {
     TEST_PROPS.setProperty(DONOTUSEServletName, "true");
     TEST_PROPS.setProperty(APITEST, "generic/DummyServlet");
@@ -83,6 +85,7 @@ public class URLClient extends AbstractUrlClient {
    * using servlet-name 3. Client try to access RequestTestServlet directly. 4.
    * Verify that filter is properly invoked.
    */
+  @Test
   public void RequestTest1() throws Exception {
     TEST_PROPS.setProperty(DONOTUSEServletName, "true");
     TEST_PROPS.setProperty(APITEST, "request/RequestTest");
@@ -99,6 +102,7 @@ public class URLClient extends AbstractUrlClient {
    * set to REQUEST but to FORWARD only. 3. Client try to access
    * forward/ForwardedServlet directly. 4. Verify that filter is not invoked.
    */
+  @Test
   public void RequestTest2() throws Exception {
     TEST_PROPS.setProperty(DONOTUSEServletName, "true");
     TEST_PROPS.setProperty(SEARCH_STRING, Data.FAILED);
@@ -119,6 +123,7 @@ public class URLClient extends AbstractUrlClient {
    * forward to ForwardedServlet through TestServlet. 4. Verify that filter is
    * properly invoked.
    */
+  @Test
   public void ForwardTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "forwardTest");
     invoke();
@@ -136,6 +141,7 @@ public class URLClient extends AbstractUrlClient {
    * RequestDispatcher to forward to TestServlet. 4. Verify that filter is
    * properly invoked.
    */
+  @Test
   public void ForwardTest1() throws Exception {
     TEST_PROPS.setProperty(APITEST, "forwardServletTest");
     invoke();
@@ -158,6 +164,7 @@ public class URLClient extends AbstractUrlClient {
    * access IncludedServlet through TestServlet. 4. Verify that filter is
    * properly invoked.
    */
+  @Test
   public void IncludeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "includeTest");
     invoke();
@@ -175,6 +182,7 @@ public class URLClient extends AbstractUrlClient {
    * try to use the RequestDispatcher's include to access all three through
    * TestServlet. 4. Verify that filter is properly invoked.
    */
+  @Test
   public void IncludeTest1() throws Exception {
     TEST_PROPS.setProperty(APITEST, "includeJSPTest");
     invoke();
@@ -197,6 +205,7 @@ public class URLClient extends AbstractUrlClient {
    * Client try to access a non-existent Servlet 4. Verify that filter is
    * properly invoked.
    */
+  @Test
   public void ErrorTest() throws Exception {
     TEST_PROPS.setProperty(DONOTUSEServletName, "true");
     TEST_PROPS.setProperty(APITEST, "forward/IncludedServlet");

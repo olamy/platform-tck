@@ -19,14 +19,12 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.dofilter;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -61,6 +59,7 @@ public class URLClient extends AbstractUrlClient {
    * wrap the response with custom implementation of ServletResponse
    * CTSResponseWrapper 5. Verify that filter is properly invoked.
    */
+  @Test
   public void wrapResponseTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "wrapResponseTest");
     TEST_PROPS.setProperty(SEARCH_STRING,

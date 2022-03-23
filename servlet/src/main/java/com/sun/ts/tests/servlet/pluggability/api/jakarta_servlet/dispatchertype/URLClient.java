@@ -27,6 +27,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -59,6 +60,7 @@ public class URLClient extends AbstractUrlClient {
    * to TestServlet 3. In TestServlet, call DispatcherType.values 4. Verify that
    * DispatcherType.values works properly.
    */
+  @Test
   public void valuesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "valuesTest");
     invoke();
@@ -73,6 +75,7 @@ public class URLClient extends AbstractUrlClient {
    * to TestServlet 3. In TestServlet, call DispatcherType.valueOf 4. Verify
    * that DispatcherType.valueOf works properly.
    */
+  @Test
   public void valueOfTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "valueOfTest");
     invoke();
@@ -87,7 +90,7 @@ public class URLClient extends AbstractUrlClient {
    * 4. Verify that DispatcherType.valueOf throws NullPointerException when name
    * is null
    */
-
+  @Test
   public void valueOfNullTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "valueOfNullTest");
     invoke();
@@ -102,7 +105,7 @@ public class URLClient extends AbstractUrlClient {
    * 4. Verify that DispatcherType.valueOf throws IllegalArgumentException when
    * name is invalid Dispatcher type
    */
-
+  @Test
   public void valueOfInvalidTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "valueOfInvalidTest");
     invoke();

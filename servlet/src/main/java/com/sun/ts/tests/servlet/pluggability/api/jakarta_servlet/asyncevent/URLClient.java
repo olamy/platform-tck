@@ -21,6 +21,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -50,6 +51,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: test the constructor AsyncEvent( AsyncContext )
    */
+  @Test
   public void constructorTest1() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest1");
     invoke();
@@ -63,6 +65,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: test the constructor AsyncEvent(AsyncContext,
    * ServletRequest, ServletResponse)
    */
+  @Test
   public void constructorTest2() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest2");
     invoke();
@@ -75,6 +78,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: test the constructor AsyncEvent(AsyncContext, Throwable)
    */
+  @Test
   public void constructorTest3() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest3");
     invoke();
@@ -88,6 +92,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: test the constructor AsyncEvent(AsyncContext,
    * ServletRequest, ServletResponse, Throwable)
    */
+  @Test
   public void constructorTest4() throws Exception {
     TEST_PROPS.setProperty(APITEST, "constructorTest4");
     invoke();
@@ -102,6 +107,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse) verify AsyncEvent.getSuplliedRequest()
    * works
    */
+  @Test
   public void getSuppliedRequestTest1() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSuppliedRequestTest1");
     invoke();
@@ -116,6 +122,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse, Throwable) verify
    * AsyncEvent.getSuplliedRequest() works
    */
+  @Test
   public void getSuppliedRequestTest2() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSuppliedRequestTest2");
     invoke();
@@ -130,6 +137,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse) verify AsyncEvent.getSuplliedResponse()
    * works
    */
+  @Test
   public void getSuppliedResponseTest1() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSuppliedResponseTest1");
     invoke();
@@ -144,6 +152,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse, Throwable) verify
    * AsyncEvent.getSuplliedResponse() works
    */
+  @Test
   public void getSuppliedResponseTest2() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getSuppliedResponseTest2");
     invoke();
@@ -158,6 +167,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletRequest, ServletResponse, Throwable) verify
    * AsyncEvent.getThrowable() works
    */
+  @Test
   public void getThrowableTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getThrowableTest");
     invoke();
