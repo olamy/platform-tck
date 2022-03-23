@@ -19,38 +19,29 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet_http.httpservletresponsewrapper30;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.response.HttpResponseClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends HttpResponseClient {
 
-  private static final String CONTEXT_ROOT = "/servlet_pluh_HSRespWrapper30_web";
-
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
-
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
+  @BeforeEach
+  public void setupServletName() throws Exception {
     setServletName("TestServlet");
-    setContextRoot(CONTEXT_ROOT);
-
-    return super.run(args, out, err);
   }
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_pluh_HSRespWrapper30_web.xml"));
+  }
+
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -71,6 +62,7 @@ public class URLClient extends HttpResponseClient {
    * servlet, set a header value; then add multiple values to it; verify that
    * getHeaders(String) works properly
    */
+  @Test
   public void getHeadersTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeadersTest");
     invoke();
@@ -86,6 +78,7 @@ public class URLClient extends HttpResponseClient {
    * servlet, set a header value; then add multiple values to it; verify that
    * getHeader(String) works properly
    */
+  @Test
   public void getHeaderTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeaderTest");
     invoke();
@@ -103,6 +96,7 @@ public class URLClient extends HttpResponseClient {
    * #setDateHeader, #addDateHeader, #setIntHeader, and #addIntHeader, verify
    * that getHeaderNames() works properly
    */
+  @Test
   public void getHeaderNamesTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getHeaderNamesTest");
     invoke();
@@ -116,6 +110,7 @@ public class URLClient extends HttpResponseClient {
    * @test_Strategy: Create a Servlet, wrap the servlet in another one, In the
    * servlet, set a status value; verify that getStatus() works properly
    */
+  @Test
   public void getStatusTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getStatusTest");
     invoke();
