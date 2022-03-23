@@ -19,35 +19,23 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.servlet;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
   /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
+   * Deployment for the test
    */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_plu_servlet_web.xml"));
   }
 
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
-    setContextRoot("/servlet_plu_servlet_web");
-
-    return super.run(args, out, err);
-  }
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -62,6 +50,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Testing that destroy method is not called during service
    * method execution
    */
+  @Test
   public void DoDestroyedTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "DoDestroyedTest");
     invoke();
@@ -76,6 +65,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Validate a 404 is returned to the client if a permanent
    * UnavailableException is thrown during servlet initialization.
    */
+  @Test
   public void DoInit1Test() throws Exception {
     TEST_PROPS.setProperty(TEST_NAME, "DoInit1Test");
     TEST_PROPS.setProperty(REQUEST,
@@ -93,6 +83,7 @@ public class URLClient extends AbstractUrlClient {
    * implementing init() and setting a boolean variable to true. We'll check for
    * the variables here in the DoInit2Test
    */
+  @Test
   public void DoInit2Test() throws Exception {
     TEST_PROPS.setProperty(APITEST, "DoInit2Test");
     invoke();
@@ -106,6 +97,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Create a servlet and test for the getServletConfig() method
    * to be a non-null value and an initial paramter can be retrieved
    */
+  @Test
   public void DoServletConfigTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "DoServletConfigTest");
     invoke();
@@ -118,6 +110,7 @@ public class URLClient extends AbstractUrlClient {
    *
    * @test_Strategy: Create a servlet and test that information is returned
    */
+  @Test
   public void DoServletInfoTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "DoServletInfoTest");
     invoke();
@@ -131,6 +124,7 @@ public class URLClient extends AbstractUrlClient {
    * @test_Strategy: Create a servlet, throw UnavailableException and test if
    * isPermanent() method is true
    */
+  @Test
   public void PUTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "PUTest");
     invoke();
@@ -146,6 +140,7 @@ public class URLClient extends AbstractUrlClient {
    * will override init method and assign some value to the String. We'll check
    * for that value in the service method
    */
+  @Test
   public void DoServiceTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "DoServiceTest");
     invoke();
