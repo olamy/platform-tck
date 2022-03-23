@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
-
   @BeforeEach
   public void setupServletName() throws Exception {
     setServletName("AsyncTestServlet");
