@@ -9,9 +9,7 @@ import org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor;
 import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
 import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor;
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
-import org.junit.jupiter.engine.discovery.predicates.IsNestedTestClass;
 import org.junit.jupiter.engine.discovery.predicates.IsTestClassWithTests;
-import org.junit.platform.commons.support.AnnotationSupport;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.ExecutionRequest;
@@ -53,15 +51,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toCollection;
-import static org.junit.jupiter.engine.discovery.predicates.IsTestClassWithTests.isTestOrTestFactoryOrTestTemplateMethod;
-import static org.junit.platform.commons.support.ReflectionSupport.findNestedClasses;
 import static org.junit.platform.commons.util.ReflectionUtils.findMethods;
 import static org.junit.platform.engine.support.discovery.SelectorResolver.Resolution.unresolved;
 
 public class TckTestEngine implements TestEngine {
-
-
-    private JupiterTestEngine jupiterTestEngine = new JupiterTestEngine();
 
     private static final boolean NO_FILTERING_TESTS = Boolean.getBoolean("jakarta.tck.notfilter.tests");
 
@@ -88,18 +81,8 @@ public class TckTestEngine implements TestEngine {
         return "jakarta-tck-test-engine";
     }
 
-    private static final Predicate<Class<?>> IS_TCK_TEST_CONTAINER
-            = classCandidate -> AnnotationSupport.isAnnotated(classCandidate, Test.class);
-
     @Override
     public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
-//        TestDescriptor testDescriptor = jupiterTestEngine.discover(request, uniqueId);
-//        if (! (testDescriptor instanceof JupiterEngineDescriptor) ) {
-//            return testDescriptor;
-//        }
-//        JupiterConfiguration jupiterConfiguration = ((JupiterEngineDescriptor) testDescriptor).getConfiguration();
-////        return testDescriptor;
-
         JupiterConfiguration configuration = new CachingJupiterConfiguration(
                 new DefaultJupiterConfiguration(request.getConfigurationParameters()));
 
@@ -111,7 +94,6 @@ public class TckTestEngine implements TestEngine {
                 .build()
                 .resolve(request, engineDescriptor);
 
-        //new DiscoverySelectorResolver().resolveSelectors(request, engineDescriptor);
         return engineDescriptor;
 
     }
@@ -123,7 +105,6 @@ public class TckTestEngine implements TestEngine {
         private final JupiterConfiguration configuration;
         private final Predicate<String> classNameFilter;
         private static final IsTestClassWithTests isTestClassWithTests = new IsTestClassWithTests();
-        private static final IsNestedTestClass isNestedTestClass = new IsNestedTestClass();
 
         private TckTestsResolver(List<String> testClassesAndMethods, UniqueId uniqueId,  JupiterConfiguration configuration, Predicate<String> classNameFilter) {
             this.testClassesAndMethods = testClassesAndMethods;
@@ -135,12 +116,11 @@ public class TckTestEngine implements TestEngine {
         @Override
         public Resolution resolve(ClassSelector selector, Context context) {
             Class<?> testClass = selector.getJavaClass();
-            if (isTestClassWithTests.test(testClass)) {
-                if (classNameFilter.test(testClass.getName())) {
-                    return toResolution(
-                            context.addToParent(parent -> Optional.of(newClassTestDescriptor(parent, testClass))));
-                }
+            if (isTestClassWithTests.test(testClass) && classNameFilter.test(testClass.getName())) {
+                return toResolution(
+                        context.addToParent(parent -> Optional.of(newClassTestDescriptor(parent, testClass))));
             }
+
             return unresolved();
         }
 
@@ -164,9 +144,8 @@ public class TckTestEngine implements TestEngine {
 
         private final Predicate<Method> METHODS_PREDICATE = method -> {
             String fqcn = method.getDeclaringClass().getName() + "#" + method.getName();
-            boolean ok = method.getAnnotation(Test.class) != null &&
+            return method.getAnnotation(Test.class) != null &&
                     TckTestsResolver.this.testClassesAndMethods.contains(fqcn);
-            return ok;
         };
 
 
@@ -239,18 +218,7 @@ public class TckTestEngine implements TestEngine {
 
     @Override
     public void execute(ExecutionRequest executionRequest) {
-        jupiterTestEngine.execute(executionRequest);
-    }
-
-    private void cleanupTestDescriptor(TestDescriptor testDescriptor) {
-        if(testDescriptor instanceof TestMethodTestDescriptor) {
-            String fqcn = ((TestMethodTestDescriptor) testDescriptor).getTestClass().getName() + "#" +
-                    ((TestMethodTestDescriptor) testDescriptor).getTestMethod().getName();
-            if (testClassesAndMethods.contains(fqcn) && testDescriptor.getParent().isPresent()) {
-                testDescriptor.getParent().get().removeChild(testDescriptor);
-            }
-        }
-        testDescriptor.getChildren().forEach(child -> cleanupTestDescriptor(child));
+        new JupiterTestEngine().execute(executionRequest);
     }
 
 }
