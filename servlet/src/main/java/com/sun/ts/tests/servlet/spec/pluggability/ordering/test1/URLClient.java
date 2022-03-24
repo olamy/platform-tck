@@ -19,33 +19,23 @@
  */
 package com.sun.ts.tests.servlet.spec.pluggability.ordering.test1;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
   /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
+   * Deployment for the test
    */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient.class.getResource("servlet_spec_ordering1_web.xml"));
   }
 
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String[] args, PrintWriter out, PrintWriter err) {
-    setContextRoot("/servlet_spec_ordering1_web");
-    return super.run(args, out, err);
-  }
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -63,6 +53,7 @@ public class URLClient extends AbstractUrlClient {
    * web-fragment.xml are considered, and the one defined in web.xml take
    * precedence.
    */
+  @Test
   public void initParamTest() throws Exception {
     TEST_PROPS.setProperty(SEARCH_STRING, "TestServlet4|"
         + "msg1=first|msg2=second|msg3=third|msg4=fourth|" + "RequestListener");

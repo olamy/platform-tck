@@ -23,31 +23,26 @@ import java.io.PrintWriter;
 
 import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
-  /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
-   */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
+  @BeforeEach
+  public void setupServletName() throws Exception {
+    setServletName("TestServlet");
   }
 
   /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
+   * Deployment for the test
    */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
-    setContextRoot("/servlet_spec_requestdispatcher_web");
-    setServletName("TestServlet");
-
-    return super.run(args, out, err);
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_spec_requestdispatcher_web.xml"));
   }
 
   /*
@@ -68,6 +63,7 @@ public class URLClient extends AbstractUrlClient {
    * jakarta.servlet.include.servlet_path; jakarta.servlet.include.path_info;
    * jakarta.servlet.include.query_string;
    */
+  @Test
   public void getRequestAttributes() throws Exception {
     TEST_PROPS.setProperty(SEARCH_STRING,
         "jakarta.servlet.include.request_uri=SET_GOOD;jakarta.servlet.include.context_path=SET_GOOD;jakarta.servlet.include.servlet_path=SET_GOOD;jakarta.servlet.include.path_info=SET_NO;jakarta.servlet.include.query_string=SET_GOOD;");
@@ -91,6 +87,7 @@ public class URLClient extends AbstractUrlClient {
    * jakarta.servlet.include.servlet_path; jakarta.servlet.include.path_info;
    * jakarta.servlet.include.query_string;
    */
+  @Test
   public void getRequestAttributes1() throws Exception {
     TEST_PROPS.setProperty(SEARCH_STRING,
         "jakarta.servlet.include.request_uri=SET_GOOD;jakarta.servlet.include.context_path=SET_GOOD;jakarta.servlet.include.servlet_path=SET_GOOD;jakarta.servlet.include.path_info=SET_NO;jakarta.servlet.include.query_string=SET_GOOD;");
@@ -114,6 +111,7 @@ public class URLClient extends AbstractUrlClient {
    * jakarta.servlet.include.servlet_path; jakarta.servlet.include.path_info;
    * jakarta.servlet.include.query_string;
    */
+  @Test
   public void getRequestAttributes2() throws Exception {
     TEST_PROPS.setProperty(SEARCH_STRING,
         "jakarta.servlet.include.request_uri=SET_NO;jakarta.servlet.include.context_path=SET_NO;jakarta.servlet.include.servlet_path=SET_NO;jakarta.servlet.include.path_info=SET_NO;jakarta.servlet.include.query_string=SET_NO;");
@@ -133,6 +131,7 @@ public class URLClient extends AbstractUrlClient {
    * propagated back to the caller and will not be wrapped by a
    * ServletException.
    */
+  @Test
   public void requestDispatcherIncludeIOAndServletExceptionTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET /servlet_spec_requestdispatcher_web/TestServlet?testname=includeIOAndServletException HTTP/1.1");
@@ -151,6 +150,7 @@ public class URLClient extends AbstractUrlClient {
    * propagated back to the caller and will not be wrapped by a
    * ServletException.
    */
+  @Test
   public void requestDispatcherIncludeRuntimeExceptionTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET /servlet_spec_requestdispatcher_web/TestServlet?testname=includeUnCheckedException HTTP/1.1");
@@ -169,6 +169,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletException or IOException is returned to the caller wrapped by
    * ServletException.
    */
+  @Test
   public void requestDispatcherIncludeCheckedExceptionTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET /servlet_spec_requestdispatcher_web/TestServlet?testname=includeCheckedException HTTP/1.1");
@@ -188,6 +189,7 @@ public class URLClient extends AbstractUrlClient {
    * propagated back to the caller and will not be wrapped by a
    * ServletException.
    */
+  @Test
   public void requestDispatcherForwardIOAndServletExceptionTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET /servlet_spec_requestdispatcher_web/TestServlet?testname=forwardIOAndServletException HTTP/1.1");
@@ -206,6 +208,7 @@ public class URLClient extends AbstractUrlClient {
    * propagated back to the caller and will not be wrapped by a
    * ServletException.
    */
+  @Test
   public void requestDispatcherForwardRuntimeExceptionTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET /servlet_spec_requestdispatcher_web/TestServlet?testname=forwardUnCheckedException HTTP/1.1");
@@ -224,6 +227,7 @@ public class URLClient extends AbstractUrlClient {
    * ServletException or IOException is returned to the caller wrapped by
    * ServletException.
    */
+  @Test
   public void requestDispatcherForwardCheckedExceptionTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET /servlet_spec_requestdispatcher_web/TestServlet?testname=forwardCheckedException HTTP/1.1");
@@ -247,6 +251,7 @@ public class URLClient extends AbstractUrlClient {
    * jakarta.servlet.forward.servlet_path; jakarta.servlet.forward.path_info;
    * jakarta.servlet.forward.query_string;
    */
+  @Test
   public void getRequestAttributes3() throws Exception {
     TEST_PROPS.setProperty(SEARCH_STRING,
         "jakarta.servlet.forward.request_uri=SET_GOOD;"
@@ -274,6 +279,7 @@ public class URLClient extends AbstractUrlClient {
    * jakarta.servlet.forward.servlet_path; jakarta.servlet.forward.path_info;
    * jakarta.servlet.forward.query_string;
    */
+  @Test
   public void getRequestAttributes4() throws Exception {
     TEST_PROPS.setProperty(SEARCH_STRING,
         "jakarta.servlet.forward.request_uri=SET_GOOD;"
@@ -301,6 +307,7 @@ public class URLClient extends AbstractUrlClient {
    * jakarta.servlet.forward.servlet_path; jakarta.servlet.forward.path_info;
    * jakarta.servlet.forward.query_string;
    */
+  @Test
   public void getRequestAttributes5() throws Exception {
     TEST_PROPS.setProperty(SEARCH_STRING,
         "jakarta.servlet.forward.request_uri=SET_NO;"
@@ -331,6 +338,7 @@ public class URLClient extends AbstractUrlClient {
    * jakarta.servlet.forward.servlet_path; jakarta.servlet.forward.path_info;
    * jakarta.servlet.forward.query_string;
    */
+  @Test
   public void getRequestAttributes6() throws Exception {
     TEST_PROPS.setProperty(SEARCH_STRING,
         "jakarta.servlet.forward.request_uri=SET_GOOD;"
@@ -354,6 +362,7 @@ public class URLClient extends AbstractUrlClient {
    * message "Test FAILED" wrote to ServletResponse is cleared and not sent to
    * Client as required by Servlet 2.4 Spec.
    */
+  @Test
   public void bufferContent() throws Exception {
     TEST_PROPS.setProperty(SEARCH_STRING,
         "bufferContent_in_ForwardedServlet_invoked");
@@ -371,6 +380,7 @@ public class URLClient extends AbstractUrlClient {
    * RequestDispatcher operation to the target entity. The container should not
    * wrap the object at any point.
    */
+  @Test
   public void requestDispatcherNoWrappingTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
         "GET /servlet_spec_requestdispatcher_web/TestServlet?testname=rdNoWrappingTest&operation=0 HTTP/1.1");
@@ -394,6 +404,7 @@ public class URLClient extends AbstractUrlClient {
    * Verify in HttpTestServlet, that getRequestURI returns correct URI according
    * to 8.3
    */
+  @Test
   public void getRequestURIIncludeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRequestURIIncludeTest");
     invoke();
@@ -409,6 +420,7 @@ public class URLClient extends AbstractUrlClient {
    * Verify in HttpTestServlet, that getRequestURL returns correct URI according
    * to 8.3
    */
+  @Test
   public void getRequestURLIncludeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRequestURLIncludeTest");
     invoke();
@@ -424,6 +436,7 @@ public class URLClient extends AbstractUrlClient {
    * Verify in HttpTestServlet, that getRequestURI returns correct URI according
    * to 8.4
    */
+  @Test
   public void getRequestURIForwardTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRequestURIForwardTest");
     invoke();
@@ -439,6 +452,7 @@ public class URLClient extends AbstractUrlClient {
    * Verify in HttpTestServlet, that getRequestURL returns correct URL according
    * to 8.4
    */
+  @Test
   public void getRequestURLForwardTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getRequestURLForwardTest");
     invoke();
@@ -456,6 +470,7 @@ public class URLClient extends AbstractUrlClient {
    * getQueryString returns correct QueryString
    * testname=getQueryStringIncludeTest according to 8.3
    */
+  @Test
   public void getQueryStringIncludeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getQueryStringIncludeTest");
     invoke();
@@ -473,6 +488,7 @@ public class URLClient extends AbstractUrlClient {
    * getQueryString returns correct QueryString
    * testname=getQueryStringTestForward according to 8.4.2
    */
+  @Test
   public void getQueryStringForwardTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getQueryStringForwardTest");
     invoke();

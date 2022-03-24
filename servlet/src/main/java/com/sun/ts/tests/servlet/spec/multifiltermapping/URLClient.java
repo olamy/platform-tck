@@ -21,8 +21,27 @@
 package com.sun.ts.tests.servlet.spec.multifiltermapping;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
+
+  @BeforeEach
+  public void setupServletName() throws Exception {
+    setServletName("TestServlet");
+  }
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_spec_multifiltermapping_web.xml.xml"));
+  }
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -42,6 +61,7 @@ public class URLClient extends AbstractUrlClient {
    * servlet name respectively. 3. Client try to access all of them directly. 4.
    * Verify that Test_RequestFilter is properly invoked.
    */
+  @Test
   public void requestTest() throws Exception {
     TEST_PROPS.setProperty(DONOTUSEServletName, "true");
     TEST_PROPS.setProperty(SEARCH_STRING, "Test_RequestFilter|TestServlet1");
@@ -105,6 +125,7 @@ public class URLClient extends AbstractUrlClient {
    * request to TestServlet, which access all resources list in 1 and 2 using
    * forward. 6. Verify that the filter is invoked properly
    */
+  @Test
   public void forwardTest() throws Exception {
     String testName = "forwardTest";
 
@@ -179,6 +200,7 @@ public class URLClient extends AbstractUrlClient {
    * request to TestServlet, which access all resources list in 1 and 2 using
    * include. 6. Verify that the filter is invoked properly
    */
+  @Test
   public void includeTest() throws Exception {
     String testName = "includeTest";
     String filterString = "Test_IncludeFilter";
@@ -260,6 +282,7 @@ public class URLClient extends AbstractUrlClient {
    * that dose not match any resource listed in 1 and 2 using include and
    * forward respectively. 10. Verify that Test_ErrorFilter is properly invoked.
    */
+  @Test
   public void errorTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "test/foo/bar/xyz");
     TEST_PROPS.setProperty(SEARCH_STRING, "Test_ErrorFilter|ErrorPage");
