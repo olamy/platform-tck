@@ -103,6 +103,7 @@
           <directory>src/main/java</directory>
           <includes>
             <include>**/**.xml</include>
+            <include>**/jakarta.servlet.ServletContainerInitializer</include>
           </includes>
         </resource>
       </resources>
