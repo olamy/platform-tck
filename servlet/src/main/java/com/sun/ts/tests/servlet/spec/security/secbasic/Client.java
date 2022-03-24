@@ -20,9 +20,13 @@
 
 package com.sun.ts.tests.servlet.spec.security.secbasic;
 
-import java.util.Properties;
-
 import com.sun.ts.tests.servlet.common.request.SecBasicClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 /*
  * This  class uses the SecBasicClient to do most of its actual testing.  
@@ -37,6 +41,18 @@ import com.sun.ts.tests.servlet.common.request.SecBasicClient;
  *
  */
 public class Client extends SecBasicClient {
+
+  // TOFIX
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(Client.class.getResource("servlet_sec_secbasic_web.xml"));
+  }
+
   // Shared test variables:
   private Properties props = null;
 
@@ -96,6 +112,7 @@ public class Client extends SecBasicClient {
    * unauthenticated user 2. Receive authentication request.
    *
    */
+  @Test
   public void test1_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;
@@ -155,6 +172,7 @@ public class Client extends SecBasicClient {
    * "ADM" role (as defined in the DD via the role-link element.)
    *
    */
+  @Test
   public void test2_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;
@@ -202,6 +220,7 @@ public class Client extends SecBasicClient {
    * the container denies access to the web resource.
    *
    */
+  @Test
   public void test3_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;
@@ -255,6 +274,7 @@ public class Client extends SecBasicClient {
    * denies access to the web resource.
    *
    */
+  @Test
   public void test4_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;
@@ -311,6 +331,7 @@ public class Client extends SecBasicClient {
    * role reference. 3. getRemoteUser() must return false
    *
    */
+  @Test
   public void test5_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageUnprotected = pageUnprotected;
@@ -381,6 +402,7 @@ public class Client extends SecBasicClient {
    * 8. Receive resource (check isUserInRole for all known roles)
    *
    */
+  @Test
   public void test6_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageRoleReverse = pageRoleReverse;
@@ -427,6 +449,7 @@ public class Client extends SecBasicClient {
    * the container denies access to the web resource.
    *
    */
+  @Test
   public void test7_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;

@@ -16,6 +16,13 @@
 
 package com.sun.ts.tests.servlet.spec.security.clientcertanno;
 
+import com.sun.ts.lib.util.TestUtil;
+import com.sun.ts.lib.util.WebUtil;
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,10 +30,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
-
-import com.sun.ts.lib.util.TestUtil;
-import com.sun.ts.lib.util.WebUtil;
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 
 /**
  * @author Raja Perumal
@@ -37,6 +40,16 @@ import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
  *              cert w/ Transport guarantee mechanism.
  */
 public class Client extends AbstractUrlClient {
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(Client.class.getResource("clientcertanno_web.xml"));
+  }
+
   // Configurable constants:
   private String hostname = null;
 

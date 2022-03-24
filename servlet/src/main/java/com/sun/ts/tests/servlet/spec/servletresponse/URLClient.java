@@ -20,70 +20,28 @@
 
 package com.sun.ts.tests.servlet.spec.servletresponse;
 
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.Properties;
-
-import com.sun.javatest.Status;
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 
 public class URLClient extends AbstractUrlClient {
-
-  String host = null;
-
-  int port;
-
-  private static final String contextPath = "/servlet_spec_servletresponse_web";
+  
 
   /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
+   * Deployment for the test
    */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
-  }
-
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-    // setContextRoot(CONTEXT_ROOT);
-    // setServletName("HttpTestServlet");
-
-    return super.run(args, out, err);
-  }
-
-  /*
-   * @class.setup_props: webServerHost; webServerPort; ts_home;
-   */
-  public void setup(String[] args, Properties p) throws Exception {
-    logger.trace("setup");
-    try {
-      // get props
-      port = Integer.parseInt(p.getProperty("webServerPort"));
-      host = p.getProperty("webServerHost");
-
-      // check props for errors
-      if (port < 1) {
-        throw new Exception("'port' in ts.jte must be > 0");
-      }
-      if (host == null) {
-        throw new Exception("'host' in ts.jte must not be null ");
-      }
-
-    } catch (Exception e) {
-      logger.error(e.getMessage(), e);
-      throw new Exception("Setup failed!", e);
-    }
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_spec_servletresponse_web.xml"));
   }
 
   /* Run test */
@@ -97,13 +55,13 @@ public class URLClient extends AbstractUrlClient {
    * This is done by sleeping a long time between flush and exit in servlet;
    * Then verify time gap on client side.
    */
-
+  @Test
   public void testFlushBufferHttp() throws Exception {
     logger.trace("testFlushBufferHttp");
     try {
       URL u = new URL(
-          "http://" + host + ":" + port + contextPath + "/HttpTestServlet");
-      logger.trace("URL: http://" + host + ":" + port + contextPath
+          "http://" + _hostname + ":" + _port + "/" + getContextRoot() + "/HttpTestServlet");
+      logger.trace("URL: http://" + _hostname + ":" + _port + "/" + getContextRoot()
           + "/HttpTestServlet");
 
       InputStream is = u.openStream();
@@ -137,12 +95,6 @@ public class URLClient extends AbstractUrlClient {
             "Test failed: there is not enough time between two clocked time");
       }
 
-    } catch (java.net.UnknownHostException exuh) {
-      exuh.printStackTrace();
-      throw new Exception("Test failed with the above exception");
-    } catch (java.io.IOException exio) {
-      exio.printStackTrace();
-      throw new Exception("Test failed with the above exception");
     } catch (Exception ex) {
       ex.printStackTrace();
       throw new Exception("Test failed with the above exception");
@@ -165,9 +117,9 @@ public class URLClient extends AbstractUrlClient {
 
     try {
       URL u = new URL(
-          "http://" + host + ":" + port + contextPath + "/TestServlet");
+          "http://" + _hostname + ":" + _port + "/" + getContextRoot() + "/TestServlet");
       logger.trace(
-          "URL: http://" + host + ":" + port + contextPath + "/TestServlet");
+          "URL: http://" + _hostname + ":" + _port + "/" + getContextRoot() + "/TestServlet");
 
       InputStream is = u.openStream();
       BufferedReader bis = new BufferedReader(new InputStreamReader(is));
@@ -201,12 +153,6 @@ public class URLClient extends AbstractUrlClient {
             "Test failed: there is not enough time between two clocked time");
       }
 
-    } catch (java.net.UnknownHostException exuh) {
-      exuh.printStackTrace();
-      throw new Exception("testFlushBuffer failed with the above exception");
-    } catch (java.io.IOException exio) {
-      exio.printStackTrace();
-      throw new Exception("testFlushBuffer failed with the above IOException");
     } catch (Exception ex) {
       ex.printStackTrace();
       throw new Exception("testFlushBuffer failed with the above exception");

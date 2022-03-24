@@ -27,11 +27,29 @@ import java.util.Properties;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Raja Perumal
  */
 public class Client extends AbstractUrlClient {
+
+  // TOFIX
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(Client.class.getResource("clientcert_web.xml"));
+  }
+
   // Configurable constants:
   private String hostname = null;
 
@@ -109,6 +127,7 @@ public class Client extends AbstractUrlClient {
    * objects of type java.security.cert.X509Certificate
    *
    */
+  @Test
   public void clientCertTest() throws Exception {
 
     String testName = "clientCertTest";

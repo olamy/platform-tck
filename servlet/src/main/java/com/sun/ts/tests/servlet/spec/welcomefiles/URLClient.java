@@ -20,35 +20,23 @@
 
 package com.sun.ts.tests.servlet.spec.welcomefiles;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
   /**
-   * Entry point for different-VM execution. It should delegate to method
-   * run(String[], PrintWriter, PrintWriter), and this method should not contain
-   * any test configuration.
+   * Deployment for the test
    */
-  public static void main(String[] args) {
-    URLClient theTests = new URLClient();
-    Status s = theTests.run(args, new PrintWriter(System.out),
-        new PrintWriter(System.err));
-    s.exit();
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_js_welcomefiles_web.xml"));
   }
 
-  /**
-   * Entry point for same-VM execution. In different-VM execution, the main
-   * method delegates to this method.
-   */
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
-
-    setContextRoot("/servlet_js_welcomefiles_web");
-
-    return super.run(args, out, err);
-  }
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -67,7 +55,7 @@ public class URLClient extends AbstractUrlClient {
    * that a request URI of /foo will be returned as /foo/index.html based on
    * Servlet Spec(9.10)
    */
-
+  @Test
   public void partialfound1() throws Exception {
     TEST_PROPS.setProperty(FOLLOW_REDIRECT, "follow_redirect");
     TEST_PROPS.setProperty(SEARCH_STRING,
@@ -87,7 +75,7 @@ public class URLClient extends AbstractUrlClient {
    * that a request URI of /catalog will be returned as /catalog/default.jsp
    * based on Servlet Spec(9.10)
    */
-
+  @Test
   public void partialfound2() throws Exception {
     TEST_PROPS.setProperty(FOLLOW_REDIRECT, "follow_redirect");
     TEST_PROPS.setProperty(SEARCH_STRING, "HELLO from catalog/default.jsp");

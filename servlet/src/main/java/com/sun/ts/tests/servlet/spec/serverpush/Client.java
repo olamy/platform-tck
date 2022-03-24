@@ -21,6 +21,11 @@ import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.apache.commons.codec.binary.Base64;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.net.Authenticator;
 import java.net.CookieManager;
@@ -44,7 +49,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public class Client extends AbstractUrlClient {
-  private static final String CONTEXT_ROOT = "/servlet_spec_serverpush_web";
+
+  @BeforeEach
+  public void setupServletName() throws Exception {
+    setServletName("TestServlet");
+  }
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(Client.class.getResource("servlet_spec_serverpush_web.xml"));
+  }  
+  
 
   private static final String WEBSERVERHOSTPROP = "webServerHost";
 
@@ -72,6 +91,7 @@ public class Client extends AbstractUrlClient {
    * @class.setup_props: webServerHost; webServerPort; authuser; authpassword;
    *
    */
+  // TOFIX
   public void setup(String[] args, Properties p) throws Exception {
     boolean pass = true;
 
@@ -114,8 +134,9 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: Verify server push can work correctly.
    */
+  @Test
   public void serverPushTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + CONTEXT_ROOT
+    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
         + "/TestServlet";
     Map<String, String> headers = new HashMap<>();
     headers.put("foo", "bar");
@@ -132,9 +153,10 @@ public class Client extends AbstractUrlClient {
    * @test_Strategy: Verify the returned PushBuilder Object is null if the
    * current connection does not support server push.
    */
+  @Test
   public void getNullPushBuilderTest() throws Exception {
     try {
-      requestURI = CONTEXT_ROOT + "/TestServlet";
+      requestURI = "/" + getContextRoot() + "/TestServlet";
       TestUtil.logMsg("Sending request \"" + requestURI + "\"");
 
       response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
@@ -166,9 +188,10 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: Verify PushBuilder is initialized correctly.
    */
+  @Test
   public void serverPushInitTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + CONTEXT_ROOT
-        + "/TestServlet2";
+    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot() +
+         "/TestServlet2";
     Map<String, String> headers = new HashMap<>();
     headers.put("foo", "bar");
     headers.put("If-Match", "*");
@@ -268,9 +291,10 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: Verify PushBuilder with session works as expected.
    */
+  @Test
   public void serverPushSessionTest() throws Exception {
     try {
-      requestURI = CONTEXT_ROOT + "/TestServlet3?generateSession=true";
+      requestURI = "/" + getContextRoot() + "/TestServlet3?generateSession=true";
       TestUtil.logMsg("Sending request \"" + requestURI + "\"");
 
       response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
@@ -283,7 +307,7 @@ public class Client extends AbstractUrlClient {
         throw new Exception("serverPushSessionTest failed.");
       }
 
-      requestURI = "http://" + hostname + ":" + portnum + CONTEXT_ROOT
+      requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
           + "/TestServlet3;jsessionid=" + response.content.trim();
       TestUtil.logMsg("Sending request \"" + requestURI + "\"");
       List<HttpResponse<String>> responses = sendRequest(new HashMap<>(), null,
@@ -308,9 +332,10 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: Verify PushBuilder with cookie works as expected.
    */
+  @Test
   public void serverPushCookieTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + CONTEXT_ROOT
-        + "/TestServlet4";
+    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot() +
+        "/TestServlet4";
     Map<String, String> headers = new HashMap<>();
     headers.put("foo", "bar");
     CookieManager cm = new CookieManager();
@@ -356,8 +381,9 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: Verify PushBuilder with Session works as expected.
    */
+  @Test
   public void serverPushSessionTest2() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + CONTEXT_ROOT
+    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
         + "/TestServlet5";
     Map<String, String> headers = new HashMap<>();
     CookieManager cm = new CookieManager();
@@ -367,7 +393,7 @@ public class Client extends AbstractUrlClient {
 
     try {
       List<HttpCookie> cookies = cm.getCookieStore().get(new URI(
-          "http://" + hostname + ":" + portnum + CONTEXT_ROOT + "/index.html"));
+          "http://" + hostname + ":" + portnum + "/" + getContextRoot() + "/index.html"));
       for (HttpCookie cookie : cookies) {
         if ("JSESSIONID".equals(cookie.getName())) {
           pass = true;
@@ -401,8 +427,9 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: Verify some methods of PushBuilder works as expected.
    */
+  @Test
   public void serverPushMiscTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + CONTEXT_ROOT
+    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
         + "/TestServlet6";
     Map<String, String> headers = new HashMap<>();
     headers.put("foo", "bar");
@@ -455,8 +482,9 @@ public class Client extends AbstractUrlClient {
    * 
    * @test_Strategy: Verify some methods of PushBuilder works as expected.
    */
+  @Test
   public void serverPushNegtiveTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + CONTEXT_ROOT
+    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
         + "/TestServlet7";
     Map<String, String> headers = new HashMap<>();
 

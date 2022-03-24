@@ -16,16 +16,22 @@
 
 package com.sun.ts.tests.servlet.spec.security.annotations;
 
-import java.util.Properties;
-
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.BaseUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 /*
  *
  */
 public class Client extends BaseUrlClient {
+
+  // TOFIX
 
   // Constants:
   private static final String USERNAME = "user";
@@ -85,6 +91,15 @@ public class Client extends BaseUrlClient {
 
   private String request = null;
 
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(Client.class.getResource("servlet_sec_annotations_web.xml"));
+  }
+
 
   /*
    * @class.setup_props: webServerHost; webServerPort; securedWebServicePort;
@@ -126,6 +141,7 @@ public class Client extends BaseUrlClient {
    * @test_Strategy: 1. Send request to access DenyAllServlet 2. Receive an
    * access denied
    */
+  @Test
   public void test1() throws Exception {
     trace("testing DenyAll");
 
@@ -171,6 +187,7 @@ public class Client extends BaseUrlClient {
    * authentication (ie "j2ee") should NOT allows access since "j2ee" is not in
    * roles as defined in DD.
    */
+  @Test
   public void test2() throws Exception {
 
     StringBuffer sb = new StringBuffer(100);
@@ -252,6 +269,7 @@ public class Client extends BaseUrlClient {
    * really does work.
    *
    */
+  @Test
   public void test3() throws Exception {
     String invalidUser = "invalid";
 
@@ -287,6 +305,7 @@ public class Client extends BaseUrlClient {
    * normally work to ensure that setting deny all access really does work.
    *
    */
+  @Test
   public void test4() throws Exception {
     String invalidUser = "invalid";
 
@@ -328,6 +347,7 @@ public class Client extends BaseUrlClient {
    * @test_Strategy: 1. Send request for unprotected servlet that uses the
    * PermitAll access at the class level. 2. Receive page
    */
+  @Test
   public void test5() throws Exception {
 
     trace("Sending request to resource that uses the PermitAll annotation....");
@@ -364,6 +384,7 @@ public class Client extends BaseUrlClient {
    * (user==javajoe) so we want to verify that user is the principal passed into
    * the servlet.
    */
+  @Test
   public void test6() throws Exception {
 
     trace(
@@ -416,6 +437,7 @@ public class Client extends BaseUrlClient {
    * no cred (if the http-method-omission does its job.)
    * 
    */
+  @Test
   public void test7() throws Exception {
     trace("testing http-method-omission");
 

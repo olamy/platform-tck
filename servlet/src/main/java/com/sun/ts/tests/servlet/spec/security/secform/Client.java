@@ -23,6 +23,12 @@ package com.sun.ts.tests.servlet.spec.security.secform;
 import java.util.Properties;
 
 import com.sun.ts.tests.servlet.common.request.SecformClient;
+import com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /*
  * This  class uses the SecformClient to do most of its actual testing.
@@ -37,6 +43,18 @@ import com.sun.ts.tests.servlet.common.request.SecformClient;
  *
  */
 public class Client extends SecformClient {
+
+  // TOFIX
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_sec_secform_web.xml"));
+  }
+
   // Shared test variables:
   private Properties props = null;
 
@@ -107,6 +125,7 @@ public class Client extends SecformClient {
    * isUserInRole() is still working properly.
    *
    */
+  @Test
   public void test1_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;
@@ -147,6 +166,7 @@ public class Client extends SecformClient {
    * the expected error page)
    *
    */
+  @Test
   public void test2_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;
@@ -200,6 +220,7 @@ public class Client extends SecformClient {
    * the javajoe user is set up properly.
    *
    */
+  @Test
   public void test3_anno() throws Exception {
     // save off pageGuest so that we can reuse it
     String tempPageGuest = pageGuest;
@@ -250,6 +271,7 @@ public class Client extends SecformClient {
    * unprotected page.
    *
    */
+  @Test
   public void test4_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;
@@ -302,6 +324,7 @@ public class Client extends SecformClient {
    * call to getRemoteUser() must return null.
    *
    */
+  @Test
   public void test5_anno() throws Exception {
     // save off pageUnprotected so that we can reuse it
     String tempPageUnprotected = pageUnprotected;
@@ -369,6 +392,7 @@ public class Client extends SecformClient {
    * isUserInRole for all known roles)
    *
    */
+  @Test
   public void test6_anno() throws Exception {
     // save off pageRoleReverse so that we can reuse it
     String tempPageReverse = pageRoleReverse;
@@ -548,6 +572,7 @@ public class Client extends SecformClient {
    * permitted to the same security identity.
    *
    */
+  @Test
   public void test14_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;
@@ -606,6 +631,7 @@ public class Client extends SecformClient {
    * requested(and restricted) form back from server.
    *
    */
+  @Test
   public void test15_anno() throws Exception {
     // save off pageSec so that we can reuse it
     String tempPageSec = pageSec;

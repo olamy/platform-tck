@@ -23,6 +23,12 @@ import java.util.Properties;
 import com.sun.ts.lib.util.BASE64Encoder;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class will be used to perform simple servlet invocations. The servlet
@@ -42,6 +48,16 @@ public class Client extends AbstractUrlClient {
   private String hostname = null;
 
   private int portnum = 0;
+
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(Client.class.getResource("servlet_sec_denyUncovered_web.xml"));
+  }
 
   // this must be the decoded context path corresponding to the web module
   private String contextPath = "/servlet_sec_denyUncovered_web";
@@ -103,6 +119,7 @@ public class Client extends AbstractUrlClient {
    *                 return 200
    * 
    */
+  @Test
   public void testAllMethodsAllowedAnno() throws Exception {
 
     int httpStatusCode = invokeServlet(ctxtAllMethodsAllowedAnno, "POST");
@@ -152,6 +169,7 @@ public class Client extends AbstractUrlClient {
    *                 attempts to access get & put must be alloed (return 200=ok)
    * 
    */
+  @Test
   public void testAccessToMethodAllowed() throws Exception {
 
     int httpStatusCode = invokeServlet(ctxtTestServlet, "POST");
@@ -187,6 +205,7 @@ public class Client extends AbstractUrlClient {
    *                 attempts to access get & put must be alloed (return 200=ok)
    * 
    */
+  @Test
   public void testDenySomeUncovered() throws Exception {
 
     int httpStatusCode = invokeServlet(ctxtTestServlet, "DELETE");
@@ -227,6 +246,7 @@ public class Client extends AbstractUrlClient {
    *                 deny-uncovered-http-method elelent, they must be denied!
    * 
    */
+  @Test
   public void testExcludeAuthConstraint() throws Exception {
 
     int httpStatusCode = invokeServlet(ctxtExcludeAuthConstraint, "GET");
@@ -268,6 +288,7 @@ public class Client extends AbstractUrlClient {
    *                 the other "uncovered" methods to get "denied"
    * 
    */
+  @Test
   public void testPartialDDServlet() throws Exception {
 
     TestUtil.logMsg("Invoking " + ctxtPartialDDServlet + "  (GET)");

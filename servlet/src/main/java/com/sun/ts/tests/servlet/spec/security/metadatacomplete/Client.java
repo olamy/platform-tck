@@ -20,6 +20,12 @@ import java.util.Properties;
 
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.BaseUrlClient;
+import com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /*
  * These tests are going to be similar to the tests that are in 
@@ -30,6 +36,17 @@ import com.sun.ts.tests.servlet.common.client.BaseUrlClient;
  *
  */
 public class Client extends BaseUrlClient {
+
+
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(Client.class.getResource("servlet_sec_metadatacomplete_web.xml"));
+  }
 
   // Constants:
   private static final String USERNAME = "user";
@@ -111,6 +128,7 @@ public class Client extends BaseUrlClient {
    * to be granted all access via annotation but will be marked as DenyAll in
    * the DD. The DD MUST take precedence. 2. Receive an access denied
    */
+  @Test
   public void test1() throws Exception {
     trace("testing that we can NOT access: " + pageDeny);
 
@@ -158,6 +176,7 @@ public class Client extends BaseUrlClient {
    * DD grants it and since metadata-complete is true, the annotations security
    * constraints do NOT get used.
    */
+  @Test
   public void test2() throws Exception {
 
     StringBuffer sb = new StringBuffer(100);
@@ -220,6 +239,7 @@ public class Client extends BaseUrlClient {
    * used.)
    *
    */
+  @Test
   public void test3() throws Exception {
 
     // Post is set to be accessed by Administrator in the annotation
@@ -287,6 +307,7 @@ public class Client extends BaseUrlClient {
    * this constraint.
    *
    */
+  @Test
   public void test4() throws Exception {
 
     // now see if we get access denied - since DenyAll anno set on doPost method
@@ -315,6 +336,7 @@ public class Client extends BaseUrlClient {
    * @test_Strategy: 1. Send request for unprotected servlet that uses the
    * PermitAll access at the class level. 2. Receive page
    */
+  @Test
   public void test5() throws Exception {
 
     trace("GET w/ user=" + unauthUsername
@@ -348,6 +370,7 @@ public class Client extends BaseUrlClient {
    * DD only allows role=Manager (with user=javajoe) to GET or POST.
    * 
    */
+  @Test
   public void test6() throws Exception {
 
     trace(
