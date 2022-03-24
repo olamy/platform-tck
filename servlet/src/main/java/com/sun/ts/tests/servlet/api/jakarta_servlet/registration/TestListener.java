@@ -36,8 +36,12 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestListener implements ServletContextListener {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(TestListener.class);
 
   /**
    * Receives notification that the web application initialization process is
@@ -154,7 +158,7 @@ public class TestListener implements ServletContextListener {
       frFilter.setInitParameters(params);
       params.clear();
     } catch (ServletException ex) {
-      System.out.println("Error creating Servlet");
+      LOGGER.error("Error creating Servlet");
     }
 
     /*

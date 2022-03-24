@@ -20,6 +20,9 @@
 
 package com.sun.ts.tests.servlet.common.util;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -28,9 +31,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.Cookie;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A set of useful utility methods to help perform test functions.
@@ -99,9 +101,9 @@ public class ServletTestUtil {
    *
    * @return true if all the expected values are found, otherwise false.
    */
-  public static boolean checkEnumeration(Enumeration e, String[] values,
+  public static boolean checkEnumeration(Enumeration<?> e, String[] values,
       boolean enforceSizes, boolean allowDuplicates) {
-    List foundValues = null;
+    List<Object> foundValues = null;
 
     if (e == null || !e.hasMoreElements() || values == null) {
       return false;
@@ -115,7 +117,7 @@ public class ServletTestUtil {
     Arrays.sort(values);
     int count = 0;
     while (e.hasMoreElements()) {
-      Object val = null;
+      Object val;
       try {
         val = e.nextElement();
         count++;
@@ -265,36 +267,13 @@ public class ServletTestUtil {
    * @return - a String based off the values in the array
    */
   public static String getAsString(Object[] sArray) {
-    if (sArray == null) {
-      return null;
-    }
-    StringBuffer buf = new StringBuffer();
-    buf.append("[");
-    for (int i = 0; i < sArray.length; i++) {
-      buf.append(sArray[i].toString());
-      if ((i + 1) != sArray.length) {
-        buf.append(",");
-      }
-    }
-    buf.append("]");
-    return buf.toString();
+    return sArray == null ? null : Stream.of(sArray).map(Object::toString).collect(Collectors.joining(",","[","]"));
+
   }
 
-  public static String getAsString(ArrayList al) {
-    if (al == null) {
-      return null;
-    }
-    StringBuffer buf = new StringBuffer();
-    buf.append("[");
-    al.trimToSize();
-    for (int i = 0, len = al.size(); i < len; i++) {
-      buf.append((String) al.get(i));
-      if ((i + 1) != len) {
-        buf.append(",");
-      }
-    }
-    buf.append("]");
-    return buf.toString();
+  public static String getAsString(List<String> al) {
+    return al == null ? null : al.stream().collect(Collectors.joining(",","[","]"));
+
   }
 
   /**
@@ -316,19 +295,18 @@ public class ServletTestUtil {
    *          - an Enumeration
    * @return - the elements of the Enumeration as an array of Objects
    */
-  public static Object[] getAsArray(Enumeration e) {
-    List list = new ArrayList();
+  public static Object[] getAsArray(Enumeration<Object> e) {
+    List<Object> list = new ArrayList<>();
     while (e.hasMoreElements()) {
       list.add(e.nextElement());
     }
-    return list.toArray(new Object[list.size()]);
+    return list.toArray(new Object[0]);
   }
 
   /**
    * Returnes the provided string as an Array of Strings.
    * 
-   * @param e
-   *          - a String
+   * @param value String
    * @return - the elements of the String as an array of Strings
    */
   public static String[] getAsArray(String value) {

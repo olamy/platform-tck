@@ -58,10 +58,11 @@
 package com.sun.ts.tests.servlet.common.util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class StaticLog {
 
-  private static ArrayList al = new ArrayList();
+  private static List<String> al = new ArrayList<>();
 
   public static void clear() {
     // System.out.println("clearing log");
@@ -100,7 +101,7 @@ public final class StaticLog {
     return tmp;
   }
 
-  public static ArrayList get() {
+  public static List get() {
     return al;
   }
 }

@@ -25,6 +25,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * GenericTCKServlet.java
@@ -41,6 +43,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public abstract class HttpTCKServlet extends HttpServlet {
 
   private static final String TEXT_PLAIN = "text/plain";
+
+  protected Logger logger = LoggerFactory.getLogger(getClass());
 
   /**
    * <code>TEST_HEADER</code> is the constant for the <code>testname</code>

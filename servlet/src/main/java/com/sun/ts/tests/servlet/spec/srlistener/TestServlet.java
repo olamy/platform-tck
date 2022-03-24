@@ -40,7 +40,7 @@ public class TestServlet extends HttpTCKServlet {
 
     String path = "/include/IncludedServlet?testname=simple";
     RequestDispatcher rd = getServletContext().getRequestDispatcher(path);
-    System.out.println("In method includes");
+    logger.info("In method includes");
     if (rd == null) {
       pw.println("Null RequestDispatcher got for path=" + path);
     } else {
