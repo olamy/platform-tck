@@ -28,10 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
-  @BeforeEach
-  public void setupServletName() throws Exception {
-    setServletName("TestServlet");
-  }
 
   // TOFIX setGeneralURI("/servlet/compat/LeadingSlash/WithoutLeadingSlash");
 
