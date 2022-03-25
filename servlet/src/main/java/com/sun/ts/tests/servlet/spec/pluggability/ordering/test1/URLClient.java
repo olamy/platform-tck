@@ -20,7 +20,6 @@
 package com.sun.ts.tests.servlet.spec.pluggability.ordering.test1;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import com.sun.ts.tests.servlet.spec.pluggability.common.CommonArchives;
 import com.sun.ts.tests.servlet.spec.pluggability.common.RequestListener;
 import com.sun.ts.tests.servlet.spec.pluggability.common.TestServlet4;
 import org.jboss.arquillian.container.test.api.Deployment;
