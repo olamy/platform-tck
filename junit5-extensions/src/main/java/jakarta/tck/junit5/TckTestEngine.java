@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class TckTestEngine implements TestEngine {
@@ -54,14 +55,18 @@ public class TckTestEngine implements TestEngine {
     @Override
     public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
         EngineDescriptor engine = new EngineDescriptor(uniqueId, "TCK Test Engine");
+        List<String> testFound = new CopyOnWriteArrayList<>();
         testClassesAndMethods.forEach(
                 s -> {
                     UniqueId uid = uniqueId.append("test", s);
                     MethodSource methodSource = MethodSource.from(s.substring(0, s.indexOf('#')), s.substring(s.indexOf('#')+1));
                     TCKDescriptor tckDescriptor = new TCKDescriptor(uid, s, methodSource);
                     engine.addChild(tckDescriptor);
+                    testFound.add(s);
                 }
         );
+        System.out.println("tests found:");
+        testFound.stream().forEach(s -> System.out.println(s));
         return engine;
 
     }
@@ -81,18 +86,18 @@ public class TckTestEngine implements TestEngine {
 
     @Override
     public void execute(ExecutionRequest executionRequest) {
-//        TestDescriptor engine = executionRequest.getRootTestDescriptor();
-//        EngineExecutionListener listener = executionRequest.getEngineExecutionListener();
-//        listener.executionStarted(engine);
-//        for (TestDescriptor child : engine.getChildren()) {
-//            if (child instanceof TCKDescriptor) {
-//                TCKDescriptor descriptor = (TCKDescriptor) child;
-//                listener.executionStarted(descriptor);
-//                listener.executionFinished(descriptor, TestExecutionResult.successful());
-//            }
-//        }
-//        listener.executionFinished(engine, TestExecutionResult.successful());
-        new JupiterTestEngine().execute(executionRequest);
+        TestDescriptor engine = executionRequest.getRootTestDescriptor();
+        EngineExecutionListener listener = executionRequest.getEngineExecutionListener();
+        listener.executionStarted(engine);
+        for (TestDescriptor child : engine.getChildren()) {
+            if (child instanceof TCKDescriptor) {
+                TCKDescriptor descriptor = (TCKDescriptor) child;
+                listener.executionStarted(descriptor);
+                listener.executionFinished(descriptor, TestExecutionResult.successful());
+            }
+        }
+        listener.executionFinished(engine, TestExecutionResult.successful());
+        //new JupiterTestEngine().execute(executionRequest);
     }
 
 }
