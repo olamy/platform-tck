@@ -46,7 +46,7 @@ import java.util.Properties;
  * that particular technology.
  * </PRE>
  */
-@ExtendWith({ArquillianExtension.class}) // TckFilerExtension.class,
+@ExtendWith({ArquillianExtension.class}) // , TckFilerExtension.class
 public abstract class BaseUrlClient {
 
   protected final Logger logger = LoggerFactory.getLogger(getClass());

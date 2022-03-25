@@ -59,6 +59,12 @@
         <artifactId>libutil</artifactId>
       </dependency>
 
+<!--      <dependency>-->
+<!--        <groupId>jakartatck</groupId>-->
+<!--        <artifactId>junit5-extensions</artifactId>-->
+<!--        <scope>compile</scope>-->
+<!--      </dependency>-->
+
       <dependency>
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>

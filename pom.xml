@@ -411,6 +411,12 @@
             </dependency>
 
             <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>junit5-extensions</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>javatest</groupId>
                 <artifactId>javatest</artifactId>
                 <version>${javatest.version}</version>

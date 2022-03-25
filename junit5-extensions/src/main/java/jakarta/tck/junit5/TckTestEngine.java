@@ -1,5 +1,6 @@
 package jakarta.tck.junit5;
 
+import org.junit.jupiter.engine.JupiterTestEngine;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
@@ -80,17 +81,18 @@ public class TckTestEngine implements TestEngine {
 
     @Override
     public void execute(ExecutionRequest executionRequest) {
-        TestDescriptor engine = executionRequest.getRootTestDescriptor();
-        EngineExecutionListener listener = executionRequest.getEngineExecutionListener();
-        listener.executionStarted(engine);
-        for (TestDescriptor child : engine.getChildren()) {
-            if (child instanceof TCKDescriptor) {
-                TCKDescriptor descriptor = (TCKDescriptor) child;
-                listener.executionStarted(descriptor);
-                listener.executionFinished(descriptor, TestExecutionResult.successful());
-            }
-        }
-        listener.executionFinished(engine, TestExecutionResult.successful());
+//        TestDescriptor engine = executionRequest.getRootTestDescriptor();
+//        EngineExecutionListener listener = executionRequest.getEngineExecutionListener();
+//        listener.executionStarted(engine);
+//        for (TestDescriptor child : engine.getChildren()) {
+//            if (child instanceof TCKDescriptor) {
+//                TCKDescriptor descriptor = (TCKDescriptor) child;
+//                listener.executionStarted(descriptor);
+//                listener.executionFinished(descriptor, TestExecutionResult.successful());
+//            }
+//        }
+//        listener.executionFinished(engine, TestExecutionResult.successful());
+        new JupiterTestEngine().execute(executionRequest);
     }
 
 }

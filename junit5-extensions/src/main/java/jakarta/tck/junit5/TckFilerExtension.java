@@ -42,14 +42,14 @@ public class TckFilerExtension implements InvocationInterceptor {
 
     @Override
     public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-//        if (invocationContext.getExecutable().getAnnotation(Test.class)!=null && !NO_FILTERING_TESTS) {
-//            String fqcnMethodName = invocationContext.getTargetClass().getName() + "#" + invocationContext.getExecutable().getName();
-//            if (!testClassesAndMethods.contains(fqcnMethodName)){
-//                invocation.skip();
-//            }
-//        } else {
-//            InvocationInterceptor.super.interceptTestMethod(invocation, invocationContext, extensionContext);
-//        }
-        InvocationInterceptor.super.interceptTestMethod(invocation, invocationContext, extensionContext);
+        if (invocationContext.getExecutable().getAnnotation(Test.class)!=null && !NO_FILTERING_TESTS) {
+            String fqcnMethodName = invocationContext.getTargetClass().getName() + "#" + invocationContext.getExecutable().getName();
+            if (!testClassesAndMethods.contains(fqcnMethodName)){
+                invocation.skip();
+            }
+        } else {
+            InvocationInterceptor.super.interceptTestMethod(invocation, invocationContext, extensionContext);
+        }
+        //InvocationInterceptor.super.interceptTestMethod(invocation, invocationContext, extensionContext);
     }
 }
