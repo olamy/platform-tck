@@ -20,12 +20,37 @@
 package com.sun.ts.tests.servlet.spec.pluggability.ordering.test1;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.spec.pluggability.common.CommonArchives;
+import com.sun.ts.tests.servlet.spec.pluggability.common.RequestListener;
+import com.sun.ts.tests.servlet.spec.pluggability.common.TestServlet4;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
+
+  public static JavaArchive getFragment1() {
+    return ShrinkWrap.create(JavaArchive.class, "fragment-1.jar")
+            .addClasses(RequestListener.class, TestServlet4.class)
+            .addAsResource(URLClient.class.getResource("web-fragment_1.xml"),
+                    "META-INF/web-fragment.xml");
+  }
+
+  public static JavaArchive getFragment2() {
+    return ShrinkWrap.create(JavaArchive.class, "fragment-2.jar")
+            .addClasses(TestServlet4.class)
+            .addAsResource(URLClient.class.getResource("web-fragment_2.xml"),
+                    "META-INF/web-fragment.xml");
+  }
+
+  public static JavaArchive getFragment3() {
+    return ShrinkWrap.create(JavaArchive.class, "fragment-3.jar")
+            .addClasses(TestServlet4.class)
+            .addAsResource(URLClient.class.getResource("web-fragment_3.xml"),
+                    "META-INF/web-fragment.xml");
+  }
 
   /**
    * Deployment for the test
@@ -33,7 +58,8 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
-            .setWebXML(com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient.class.getResource("servlet_spec_ordering1_web.xml"));
+            .addAsLibraries(getFragment1(), getFragment2(), getFragment3())
+            .setWebXML(URLClient.class.getResource("servlet_spec_ordering1_web.xml"));
   }
 
 
