@@ -20,6 +20,9 @@
 package com.sun.ts.tests.servlet.pluggability.aordering;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.pluggability.common.CommonArchives;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener;
+import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -32,8 +35,18 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+
+    WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .addClasses(TestServlet1.class, RequestListener.class)
+            .addAsLibraries(CommonArchives.getCommonWebFragmentArchives())
+            .addAsResource(URLClient.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_3.xml"),
+                    "META-INF/web-fragment.xml")
+            .addAsResource(URLClient.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_4.xml"),
+                    "META-INF/web-fragment.xml")
+            .addAsResource(URLClient.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_5.xml"),
+                    "META-INF/web-fragment.xml")
             .setWebXML(URLClient.class.getResource("servlet_spec_aordering_web.xml"));
+    return webArchive;
   }
 
   /*

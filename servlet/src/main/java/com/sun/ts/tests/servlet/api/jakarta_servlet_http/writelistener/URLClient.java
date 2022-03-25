@@ -27,8 +27,12 @@ import java.net.URL;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class URLClient extends AbstractUrlClient {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(URLClient.class);
 
   // TOFIX
 
@@ -51,8 +55,6 @@ public class URLClient extends AbstractUrlClient {
     String testName = "nioOutputTest";
     String EXPECTED_RESPONSE = "=onWritePossible";
 
-    BufferedReader input = null;
-
     String requestUrl = getContextRoot() + "/" + getServletName() + "?testname="
         + testName;
 
@@ -61,40 +63,28 @@ public class URLClient extends AbstractUrlClient {
       URL url = new URL(getURLString("http", _hostname, _port, requestUrl));
 
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      TestUtil.logTrace("======= Connecting " + url.toExternalForm());
+      LOGGER.trace("======= Connecting {}", url.toExternalForm());
       conn.setChunkedStreamingMode(5);
       conn.setDoOutput(true);
-      TestUtil.logTrace("======= Header " + conn.toString());
+      LOGGER.trace("======= Header {}", conn);
       conn.connect();
 
-      try {
-        input = new BufferedReader(
-            new InputStreamReader(conn.getInputStream()));
+      try (BufferedReader input = new BufferedReader(
+              new InputStreamReader(conn.getInputStream()))) {
         String line = null;
-        StringBuffer message_received = new StringBuffer();
+        StringBuilder message_received = new StringBuilder();
 
         while ((line = input.readLine()) != null) {
-          TestUtil.logTrace("======= message received: " + line);
+          LOGGER.trace("======= message received: " + line);
           message_received.append(line);
         }
         passed = ServletTestUtil.compareString(EXPECTED_RESPONSE,
             message_received.toString());
 
-      } catch (Exception ex) {
-        passed = false;
-        TestUtil.logErr("Exception: " + ex.getMessage());
-      } finally {
-        try {
-          if (input != null) {
-            input.close();
-          }
-        } catch (Exception ex) {
-          TestUtil.logErr("Fail to close BufferedReader" + ex.getMessage());
-        }
       }
-    } catch (Exception ex3) {
+    } catch (Exception ex) {
       passed = false;
-      TestUtil.logErr("Test" + ex3.getMessage());
+      LOGGER.error("Test" + ex.getMessage(), ex);
     }
 
     if (!passed) {

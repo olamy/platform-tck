@@ -104,6 +104,7 @@
           <includes>
             <include>**/**.xml</include>
             <include>**/jakarta.servlet.ServletContainerInitializer</include>
+            <include>**/web-fragment*.xml</include>
           </includes>
         </resource>
       </resources>

@@ -22,10 +22,7 @@ package com.sun.ts.tests.servlet.common.response.validation;
 
 import com.sun.ts.lib.util.TestUtil;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.StringTokenizer;
 
 /**
  * <pre>

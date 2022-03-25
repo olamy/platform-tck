@@ -20,8 +20,14 @@
 package com.sun.ts.tests.servlet.pluggability.aordering4;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.pluggability.common.CommonArchives;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener6;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener7;
+import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
+import com.sun.ts.tests.servlet.pluggability.common.TestServlet3;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +39,17 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
+    JavaArchive javaArchive6 = ShrinkWrap.create(JavaArchive.class, "fragment-6.jar")
+            .addClasses(RequestListener6.class, TestServlet1.class)
+            .addAsResource(CommonArchives.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_6.xml"),
+                    "META-INF/web-fragment.xml");
+    JavaArchive javaArchive7 = ShrinkWrap.create(JavaArchive.class, "fragment-7.jar")
+            .addClasses(RequestListener7.class, TestServlet3.class)
+            .addAsResource(CommonArchives.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_7.xml"),
+                    "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .addAsLibraries(CommonArchives.getCommonWebFragmentArchives())
+            .addAsLibraries(javaArchive6, javaArchive7)
             .setWebXML(URLClient.class.getResource("servlet_spec_aordering4_web.xml"));
   }
 

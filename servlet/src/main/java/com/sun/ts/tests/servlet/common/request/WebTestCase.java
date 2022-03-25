@@ -235,7 +235,7 @@ public class WebTestCase implements TestCase {
    */
   public void addUnexpectedHeader(String header) {
     if (_unexpected == null) {
-      _unexpected = new HashMap<String, Header>();
+      _unexpected = new HashMap<>();
     }
     addHeader(_unexpected, header);
   }
@@ -262,7 +262,7 @@ public class WebTestCase implements TestCase {
    */
   public void setResponseSearchString(String searchString) {
     if (_searchStrings == null) {
-      _searchStrings = new ArrayList<String>();
+      _searchStrings = new ArrayList<>();
     }
     addSearchStrings(_searchStrings, searchString);
   }
@@ -280,7 +280,7 @@ public class WebTestCase implements TestCase {
    */
   public void setResponseSearchStringIgnoreCase(String searchString) {
     if (_searchStringsNoCase == null) {
-      _searchStringsNoCase = new ArrayList<String>();
+      _searchStringsNoCase = new ArrayList<>();
     }
     addSearchStrings(_searchStringsNoCase, searchString);
   }
@@ -298,7 +298,7 @@ public class WebTestCase implements TestCase {
    */
   public void setUnexpectedResponseSearchString(String searchString) {
     if (_uSearchStrings == null) {
-      _uSearchStrings = new ArrayList<String>();
+      _uSearchStrings = new ArrayList<>();
     }
     addSearchStrings(_uSearchStrings, searchString);
   }
@@ -314,7 +314,7 @@ public class WebTestCase implements TestCase {
    */
   public void setUnorderedSearchString(String searchString) {
     if (_unorderedSearchStrings == null) {
-      _unorderedSearchStrings = new ArrayList<String>();
+      _unorderedSearchStrings = new ArrayList<>();
     }
     addSearchStrings(_unorderedSearchStrings, searchString);
   }
@@ -347,7 +347,7 @@ public class WebTestCase implements TestCase {
     if (_expected == null) {
       return null;
     }
-    return _expected.values().toArray(new Header[_expected.size()]);
+    return _expected.values().toArray(new Header[0]);
   }
 
   /**
@@ -360,7 +360,7 @@ public class WebTestCase implements TestCase {
     if (_unexpected == null) {
       return null;
     }
-    return _unexpected.values().toArray(new Header[_unexpected.size()]);
+    return _unexpected.values().toArray(new Header[0]);
   }
 
   /**
