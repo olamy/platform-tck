@@ -39,7 +39,11 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
-            .setWebXML(URLClient.class.getResource("servlet_annotationservlet_webservlet_web.xml"));
+            .addClass(Servlet1.class)
+            .addClass(Servlet2.class)
+            .addClass(Servlet3.class)
+            .addClass(Servlet4.class)
+            .addClass(Servlet5.class);
   }
 
   /*

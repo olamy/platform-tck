@@ -20,6 +20,11 @@
 package com.sun.ts.tests.servlet.spec.annotationservlet.webservletdd;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.spec.annotationservlet.webservlet.Servlet1;
+import com.sun.ts.tests.servlet.spec.annotationservlet.webservlet.Servlet2;
+import com.sun.ts.tests.servlet.spec.annotationservlet.webservlet.Servlet3;
+import com.sun.ts.tests.servlet.spec.annotationservlet.webservlet.Servlet4;
+import com.sun.ts.tests.servlet.spec.annotationservlet.webservlet.Servlet5;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -39,6 +44,11 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .addClass(Servlet1.class)
+            .addClass(Servlet2.class)
+            .addClass(Servlet3.class)
+            .addClass(Servlet4.class)
+            .addClass(Servlet5.class)
             .setWebXML(URLClient.class.getResource("servlet_annotationservlet_webservletdd_web.xml"));
   }
 
