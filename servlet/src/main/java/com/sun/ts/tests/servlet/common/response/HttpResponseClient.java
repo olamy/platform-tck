@@ -20,11 +20,10 @@
 
 package com.sun.ts.tests.servlet.common.response;
 
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.util.Data;
 import org.junit.jupiter.api.Test;
 
-public class HttpResponseClient extends AbstractUrlClient { // ResponseClient {
+public class HttpResponseClient extends ResponseClient {
 
   @Test
   public void addCookieTest() throws Exception {
