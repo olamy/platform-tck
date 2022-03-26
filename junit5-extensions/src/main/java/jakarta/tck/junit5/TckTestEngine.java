@@ -32,17 +32,23 @@ import org.junit.platform.launcher.LauncherSession;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
+import org.junit.platform.launcher.core.LauncherConfig;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.junit.platform.reporting.legacy.xml.LegacyXmlReportGeneratingListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -162,8 +168,22 @@ public class TckTestEngine implements TestEngine {
     @Override
     public void execute(ExecutionRequest executionRequest) {
         TestDescriptor engine = executionRequest.getRootTestDescriptor();
+        EngineExecutionListener engineExecutionListener = executionRequest.getEngineExecutionListener();
 
-        SummaryGeneratingListener listener = new SummaryGeneratingListener();
+        //SummaryGeneratingListener listener = new SummaryGeneratingListener();
+
+        Path reportDir = Paths.get("target/surefire-reports");
+        if (!Files.exists(reportDir)) {
+            try {
+                Files.createDirectories(reportDir);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+        PrintWriter printWriter = new PrintWriter(System.out, true);
+        LegacyXmlReportGeneratingListener listener = new LegacyXmlReportGeneratingListener(reportDir, printWriter);
+
         try (LauncherSession session = LauncherFactory.openSession()) {
             Launcher launcher = session.getLauncher();
             launcher.registerTestExecutionListeners(listener);
@@ -180,8 +200,8 @@ public class TckTestEngine implements TestEngine {
 
         }
 
-        TestExecutionSummary summary = listener.getSummary();
-        System.out.println(summary);
+//        TestExecutionSummary summary = listener.getSummary();
+//        System.out.println(summary);
     }
 
     private static class MyListener implements TestExecutionListener {
