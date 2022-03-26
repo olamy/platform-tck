@@ -110,7 +110,9 @@ public class URLClient extends AbstractUrlClient {
   }
 
   /*
-   * @testName: dispatchContextPathTest @assertion_ids: Servlet:JAVADOC:641;
+   * @testName: dispatchContextPathTest
+   *
+   * @assertion_ids: Servlet:JAVADOC:641;
    * Servlet:JAVADOC:703; Servlet:JAVADOC:707; Servlet:JAVADOC:708;
    * Servlet:JAVADOC:710;
    *
@@ -133,7 +135,8 @@ public class URLClient extends AbstractUrlClient {
   }
 
   /*
-   * @testName: getRequestTest @assertion_ids: Servlet:JAVADOC:642;
+   * @testName: getRequestTest
+   * @assertion_ids: Servlet:JAVADOC:642;
    * Servlet:JAVADOC:710;
    *
    * @test_Strategy: Create a Servlet AsyncTestServlet which support async;
