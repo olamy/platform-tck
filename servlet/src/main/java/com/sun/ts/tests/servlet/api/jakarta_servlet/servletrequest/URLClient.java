@@ -38,7 +38,7 @@ public class URLClient extends RequestClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
-            .setWebXML(URLClient.class.getResource("servlet_js_filterrequestdispatcher_web.xml"));
+            .setWebXML(URLClient.class.getResource("servlet_js_servletrequest_web.xml"));
   }
 
 
