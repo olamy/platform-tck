@@ -22,6 +22,9 @@ package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest;
 
 import com.sun.ts.tests.servlet.common.request.HttpRequestClient;
 import com.sun.ts.tests.servlet.common.util.Data;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +33,16 @@ public class URLClient extends HttpRequestClient {
   @BeforeEach
   public void setupServletName() throws Exception {
     setServletName("TestServlet");
+  }
+
+
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .setWebXML(URLClient.class.getResource("servlet_jsh_httpservletrequest_web.xml"));
   }
 
   /*
