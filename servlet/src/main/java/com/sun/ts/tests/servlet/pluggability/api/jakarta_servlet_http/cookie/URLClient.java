@@ -26,12 +26,15 @@ import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.request.HttpRequest;
 import com.sun.ts.tests.servlet.common.request.HttpResponse;
 import com.sun.ts.tests.servlet.common.util.Data;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
+import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.cookie.CookieSpec;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,8 +55,12 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
+    JavaArchive javaArchive = ShrinkWrap.create(JavaArchive.class, "fragment-1.jar")
+            .addClasses(TestServlet1.class, RequestListener1.class)
+            .addAsResource(URLClient.class.getResource("servlet_pluh_cookie_web-fragment.xml"),
+                    "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
-            .setWebXML(URLClient.class.getResource("servlet_pluh_cookie_web.xml"));
+            .addAsLibraries(javaArchive);
   }
 
 
@@ -127,7 +134,7 @@ public class URLClient extends AbstractUrlClient {
   @Test
   public void constructorIllegalArgumentExceptionTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
-        "GET /" + getContextRoot() + "/TestServlet?testname=constructorIllegalArgumentExceptionTest HTTP/1.1");
+        "GET " + getContextRoot() + "/TestServlet?testname=constructorIllegalArgumentExceptionTest HTTP/1.1");
     TEST_PROPS.setProperty(UNEXPECTED_RESPONSE_MATCH, "Test FAILED");
     invoke();
   }
@@ -177,7 +184,7 @@ public class URLClient extends AbstractUrlClient {
     // version 1
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/" + getContextRoot());
+            + "; $Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getDomainTest");
     invoke();
 
@@ -212,14 +219,14 @@ public class URLClient extends AbstractUrlClient {
   public void getNameTest() throws Exception {
     // version 0 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
-        + _hostname + "; Path=/" + getContextRoot());
+        + _hostname + "; Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getNameTest");
     invoke();
 
     // version 1 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/" + getContextRoot());
+            + "; $Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getNameTest");
     invoke();
   }
@@ -238,7 +245,7 @@ public class URLClient extends AbstractUrlClient {
   public void getPathTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/" + getContextRoot());
+            + "; $Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getPathTest");
     invoke();
   }
@@ -272,13 +279,13 @@ public class URLClient extends AbstractUrlClient {
   public void getValueTest() throws Exception {
     // version 0 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
-        + _hostname + "; Path=/" + getContextRoot());
+        + _hostname + "; Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getValueTest");
     invoke();
     // version 1 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/" + getContextRoot());
+            + "; $Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getValueTest");
     invoke();
   }
@@ -297,13 +304,13 @@ public class URLClient extends AbstractUrlClient {
   public void getVersionTest() throws Exception {
     // version 0 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
-        + _hostname + "; Path=/" + getContextRoot());
+        + _hostname + "; Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getVersionVer0Test");
     invoke();
     // version 1 Cookie
     TEST_PROPS.setProperty(REQUEST_HEADERS,
         "Cookie: $Version=1; name1=value1; $Domain=" + _hostname
-            + "; $Path=/" + getContextRoot());
+            + "; $Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getVersionVer1Test");
     invoke();
   }
