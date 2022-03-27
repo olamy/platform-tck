@@ -31,6 +31,12 @@ public class DispatchTestServlet extends GenericTCKServlet {
 
   public static String DISPATCH_TEST1_CTX_KEY = "DISPATCH_TEST1_CTX_KEY";
 
+  public static String DISPATCH_TEST_CTX_KEY = "DISPATCH_TEST_CTX_KEY";
+
+  public static String getDispatcherContextRoot() {
+    return System.getProperty(DISPATCH_TEST_CTX_KEY, "/servlet_js_dispatchtest_web");
+  }
+
   public static String getDispatcher1ContextRoot() {
     return System.getProperty(DISPATCH_TEST1_CTX_KEY, "/servlet_js_dispatchtest1_web");
   }

@@ -46,6 +46,9 @@ public class URLClient extends AbstractUrlClient {
     String ctxRoot = url2.getPath();
     ctxRoot =  ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot;
     System.setProperty(DispatchTestServlet.DISPATCH_TEST1_CTX_KEY, ctxRoot);
+    ctxRoot =  url.getPath();
+    ctxRoot =  ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot;
+    System.setProperty(DispatchTestServlet.DISPATCH_TEST_CTX_KEY, ctxRoot);
   }
 
   /**
