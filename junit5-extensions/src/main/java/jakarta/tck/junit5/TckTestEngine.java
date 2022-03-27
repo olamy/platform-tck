@@ -20,11 +20,13 @@ import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.engine.discovery.MethodSelector;
+import org.junit.platform.engine.reporting.ReportEntry;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
+import org.junit.platform.launcher.EngineFilter;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryListener;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -60,6 +62,8 @@ public class TckTestEngine implements TestEngine {
 
     private static final boolean NO_FILTERING_TESTS = Boolean.getBoolean("jakarta.tck.notfilter.tests");
 
+    private static final String ENGINE_ID = "jakarta-tck-test-engine";
+
     private List<String> testClassesAndMethods = new ArrayList<>();
 
     private JupiterEngineDescriptor engine;
@@ -84,7 +88,7 @@ public class TckTestEngine implements TestEngine {
 
     @Override
     public String getId() {
-        return "jakarta-tck-test-engine";
+        return ENGINE_ID;
     }
 
     @Override
@@ -167,10 +171,7 @@ public class TckTestEngine implements TestEngine {
 
     @Override
     public void execute(ExecutionRequest executionRequest) {
-        TestDescriptor engine = executionRequest.getRootTestDescriptor();
-        EngineExecutionListener engineExecutionListener = executionRequest.getEngineExecutionListener();
 
-        //SummaryGeneratingListener listener = new SummaryGeneratingListener();
         // TODO path configurable via system property
         Path reportDir = Paths.get("target/surefire-reports");
         if (!Files.exists(reportDir)) {
@@ -186,17 +187,18 @@ public class TckTestEngine implements TestEngine {
 
         try (LauncherSession session = LauncherFactory.openSession()) {
             Launcher launcher = session.getLauncher();
-            launcher.registerTestExecutionListeners(listener);
+            //launcher.registerTestExecutionListeners(listener);
 
             LauncherDiscoveryRequest launcherDiscoveryRequest = LauncherDiscoveryRequestBuilder.request()
+                    .filters(EngineFilter.excludeEngines(ENGINE_ID, "junit-vintage"))
                     .selectors(
-                            testClassesAndMethods.stream().map(s -> DiscoverySelectors.selectMethod(s)).collect(Collectors.toUnmodifiableList())
+                        testClassesAndMethods.stream().map(s -> DiscoverySelectors.selectMethod(s)).collect(Collectors.toUnmodifiableList())
                     )
                     .build();
             TestPlan testPlan = launcher.discover(launcherDiscoveryRequest);
 
             //TestPlan testPlan = TestPlan.from((Collection<TestDescriptor>) engine.getChildren(), executionRequest.getConfigurationParameters());
-            launcher.execute(testPlan, new MyListener());
+            launcher.execute(testPlan, listener, new MyListener());
 
         }
 
@@ -205,9 +207,49 @@ public class TckTestEngine implements TestEngine {
     }
 
     private static class MyListener implements TestExecutionListener {
+
+
+        public MyListener() {
+
+        }
+
+        @Override
+        public void testPlanExecutionStarted(TestPlan testPlan) {
+            //
+        }
+
+        @Override
+        public void testPlanExecutionFinished(TestPlan testPlan) {
+            //
+        }
+
+        @Override
+        public void dynamicTestRegistered(TestIdentifier testIdentifier) {
+            //
+        }
+
+        @Override
+        public void executionSkipped(TestIdentifier testIdentifier, String reason) {
+            //
+        }
+
+        @Override
+        public void executionStarted(TestIdentifier testIdentifier) {
+            //
+        }
+
+        @Override
+        public void reportingEntryPublished(TestIdentifier testIdentifier, ReportEntry entry) {
+            //
+        }
+
         @Override
         public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-            TestExecutionListener.super.executionFinished(testIdentifier, testExecutionResult);
+            // skip root
+            if (!testIdentifier.getParentId().isPresent()){
+                return;
+            }
+            System.out.println("Finish test:" + testIdentifier.getSource().get().toString() + " result " + testExecutionResult.toString());
         }
     }
 
