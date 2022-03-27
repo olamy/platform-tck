@@ -66,7 +66,7 @@ public abstract class BaseUrlClient {
     setup(null, properties);
   }
 
-  public Status run(String args[], PrintWriter out, PrintWriter err) {
+  public Status run(String[] args, PrintWriter out, PrintWriter err) {
     return Status.passed("200");
   }
 
@@ -440,7 +440,7 @@ public abstract class BaseUrlClient {
           "[BaseUrlClient] 'tshome' was not set in the " + " ts.jte.");
     }
 
-    logger.info("[BaseUrlClient] Test setup OK");
+    logger.info("[BaseUrlClient] Test setup OK using properties {}", p);
   }
 
   /**
@@ -473,7 +473,7 @@ public abstract class BaseUrlClient {
       if (_useSavedState && _state != null) {
         _testCase.getRequest().setState(_state);
       }
-      if (_redirect != false) {
+      if (_redirect) {
         logger.trace("##########Call setFollowRedirects");
         _testCase.getRequest().setFollowRedirects(_redirect);
       }
@@ -548,11 +548,10 @@ public abstract class BaseUrlClient {
       } else if (key.equals(STRATEGY)) {
         testCase.setStrategy(value);
       } else if (key.equals(GOLDENFILE)) {
-        StringBuffer sb = new StringBuffer(50);
-        sb.append(_tsHome).append(GOLDENFILEDIR);
-        sb.append(_generalURI).append(SL);
-        sb.append(value);
-        testCase.setGoldenFilePath(sb.toString());
+        String sb = _tsHome + GOLDENFILEDIR +
+                _generalURI + SL +
+                value;
+        testCase.setGoldenFilePath(sb);
       } else if (key.equals(CONTENT)) {
         req.setContent(value);
       } else if (key.equals(TEST_NAME)) {
@@ -597,7 +596,7 @@ public abstract class BaseUrlClient {
    */
 
   private String getTSRequest(String request) {
-    StringBuffer finReq = new StringBuffer(50);
+    StringBuilder finReq = new StringBuilder(50);
 
     finReq.append(GET).append(_contextRoot).append(SL).append(_generalURI);
     finReq.append(SL).append(request).append(HTTP10);
@@ -613,10 +612,7 @@ public abstract class BaseUrlClient {
   }
 
   private boolean isNullOrEmpty(String val) {
-    if (val == null || val.equals("")) {
-      return true;
-    }
-    return false;
+    return val == null || val.equals("");
   }
 
   public void logErr(String message) {

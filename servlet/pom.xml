@@ -113,6 +113,9 @@
             <include>**/web-fragment*.xml</include>
           </includes>
         </resource>
+        <resource>
+          <directory>src/main/resources</directory>
+        </resource>
       </resources>
       <plugins>
         <plugin>

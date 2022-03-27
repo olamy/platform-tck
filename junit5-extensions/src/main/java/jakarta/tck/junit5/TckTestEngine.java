@@ -171,7 +171,7 @@ public class TckTestEngine implements TestEngine {
         EngineExecutionListener engineExecutionListener = executionRequest.getEngineExecutionListener();
 
         //SummaryGeneratingListener listener = new SummaryGeneratingListener();
-
+        // TODO path configurable via system property
         Path reportDir = Paths.get("target/surefire-reports");
         if (!Files.exists(reportDir)) {
             try {
