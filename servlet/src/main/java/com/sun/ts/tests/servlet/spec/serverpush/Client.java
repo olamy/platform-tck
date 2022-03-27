@@ -81,9 +81,9 @@ public class Client extends AbstractUrlClient {
 
   private WebUtil.Response response = null;
 
-  private String authUsername = null;
+  private String authUsername = "javajoe";
 
-  private String authPassword = null;
+  private String authPassword = "javajoe";
 
   private CookieManager cm = new CookieManager();
 
@@ -136,7 +136,7 @@ public class Client extends AbstractUrlClient {
    */
   @Test
   public void serverPushTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
+    requestURI = "http://" + hostname + ":" + portnum  + getContextRoot()
         + "/TestServlet";
     Map<String, String> headers = new HashMap<>();
     headers.put("foo", "bar");
@@ -156,7 +156,7 @@ public class Client extends AbstractUrlClient {
   @Test
   public void getNullPushBuilderTest() throws Exception {
     try {
-      requestURI = "/" + getContextRoot() + "/TestServlet";
+      requestURI = getContextRoot() + "/TestServlet";
       TestUtil.logMsg("Sending request \"" + requestURI + "\"");
 
       response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
@@ -190,7 +190,7 @@ public class Client extends AbstractUrlClient {
    */
   @Test
   public void serverPushInitTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot() +
+    requestURI = "http://" + hostname + ":" + portnum + getContextRoot() +
          "/TestServlet2";
     Map<String, String> headers = new HashMap<>();
     headers.put("foo", "bar");
@@ -294,7 +294,7 @@ public class Client extends AbstractUrlClient {
   @Test
   public void serverPushSessionTest() throws Exception {
     try {
-      requestURI = "/" + getContextRoot() + "/TestServlet3?generateSession=true";
+      requestURI = getContextRoot() + "/TestServlet3?generateSession=true";
       TestUtil.logMsg("Sending request \"" + requestURI + "\"");
 
       response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
@@ -307,7 +307,7 @@ public class Client extends AbstractUrlClient {
         throw new Exception("serverPushSessionTest failed.");
       }
 
-      requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
+      requestURI = "http://" + hostname + ":" + portnum + getContextRoot()
           + "/TestServlet3;jsessionid=" + response.content.trim();
       TestUtil.logMsg("Sending request \"" + requestURI + "\"");
       List<HttpResponse<String>> responses = sendRequest(new HashMap<>(), null,
@@ -334,7 +334,7 @@ public class Client extends AbstractUrlClient {
    */
   @Test
   public void serverPushCookieTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot() +
+    requestURI = "http://" + hostname + ":" + portnum + getContextRoot() +
         "/TestServlet4";
     Map<String, String> headers = new HashMap<>();
     headers.put("foo", "bar");
@@ -383,7 +383,7 @@ public class Client extends AbstractUrlClient {
    */
   @Test
   public void serverPushSessionTest2() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
+    requestURI = "http://" + hostname + ":" + portnum + getContextRoot()
         + "/TestServlet5";
     Map<String, String> headers = new HashMap<>();
     CookieManager cm = new CookieManager();
@@ -393,7 +393,7 @@ public class Client extends AbstractUrlClient {
 
     try {
       List<HttpCookie> cookies = cm.getCookieStore().get(new URI(
-          "http://" + hostname + ":" + portnum + "/" + getContextRoot() + "/index.html"));
+          "http://" + hostname + ":" + portnum + getContextRoot() + "/index.html"));
       for (HttpCookie cookie : cookies) {
         if ("JSESSIONID".equals(cookie.getName())) {
           pass = true;
@@ -429,7 +429,7 @@ public class Client extends AbstractUrlClient {
    */
   @Test
   public void serverPushMiscTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
+    requestURI = "http://" + hostname + ":" + portnum + getContextRoot()
         + "/TestServlet6";
     Map<String, String> headers = new HashMap<>();
     headers.put("foo", "bar");
@@ -484,7 +484,7 @@ public class Client extends AbstractUrlClient {
    */
   @Test
   public void serverPushNegtiveTest() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + "/" + getContextRoot()
+    requestURI = "http://" + hostname + ":" + portnum + getContextRoot()
         + "/TestServlet7";
     Map<String, String> headers = new HashMap<>();
 

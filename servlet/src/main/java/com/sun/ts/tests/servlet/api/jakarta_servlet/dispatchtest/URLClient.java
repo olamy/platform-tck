@@ -21,10 +21,14 @@ package com.sun.ts.tests.servlet.api.jakarta_servlet.dispatchtest;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.net.URL;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -33,20 +37,33 @@ public class URLClient extends AbstractUrlClient {
     setServletName("DispatchTestServlet");
   }
 
+  @ArquillianResource
+  @OperateOnDeployment("servlet_js_dispatchtest_web1")
+  public URL url2;
+
+  @BeforeEach
+  public void setupDispatchCtx() throws Exception {
+    String ctxRoot = url2.getPath();
+    ctxRoot =  ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot;
+    System.setProperty(DispatchTestServlet.DISPATCH_TEST1_CTX_KEY, ctxRoot);
+  }
+
   /**
    * Deployment for the test
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest.war")
             .setWebXML(URLClient.class.getResource("servlet_js_dispatchtest_web.xml"));
   }
 
-  @Deployment(testable = false)
+  @Deployment(testable = false, name = "servlet_js_dispatchtest_web1")
   public static WebArchive getTestArchive1() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest1.war")
             .setWebXML(URLClient.class.getResource("servlet_js_dispatchtest1_web.xml"));
   }
+
+
 
 
   /*

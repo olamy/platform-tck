@@ -24,6 +24,7 @@ import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.request.HttpRequest;
 import com.sun.ts.tests.servlet.common.request.WebTestCase;
 import org.apache.commons.httpclient.HttpState;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +52,7 @@ public abstract class BaseUrlClient {
 
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  @ArquillianResource
+  @ArquillianResource @OperateOnDeployment("_DEFAULT_")
   public URL url;
 
   @BeforeEach
