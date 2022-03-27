@@ -5,13 +5,9 @@ import org.junit.jupiter.engine.config.CachingJupiterConfiguration;
 import org.junit.jupiter.engine.config.DefaultJupiterConfiguration;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor;
-import org.junit.jupiter.engine.discovery.predicates.IsTestClassWithTests;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.EngineDiscoveryRequest;
-import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
-import org.junit.platform.engine.Filter;
-import org.junit.platform.engine.FilterResult;
 import org.junit.platform.engine.SelectorResolutionResult;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestEngine;
@@ -22,10 +18,7 @@ import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.engine.discovery.MethodSelector;
 import org.junit.platform.engine.reporting.ReportEntry;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
-import org.junit.platform.engine.support.descriptor.ClassSource;
-import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import org.junit.platform.engine.support.descriptor.MethodSource;
-import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
 import org.junit.platform.launcher.EngineFilter;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryListener;
@@ -34,12 +27,13 @@ import org.junit.platform.launcher.LauncherSession;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
-import org.junit.platform.launcher.core.LauncherConfig;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.junit.platform.reporting.legacy.xml.LegacyXmlReportGeneratingListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -52,15 +46,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class TckTestEngine implements TestEngine {
 
-    private static final boolean NO_FILTERING_TESTS = Boolean.getBoolean("jakarta.tck.notfilter.tests");
+    private static final Logger LOGGER = LoggerFactory.getLogger(TckTestEngine.class);
 
     private static final String ENGINE_ID = "jakarta-tck-test-engine";
 
@@ -107,10 +99,7 @@ public class TckTestEngine implements TestEngine {
                     engine.addChild(tckDescriptor);
                 }
         );
-        System.out.println("---------------------");
-        System.out.println("TCK Tests:" + testClassesAndMethods.size());
-        System.out.println("---------------------");
-
+        LOGGER.info("TCK Tests:" + testClassesAndMethods.size());
 
 //        try (LauncherSession session = LauncherFactory.openSession()) {
 //            Launcher launcher = session.getLauncher();
@@ -184,6 +173,7 @@ public class TckTestEngine implements TestEngine {
         }
         PrintWriter printWriter = new PrintWriter(System.out, true);
         LegacyXmlReportGeneratingListener listener = new LegacyXmlReportGeneratingListener(reportDir, printWriter);
+        SummaryGeneratingListener summaryGeneratingListener = new SummaryGeneratingListener();
 
         try (LauncherSession session = LauncherFactory.openSession()) {
             Launcher launcher = session.getLauncher();
@@ -198,11 +188,15 @@ public class TckTestEngine implements TestEngine {
             TestPlan testPlan = launcher.discover(launcherDiscoveryRequest);
 
             //TestPlan testPlan = TestPlan.from((Collection<TestDescriptor>) engine.getChildren(), executionRequest.getConfigurationParameters());
-            launcher.execute(testPlan, new MyListener());
+            launcher.execute(testPlan, new MyListener(), summaryGeneratingListener);
 
         }
 
-//        TestExecutionSummary summary = listener.getSummary();
+        TestExecutionSummary summary = summaryGeneratingListener.getSummary();
+        LOGGER.info("Tests found: {} , Succeeded: {}, Failures: {}, Aborted: {}, Skipped: {}" ,
+                summary.getTestsFoundCount(), summary.getTestsSucceededCount(), summary.getTestsFailedCount(),
+                summary.getTestsAbortedCount(), summary.getTestsSkippedCount());
+
 //        System.out.println(summary);
     }
 
@@ -235,7 +229,16 @@ public class TckTestEngine implements TestEngine {
 
         @Override
         public void executionStarted(TestIdentifier testIdentifier) {
-            //
+            if(testIdentifier.isTest()) {
+                TestSource testSource = testIdentifier.getSource().get();
+                if(testSource instanceof MethodSource) {
+                    MethodSource methodSource = (MethodSource) testSource;
+                    LOGGER.info("Running Test:{}#{}",
+                            methodSource.getClassName(),
+                            methodSource.getMethodName());
+                }
+
+            }
         }
 
         @Override
@@ -249,7 +252,16 @@ public class TckTestEngine implements TestEngine {
             if (!testIdentifier.getParentId().isPresent()){
                 return;
             }
-            System.out.println("Finish test:" + testIdentifier.getSource().get().toString() + " result " + testExecutionResult.toString());
+            if (testIdentifier.isTest()) {
+                TestSource testSource = testIdentifier.getSource().get();
+                if(testSource instanceof MethodSource) {
+                    MethodSource methodSource = (MethodSource) testSource;
+                    LOGGER.info("Finish test:{}#{}, result: {}",
+                            methodSource.getClassName(),
+                            methodSource.getMethodName(),
+                            testExecutionResult.toString());
+                }
+            }
         }
     }
 
