@@ -20,10 +20,14 @@
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.scattributelistener;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
+import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -37,8 +41,12 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
+    JavaArchive javaArchive = ShrinkWrap.create(JavaArchive.class, "fragment-1.jar")
+            .addClasses(TestServlet1.class, RequestListener1.class)
+            .addAsResource(URLClient.class.getResource("servlet_plu_scattributelistener_web-fragment.xml"),
+                    "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
-            .setWebXML(URLClient.class.getResource("servlet_plu_scattributelistener_web.xml"));
+            .addAsLibraries(javaArchive);
   }
 
   /*
@@ -58,6 +66,7 @@ public class URLClient extends AbstractUrlClient {
    * verifies the result.
    *
    */
+  @Test
   public void addedTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "addedTest");
     invoke();
@@ -72,6 +81,7 @@ public class URLClient extends AbstractUrlClient {
    * detect the two actions and write a message out to a static log. Servlet
    * then reads the log and verifies the result.
    */
+  @Test
   public void removedTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "removedTest");
     invoke();
@@ -86,6 +96,7 @@ public class URLClient extends AbstractUrlClient {
    * detect the two actions and write a message to a static log. Servlet then
    * reads the log and verifies the result.
    */
+  @Test
   public void replacedTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "replacedTest");
     invoke();
