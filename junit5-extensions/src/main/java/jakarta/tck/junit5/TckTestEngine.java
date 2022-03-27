@@ -187,7 +187,7 @@ public class TckTestEngine implements TestEngine {
 
         try (LauncherSession session = LauncherFactory.openSession()) {
             Launcher launcher = session.getLauncher();
-            //launcher.registerTestExecutionListeners(listener);
+            launcher.registerTestExecutionListeners(listener);
 
             LauncherDiscoveryRequest launcherDiscoveryRequest = LauncherDiscoveryRequestBuilder.request()
                     .filters(EngineFilter.excludeEngines(ENGINE_ID, "junit-vintage"))
@@ -198,7 +198,7 @@ public class TckTestEngine implements TestEngine {
             TestPlan testPlan = launcher.discover(launcherDiscoveryRequest);
 
             //TestPlan testPlan = TestPlan.from((Collection<TestDescriptor>) engine.getChildren(), executionRequest.getConfigurationParameters());
-            launcher.execute(testPlan, listener, new MyListener());
+            launcher.execute(testPlan, new MyListener());
 
         }
 
