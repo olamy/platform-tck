@@ -1,6 +1,5 @@
 package com.sun.ts.tests.servlet.pluggability.common;
 
-import com.sun.ts.tests.servlet.pluggability.aordering.URLClient;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
