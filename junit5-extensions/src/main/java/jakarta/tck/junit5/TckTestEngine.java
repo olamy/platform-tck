@@ -179,6 +179,7 @@ public class TckTestEngine implements TestEngine {
             Launcher launcher = session.getLauncher();
             launcher.registerTestExecutionListeners(listener);
 
+            // here we don't want an infinite loop so ignore it self
             LauncherDiscoveryRequest launcherDiscoveryRequest = LauncherDiscoveryRequestBuilder.request()
                     .filters(EngineFilter.excludeEngines(ENGINE_ID, "junit-vintage"))
                     .selectors(
@@ -196,8 +197,6 @@ public class TckTestEngine implements TestEngine {
         LOGGER.info("Tests found: {} , Succeeded: {}, Failures: {}, Aborted: {}, Skipped: {}" ,
                 summary.getTestsFoundCount(), summary.getTestsSucceededCount(), summary.getTestsFailedCount(),
                 summary.getTestsAbortedCount(), summary.getTestsSkippedCount());
-
-//        System.out.println(summary);
     }
 
     private static class MyListener implements TestExecutionListener {
