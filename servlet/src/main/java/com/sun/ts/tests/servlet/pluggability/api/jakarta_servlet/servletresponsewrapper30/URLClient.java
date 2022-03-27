@@ -30,8 +30,6 @@ import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
-  private static final String CONTEXT_ROOT = "/";
-
   /**
    * Deployment for the test
    */
