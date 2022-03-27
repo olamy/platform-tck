@@ -59,6 +59,9 @@ public class Client extends AbstractUrlClient {
    * Deployment for the test
    */
   @Deployment(testable = false)
+  // TOFIX
+  // here http2 setup
+  // @TargetsContainer()
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
             .setWebXML(Client.class.getResource("servlet_spec_serverpush_web.xml"));

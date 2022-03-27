@@ -32,16 +32,33 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.part.TestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.HttpTCKServlet;
 import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
   private static final String CRLF = "\r\n";
 
-  // TOFIX
+  @BeforeEach
+  public void setupServletName() throws Exception {
+    setServletName("TestServlet");
+  }
 
-  String dir;
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .addClasses(TestServletWrapper.class, TestServlet.class, HttpTCKServlet.class, ServletTestUtil.class);
+  }
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -58,9 +75,8 @@ public class URLClient extends AbstractUrlClient {
    * From client, send multi-part form without file Verify that the data is
    * received correctly Verify all relevant API works correctly
    */
+  @Test
   public void getPartTest() throws Exception {
-    dir = _tsHome
-        + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
     String testname = "getPartTest";
     Boolean passed = true;
     String EXPECTED_RESPONSE = "getParameter(\"xyz\"): 1234567abcdefg"
@@ -69,9 +85,6 @@ public class URLClient extends AbstractUrlClient {
 
     StringBuilder test_log = new StringBuilder();
 
-    InputStream is = null;
-    OutputStream os = null;
-    Socket sock;
 
     byte[] data;
     StringBuilder header = new StringBuilder();
@@ -81,25 +94,17 @@ public class URLClient extends AbstractUrlClient {
     URL url = null;
 
     try {
-      url = getURL("http", _hostname, _port, requestUrl);
-      System.out.println(url.toExternalForm());
+      url = getURL("http", _hostname, _port, requestUrl.substring(1));
+      logger.debug("url: {}", url.toExternalForm());
     } catch (MalformedURLException ex) {
       passed = false;
       throw new Exception("EXception getting URL " + requestUrl + " with host "
           + _hostname + " at port " + _port, ex);
     }
 
-    try {
-      sock = new Socket(_hostname, _port);
-    } catch (IOException ex) {
-      passed = false;
-      throw new Exception("EXception getting Socket " + " with host " + _hostname
-          + " at port " + _port, ex);
-    }
 
-    try {
+    try (ByteArrayOutputStream ba = new ByteArrayOutputStream()) {
       // First compose the post request data
-      ByteArrayOutputStream ba = new ByteArrayOutputStream();
 
       addFile(ba, "xyz", null, "1234567abcdefg");
       ba.write("\r\n--AaB03x--\r\n".getBytes());
@@ -114,16 +119,16 @@ public class URLClient extends AbstractUrlClient {
       header.append("Connection: close\r\n");
       header.append("Content-Type: multipart/form-data; boundary=AaB03x\r\n");
       header.append("Content-Length: " + data.length + "\r\n\r\n");
-      System.out.println("Header:" + header);
+      logger.debug("Header: {}", header);
     } catch (IOException ex) {
       passed = false;
       throw new Exception("Exception creating data", ex);
     }
 
-    try {
-      os = sock.getOutputStream();
-      is = sock.getInputStream();
-      BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+    try (Socket sock = new Socket(_hostname, _port);
+         InputStream is = sock.getInputStream();
+         OutputStream os = sock.getOutputStream();
+         BufferedReader bis = new BufferedReader(new InputStreamReader(is))) {
 
       os.write(header.toString().getBytes());
       os.write(data);
@@ -144,7 +149,7 @@ public class URLClient extends AbstractUrlClient {
       passed = false;
     }
 
-    System.out.print(test_log.toString());
+    logger.debug("test_log: {}", test_log);
     if (!passed) {
       throw new Exception("Test failed due to incorrect response");
     }
@@ -159,18 +164,13 @@ public class URLClient extends AbstractUrlClient {
    * From client, send a non-multi-part form data request with a form data
    * Verify getPart(String name) throw ServletException
    */
+  @Test
   public void getPartTest1() throws Exception {
-    dir = _tsHome
-        + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
     String testname = "getPartTest1";
     Boolean passed = true;
     String EXPECTED_RESPONSE = "Expected ServletException thrown";
 
     StringBuilder test_log = new StringBuilder();
-
-    InputStream is = null;
-    OutputStream os = null;
-    Socket sock;
 
     byte[] data;
     StringBuilder header = new StringBuilder();
@@ -180,20 +180,12 @@ public class URLClient extends AbstractUrlClient {
     URL url = null;
 
     try {
-      url = getURL("http", _hostname, _port, requestUrl);
-      System.out.println(url.toExternalForm());
+      url = getURL("http", _hostname, _port, requestUrl.substring(1));
+      logger.debug("url: {}", url.toExternalForm());
     } catch (MalformedURLException ex) {
       passed = false;
       throw new Exception("EXception getting URL " + requestUrl + " with host "
           + _hostname + " at port " + _port, ex);
-    }
-
-    try {
-      sock = new Socket(_hostname, _port);
-    } catch (IOException ex) {
-      passed = false;
-      throw new Exception("EXception getting Socket " + " with host " + _hostname
-          + " at port " + _port, ex);
     }
 
     try {
@@ -202,7 +194,7 @@ public class URLClient extends AbstractUrlClient {
 
       addFile(ba, "xyz", null, "1234567abcdefg");
       ba.write("\r\n--AaB03x--\r\n".getBytes());
-      System.out.println("Content: " + ba.toString());
+      logger.debug("Content: {}", ba);
 
       data = ba.toByteArray();
 
@@ -214,16 +206,16 @@ public class URLClient extends AbstractUrlClient {
       header.append("Connection: close\r\n");
       header.append("Content-Type:  text/plain; boundary=AaB03x\r\n");
       header.append("Content-Length: " + data.length + "\r\n\r\n");
-      System.out.println("Header:" + header);
+      logger.debug("Header: {}", header);
     } catch (IOException ex) {
       passed = false;
       throw new Exception("Exception creating data", ex);
     }
 
-    try {
-      os = sock.getOutputStream();
-      is = sock.getInputStream();
-      BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+    try (Socket sock = new Socket(_hostname, _port);
+         InputStream is = sock.getInputStream();
+         OutputStream os = sock.getOutputStream();
+         BufferedReader bis = new BufferedReader(new InputStreamReader(is))) {
 
       os.write(header.toString().getBytes());
       os.write(data);
@@ -244,7 +236,7 @@ public class URLClient extends AbstractUrlClient {
       passed = false;
     }
 
-    System.out.print(test_log.toString());
+    logger.debug("test_log: {}", test_log);
     if (!passed) {
       throw new Exception("Test failed due to incorrect response");
     }
@@ -259,18 +251,13 @@ public class URLClient extends AbstractUrlClient {
    * From client, send a non-multi-part form data request with a few form data
    * Verify getParts() throw ServletException
    */
+  @Test
   public void getPartsTest() throws Exception {
-    dir = _tsHome
-        + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
     String testname = "getPartsTest";
     Boolean passed = true;
     String EXPECTED_RESPONSE = "Expected ServletException thrown";
 
     StringBuilder test_log = new StringBuilder();
-
-    InputStream is = null;
-    OutputStream os = null;
-    Socket sock;
 
     byte[] data;
     StringBuilder header = new StringBuilder();
@@ -279,21 +266,14 @@ public class URLClient extends AbstractUrlClient {
         + testname + " HTTP/1.1";
     URL url;
     try {
-      url = getURL("http", _hostname, _port, requestUrl);
-      System.out.println(url.toExternalForm());
+      url = getURL("http", _hostname, _port, requestUrl.substring(1));
+      logger.debug("url: {}", url.toExternalForm());
     } catch (MalformedURLException ex) {
       passed = false;
       throw new Exception("EXception getting URL " + requestUrl + " with host "
           + _hostname + " at port " + _port, ex);
     }
 
-    try {
-      sock = new Socket(_hostname, _port);
-    } catch (IOException ex) {
-      passed = false;
-      throw new Exception("EXception getting Socket " + " with host " + _hostname
-          + " at port " + _port, ex);
-    }
 
     try {
       // First compose the post request data
@@ -306,7 +286,7 @@ public class URLClient extends AbstractUrlClient {
       addFile(ba, "xyz", null, "1234567abcdefg");
       ba.write("\r\n--AaB03x--\r\n".getBytes());
 
-      System.out.println("Content: " + ba.toString());
+      logger.debug("Content: {}", ba);
 
       data = ba.toByteArray();
 
@@ -318,16 +298,16 @@ public class URLClient extends AbstractUrlClient {
       header.append("Connection: close\r\n");
       header.append("Content-Type:  text/plain; boundary=AaB03x\r\n");
       header.append("Content-Length: " + data.length + "\r\n\r\n");
-      System.out.println("Header:" + header);
+      logger.debug("Header: {}", header);
     } catch (IOException ex) {
       passed = false;
       throw new Exception("Exception creating data", ex);
     }
 
-    try {
-      os = sock.getOutputStream();
-      is = sock.getInputStream();
-      BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+    try (Socket sock = new Socket(_hostname, _port);
+         InputStream is = sock.getInputStream();
+         OutputStream os = sock.getOutputStream();
+         BufferedReader bis = new BufferedReader(new InputStreamReader(is))) {
 
       os.write(header.toString().getBytes());
       os.write(data);
@@ -348,7 +328,7 @@ public class URLClient extends AbstractUrlClient {
       passed = false;
     }
 
-    System.out.print(test_log.toString());
+    logger.debug("test_log: {}", test_log);
     if (!passed) {
       throw new Exception("Test failed due to incorrect response");
     }
@@ -366,9 +346,8 @@ public class URLClient extends AbstractUrlClient {
    * Verify that the data is received correctly Verify all relevant API works
    * correctly
    */
+  @Test
   public void getPartsTest1() throws Exception {
-    dir = _tsHome
-        + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
     String testname = "getPartsTest1";
 
     Boolean passed = true;
@@ -379,10 +358,6 @@ public class URLClient extends AbstractUrlClient {
 
     StringBuilder test_log = new StringBuilder();
 
-    InputStream is = null;
-    OutputStream os = null;
-    Socket sock;
-
     byte[] data;
     StringBuilder header = new StringBuilder();
 
@@ -391,38 +366,31 @@ public class URLClient extends AbstractUrlClient {
     URL url;
 
     try {
-      url = getURL("http", _hostname, _port, requestUrl);
-      System.out.println(url.toExternalForm());
+      url = getURL("http", _hostname, _port, requestUrl.substring(1));
+      logger.debug("url: {}", url.toExternalForm());
     } catch (MalformedURLException ex) {
       passed = false;
       throw new Exception("EXception getting URL " + requestUrl + " with host "
           + _hostname + " at port " + _port, ex);
     }
 
-    try {
-      sock = new Socket(_hostname, _port);
-    } catch (IOException ex) {
-      passed = false;
-      throw new Exception("EXception getting Socket " + " with host " + _hostname
-          + " at port " + _port, ex);
-    }
 
     try {
       // First compose the post request data
       ByteArrayOutputStream ba = new ByteArrayOutputStream();
 
       addFile(ba, "myFile", "test.txt", null);
-      System.out.println("first file:" + ba.toString());
+      logger.debug("first file: {}", ba);
       ba.write("\r\n".getBytes());
       addFile(ba, "myFile2", "test2.txt", null);
       ba.write("\r\n".getBytes());
-      System.out.println("second file:" + ba.toString());
+      logger.debug("second file: {}", ba);
       addFile(ba, "xyz", null, "1234567abcdefg");
-      System.out.println("third:" + ba.toString());
+      logger.debug("third: {}", ba);
       ba.write("\r\n--AaB03x--\r\n".getBytes());
 
       data = ba.toByteArray();
-      System.out.println("Data:" + data.toString());
+      logger.debug("Data: {}", data);
 
       // Compose the post request header
       header.append("POST ").append(url.toExternalForm().replace("http://", "")
@@ -432,20 +400,20 @@ public class URLClient extends AbstractUrlClient {
       header.append("Connection: close\r\n");
       header.append("Content-Type: multipart/form-data; boundary=AaB03x\r\n");
       header.append("Content-Length: " + data.length + "\r\n\r\n");
-      System.out.println("Header:" + header);
+      logger.debug("Header: {}", header);
     } catch (IOException ex) {
       passed = false;
       throw new Exception("Exception creating data", ex);
     }
 
-    try {
-      os = sock.getOutputStream();
-      is = sock.getInputStream();
-      BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+    try (Socket sock = new Socket(_hostname, _port);
+         InputStream is = sock.getInputStream();
+         OutputStream os = sock.getOutputStream();
+         BufferedReader bis = new BufferedReader(new InputStreamReader(is))){
 
       os.write(header.toString().getBytes());
       os.write(data);
-      System.out.println("Data sent:" + data.toString());
+      logger.debug("Data sent: {}", data);
 
       String line = null;
       while ((line = bis.readLine()) != null) {
@@ -462,7 +430,7 @@ public class URLClient extends AbstractUrlClient {
       passed = false;
     }
 
-    System.out.print(test_log.toString());
+    logger.debug("test_log: {}", test_log);
     if (!passed) {
       throw new Exception("Test failed due to incorrect response");
     }
@@ -477,9 +445,8 @@ public class URLClient extends AbstractUrlClient {
    * From client, send multi-part form with several parts, with and without file
    * Verify that Part.getHeader(String) works correctly
    */
+  @Test
   public void getHeaderTest() throws Exception {
-    dir = _tsHome
-        + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
     String testname = "getHeaderTest";
 
     Boolean passed = true;
@@ -492,10 +459,6 @@ public class URLClient extends AbstractUrlClient {
 
     StringBuilder test_log = new StringBuilder();
 
-    InputStream is = null;
-    OutputStream os = null;
-    Socket sock;
-
     byte[] data;
     StringBuilder header = new StringBuilder();
 
@@ -504,25 +467,17 @@ public class URLClient extends AbstractUrlClient {
     URL url;
 
     try {
-      url = getURL("http", _hostname, _port, requestUrl);
-      System.out.println(url.toExternalForm());
+      url = getURL("http", _hostname, _port, requestUrl.substring(1));
+      logger.debug("url: {}", url.toExternalForm());
     } catch (MalformedURLException ex) {
       passed = false;
       throw new Exception("EXception getting URL " + requestUrl + " with host "
           + _hostname + " at port " + _port, ex);
     }
 
-    try {
-      sock = new Socket(_hostname, _port);
-    } catch (IOException ex) {
-      passed = false;
-      throw new Exception("EXception getting Socket " + " with host " + _hostname
-          + " at port " + _port, ex);
-    }
 
-    try {
+    try (ByteArrayOutputStream ba = new ByteArrayOutputStream()){
       // First compose the post request data
-      ByteArrayOutputStream ba = new ByteArrayOutputStream();
 
       addFile(ba, "myFile", "test.txt", null);
       ba.write("\r\n".getBytes());
@@ -541,20 +496,20 @@ public class URLClient extends AbstractUrlClient {
       header.append("Connection: close\r\n");
       header.append("Content-Type: multipart/form-data; boundary=AaB03x\r\n");
       header.append("Content-Length: " + data.length + "\r\n\r\n");
-      System.out.println("Header:" + header);
+      logger.debug("Header: {}", header);
     } catch (IOException ex) {
       passed = false;
       throw new Exception("Exception creating data", ex);
     }
 
-    try {
-      os = sock.getOutputStream();
-      is = sock.getInputStream();
-      BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+    try (Socket sock = new Socket(_hostname, _port);
+         InputStream is = sock.getInputStream();
+         OutputStream os = sock.getOutputStream();
+         BufferedReader bis = new BufferedReader(new InputStreamReader(is))) {
 
       os.write(header.toString().getBytes());
       os.write(data);
-      System.out.println("Data sent:" + data.toString());
+      logger.debug("Data sent: {}", data.toString());
 
       String line = null;
       while ((line = bis.readLine()) != null) {
@@ -571,7 +526,7 @@ public class URLClient extends AbstractUrlClient {
       passed = false;
     }
 
-    System.out.print(test_log.toString());
+    logger.debug("test_log: {}", test_log.toString());
     if (!passed) {
       throw new Exception("Test failed due to incorrect response");
     }
@@ -586,9 +541,8 @@ public class URLClient extends AbstractUrlClient {
    * From client, send multi-part form with several parts, with and without file
    * Verify that Part.getHeaders(String) works correctly
    */
+  @Test
   public void getHeadersTest() throws Exception {
-    dir = _tsHome
-        + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
     String testname = "getHeadersTest";
 
     Boolean passed = true;
@@ -601,10 +555,6 @@ public class URLClient extends AbstractUrlClient {
 
     StringBuilder test_log = new StringBuilder();
 
-    InputStream is = null;
-    OutputStream os = null;
-    Socket sock;
-
     byte[] data;
     StringBuilder header = new StringBuilder();
 
@@ -613,25 +563,16 @@ public class URLClient extends AbstractUrlClient {
     URL url = null;
 
     try {
-      url = getURL("http", _hostname, _port, requestUrl);
-      System.out.println(url.toExternalForm());
+      url = getURL("http", _hostname, _port, requestUrl.substring(1));
+      logger.debug("url: {}", url.toExternalForm());
     } catch (MalformedURLException ex) {
       passed = false;
       throw new Exception("EXception getting URL " + requestUrl + " with host "
           + _hostname + " at port " + _port, ex);
     }
 
-    try {
-      sock = new Socket(_hostname, _port);
-    } catch (IOException ex) {
-      passed = false;
-      throw new Exception("EXception getting Socket " + " with host " + _hostname
-          + " at port " + _port, ex);
-    }
-
-    try {
+    try (ByteArrayOutputStream ba = new ByteArrayOutputStream()) {
       // First compose the post request data
-      ByteArrayOutputStream ba = new ByteArrayOutputStream();
 
       addFile(ba, "myFile", "test.txt", null);
       ba.write("\r\n".getBytes());
@@ -650,20 +591,20 @@ public class URLClient extends AbstractUrlClient {
       header.append("Connection: close\r\n");
       header.append("Content-Type: multipart/form-data; boundary=AaB03x\r\n");
       header.append("Content-Length: " + data.length + "\r\n\r\n");
-      System.out.println("Header:" + header);
+      logger.debug("Header: {}", header);
     } catch (IOException ex) {
       passed = false;
       throw new Exception("Exception creating data", ex);
     }
 
-    try {
-      os = sock.getOutputStream();
-      is = sock.getInputStream();
-      BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+    try (Socket sock = new Socket(_hostname, _port);
+         InputStream is = sock.getInputStream();
+         OutputStream os = sock.getOutputStream();
+         BufferedReader bis = new BufferedReader(new InputStreamReader(is))) {
 
       os.write(header.toString().getBytes());
       os.write(data);
-      System.out.println("Data sent:" + data.toString());
+      logger.debug("Data sent: {}", data.toString());
 
       String line = null;
       while ((line = bis.readLine()) != null) {
@@ -680,7 +621,7 @@ public class URLClient extends AbstractUrlClient {
       passed = false;
     }
 
-    System.out.print(test_log.toString());
+    logger.debug("test_log: {}", test_log);
     if (!passed) {
       throw new Exception("Test failed due to incorrect response");
     }
@@ -695,9 +636,8 @@ public class URLClient extends AbstractUrlClient {
    * From client, send multi-part form with several parts, with and without file
    * Verify that Part.getInputStream() works correctly
    */
+  @Test
   public void getInputStreamTest() throws Exception {
-    dir = _tsHome
-        + "/src/com/sun/ts/tests/servlet/api/jakarta_servlet_http/part/";
     String testname = "getInputStreamTest";
 
     Boolean passed = true;
@@ -705,10 +645,6 @@ public class URLClient extends AbstractUrlClient {
         + "|First line." + "|Second line." + "|Last line.";
 
     StringBuilder test_log = new StringBuilder();
-
-    InputStream is = null;
-    OutputStream os = null;
-    Socket sock;
 
     byte[] data;
     StringBuilder header = new StringBuilder();
@@ -718,25 +654,17 @@ public class URLClient extends AbstractUrlClient {
     URL url = null;
 
     try {
-      url = getURL("http", _hostname, _port, requestUrl);
-      System.out.println(url.toExternalForm());
+      url = getURL("http", _hostname, _port, requestUrl.substring(1));
+      logger.debug("url: {}", url.toExternalForm());
     } catch (MalformedURLException ex) {
       passed = false;
       throw new Exception("EXception getting URL " + requestUrl + " with host "
           + _hostname + " at port " + _port, ex);
     }
 
-    try {
-      sock = new Socket(_hostname, _port);
-    } catch (IOException ex) {
-      passed = false;
-      throw new Exception("EXception getting Socket " + " with host " + _hostname
-          + " at port " + _port, ex);
-    }
 
-    try {
+    try (ByteArrayOutputStream ba = new ByteArrayOutputStream()) {
       // First compose the post request data
-      ByteArrayOutputStream ba = new ByteArrayOutputStream();
 
       addFile(ba, "myFile", "test.txt", null);
       ba.write("\r\n--AaB03x--\r\n".getBytes());
@@ -751,20 +679,20 @@ public class URLClient extends AbstractUrlClient {
       header.append("Connection: close\r\n");
       header.append("Content-Type: multipart/form-data; boundary=AaB03x\r\n");
       header.append("Content-Length: " + data.length + "\r\n\r\n");
-      System.out.println("Header:" + header);
+      logger.debug("Header: {}", header);
     } catch (IOException ex) {
       passed = false;
       throw new Exception("Exception creating data", ex);
     }
 
-    try {
-      os = sock.getOutputStream();
-      is = sock.getInputStream();
-      BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+    try (Socket sock = new Socket(_hostname, _port);
+         InputStream is = sock.getInputStream();
+         OutputStream os = sock.getOutputStream();
+         BufferedReader bis = new BufferedReader(new InputStreamReader(is))) {
 
       os.write(header.toString().getBytes());
       os.write(data);
-      System.out.println("Data sent:" + data.toString());
+      logger.debug("Data sent: {}", data.toString());
 
       String line = null;
       while ((line = bis.readLine()) != null) {
@@ -781,7 +709,7 @@ public class URLClient extends AbstractUrlClient {
       passed = false;
     }
 
-    System.out.print(test_log.toString());
+    logger.debug("test_log: {}", test_log);
     if (!passed) {
       throw new Exception("Test failed due to incorrect response");
     }
@@ -797,7 +725,8 @@ public class URLClient extends AbstractUrlClient {
           + "\"; filename=\"" + filename + "\"\r\n").getBytes());
       ba.write("Content-Type: text/plain\r\n\r\n".getBytes());
       // Write content of the file
-      byte[] file1Bytes = Files.readAllBytes(Paths.get(dir, filename));
+      URL url = com.sun.ts.tests.servlet.api.jakarta_servlet_http.part.URLClient.class.getResource(filename);
+      byte[] file1Bytes = url.openStream().readAllBytes();;
       ba.write(file1Bytes, 0, file1Bytes.length);
     } else {
       // Write header
