@@ -47,7 +47,7 @@ public class URLClient extends HttpResponseClient {
             .addAsResource(URLClient.class.getResource("servlet_pluh_HSRespWrapper_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
 
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_pluh_HSRespWrapper_web.war")
             .addAsLibraries(javaArchive1);
   }
 

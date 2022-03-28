@@ -45,7 +45,7 @@ public class URLClient extends HttpRequestClient {
             .addClasses(TestServlet1.class, RequestListener1.class)
             .addAsResource(URLClient.class.getResource("servlet_pluh_httpservletrequest30_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_pluh_httpservletrequest30_web.war")
             .addAsLibraries(javaArchive);
   }
 
