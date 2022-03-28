@@ -16,10 +16,10 @@
 
 package com.sun.ts.tests.servlet.spec.security.annotations;
 
-import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.BaseUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
@@ -42,8 +42,6 @@ public class Client extends BaseUrlClient {
 
   private static final String UNAUTH_PASSWORD = "authpassword";
 
-  private static final String CLASS_TRACE_HEADER = "[Client]: ";
-
   private static final String USER_PRINCIPAL_SEARCH = "The user principal is: "; // (+username)
 
   private static final String REMOTE_USER_SEARCH = "getRemoteUser(): "; // (+username)
@@ -61,24 +59,6 @@ public class Client extends BaseUrlClient {
 
   private String pagePartial = null;
 
-  private String pageServletBase = "/servlet_sec_annotations_web";
-
-  private String pageServletDeny = pageServletBase + "/ServletDenyAll";
-
-  private String pageServletSec = pageServletBase + "/ServletSecTest";
-
-  private String pageServletGuest = pageServletBase + "/GuestPageTest";
-
-  private String pageServletUnprotected = pageServletBase + "/UnProtectedTest";
-
-  private String pageTransport = pageServletBase + "/TransportServlet";
-
-  private String pagePartialDD = pageServletBase + "/PartialDDTest";
-
-  private String hostname = null;
-
-  private int portnum = 0;
-
   private String username = null;
 
   private String password = null;
@@ -86,6 +66,8 @@ public class Client extends BaseUrlClient {
   private String unauthUsername = null;
 
   private String unauthPassword = null;
+
+  private String realm = null;
 
   private WebUtil.Response response = null;
 
@@ -95,8 +77,10 @@ public class Client extends BaseUrlClient {
    * Deployment for the test
    */
   @Deployment(testable = false)
+  @TargetsContainer("https")
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_sec_annotations_web.war")
+            .addClasses(DenyAllServlet.class, GuestPageTestServlet.class, ServletSecTestServlet.class, UnProtectedTestServlet.class)
             .setWebXML(Client.class.getResource("servlet_sec_annotations_web.xml"));
   }
 
@@ -109,13 +93,34 @@ public class Client extends BaseUrlClient {
   public void setup(String[] args, Properties p) throws Exception {
     super.setup(args, p);
 
+    // user=j2ee
+    // password=j2ee
+    // authuser=javajoe
+    // authpassword=javajoe
+
+    //portnum = Integer.parseInt(p.getProperty("securedWebServicePort"));
+
+    // TOFIX configurable
     try {
-      hostname = p.getProperty("webServerHost");
-      portnum = Integer.parseInt(p.getProperty("securedWebServicePort"));
-      username = p.getProperty(USERNAME);
-      password = p.getProperty(PASSWORD);
-      unauthUsername = p.getProperty(UNAUTH_USERNAME);
-      unauthPassword = p.getProperty(UNAUTH_PASSWORD);
+      username = "j2ee";//  p.getProperty(USERNAME);
+      password = "j2ee"; //p.getProperty(PASSWORD);
+      unauthUsername = "javajoe"; //p.getProperty(UNAUTH_USERNAME);
+      unauthPassword = "javajoe";  // p.getProperty(UNAUTH_PASSWORD);
+      realm = "default"; // p.getProperty(BASIC_AUTH_REALM)
+
+      String pageServletBase = getContextRoot();//"/servlet_sec_annotations_web";
+
+      String pageServletDeny = pageServletBase + "/ServletDenyAll";
+
+      String pageServletSec = pageServletBase + "/ServletSecTest";
+
+      String pageServletGuest = pageServletBase + "/GuestPageTest";
+
+      String pageServletUnprotected = pageServletBase + "/UnProtectedTest";
+
+      String pageTransport = pageServletBase + "/TransportServlet";
+
+      String pagePartialDD = pageServletBase + "/PartialDDTest";
 
       pageSec = pageServletSec;
       pageDeny = pageServletDeny;
@@ -190,7 +195,7 @@ public class Client extends BaseUrlClient {
   @Test
   public void test2() throws Exception {
 
-    StringBuffer sb = new StringBuffer(100);
+    StringBuilder sb = new StringBuilder(100);
     sb.append(USER_PRINCIPAL_SEARCH).append(unauthUsername);
 
     // attempt to doPost as "javajoe" should be allowed
@@ -200,6 +205,7 @@ public class Client extends BaseUrlClient {
     TEST_PROPS.setProperty(REQUEST, getRequestLine("POST", pageGuest));
     TEST_PROPS.setProperty(BASIC_AUTH_USER, unauthUsername); // "javajoe"
     TEST_PROPS.setProperty(BASIC_AUTH_PASSWD, unauthPassword); // "javajoe"
+    TEST_PROPS.setProperty(BASIC_AUTH_REALM, realm); // default
     TEST_PROPS.setProperty(STATUS_CODE, UNAUTHORIZED);
     try {
       invoke();
@@ -501,8 +507,8 @@ public class Client extends BaseUrlClient {
    * @param message
    *          - the message to log
    */
-  private static void trace(String message) {
-    TestUtil.logMsg(CLASS_TRACE_HEADER + message);
+  private void trace(String message) {
+    logger.debug("[Client]: {}", message);
   }
 
 }

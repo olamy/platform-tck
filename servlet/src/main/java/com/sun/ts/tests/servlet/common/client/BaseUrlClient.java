@@ -364,7 +364,7 @@ public abstract class BaseUrlClient {
   /**
    * Follow redirect.
    */
-  protected String FOLLOW_REDIRECT = "follow_redirect";
+  protected static final String FOLLOW_REDIRECT = "follow_redirect";
 
   protected boolean _redirect = false;
 
@@ -532,62 +532,85 @@ public abstract class BaseUrlClient {
       key = (String) e.nextElement();
       value = TEST_PROPS.getProperty(key);
 
-      if (key.equals(STATUS_CODE)) {
-        testCase.setExpectedStatusCode(value);
-      } else if (key.equals(IGNORE_STATUS_CODE)) {
-        testCase.setExpectedStatusCode("-1");
-      } else if (key.equals(REASON_PHRASE)) {
-        testCase.setExpectedReasonPhrase(value);
-      } else if (key.equals(EXPECTED_HEADERS)) {
-        testCase.addExpectedHeader(value);
-      } else if (key.equals(UNEXPECTED_HEADERS)) {
-        testCase.addUnexpectedHeader(value);
-      } else if (key.equals(SEARCH_STRING)) {
-        testCase.setResponseSearchString(value);
-      } else if (key.equals(SEARCH_STRING_IGNORE_CASE)) {
-        testCase.setResponseSearchStringIgnoreCase(value);
-      } else if (key.equals(STRATEGY)) {
-        testCase.setStrategy(value);
-      } else if (key.equals(GOLDENFILE)) {
-        String sb = _tsHome + GOLDENFILEDIR +
-                _generalURI + SL +
-                value;
-        testCase.setGoldenFilePath(sb);
-      } else if (key.equals(CONTENT)) {
-        req.setContent(value);
-      } else if (key.equals(TEST_NAME)) {
-        // testName = TEST_PROPS.getProperty(key);
-      } else if (key.equals(RESPONSE_MATCH)) {
-        // setResponseMatch(TEST_PROPS.getProperty(key));
-      } else if (key.equals(REQUEST_HEADERS)) {
-        req.addRequestHeader(TEST_PROPS.getProperty(key));
-      } else if (key.equals(EXPECT_RESPONSE_BODY)) {
-        // FIXME
-        // setExpectResponseBody(false);
-      } else if (key.equals(IGNORE_BODY)) {
-        // FIXME
-        // setIgnoreResponseBody(true);
-        testCase.setGoldenFilePath(null);
-      } else if (key.equals(UNEXPECTED_RESPONSE_MATCH)) {
-        testCase.setUnexpectedResponseSearchString(value);
-      } else if (key.equals(UNORDERED_SEARCH_STRING)) {
-        testCase.setUnorderedSearchString(value);
-      } else if (key.equals(USE_SAVED_STATE)) {
-        _useSavedState = true;
-      } else if (key.equals(SAVE_STATE)) {
-        _saveState = true;
-      } else if (key.equals(FOLLOW_REDIRECT)) {
-        logger.debug("##########Found redirect Property");
-        _redirect = true;
-      } else if (key.equals(BASIC_AUTH_USER) || key.equals(BASIC_AUTH_PASSWD)
-          || key.equals(BASIC_AUTH_REALM)) {
-
-        String user = TEST_PROPS.getProperty(BASIC_AUTH_USER);
-        String password = TEST_PROPS.getProperty(BASIC_AUTH_PASSWD);
-        String realm = TEST_PROPS.getProperty(BASIC_AUTH_REALM);
-        req.setAuthenticationCredentials(user, password,
-            HttpRequest.BASIC_AUTHENTICATION, realm);
+      switch (key) {
+        case STATUS_CODE:
+          testCase.setExpectedStatusCode(value);
+          break;
+        case IGNORE_STATUS_CODE:
+          testCase.setExpectedStatusCode("-1");
+          break;
+        case REASON_PHRASE:
+          testCase.setExpectedReasonPhrase(value);
+          break;
+        case EXPECTED_HEADERS:
+          testCase.addExpectedHeader(value);
+          break;
+        case UNEXPECTED_HEADERS:
+          testCase.addUnexpectedHeader(value);
+          break;
+        case SEARCH_STRING:
+          testCase.setResponseSearchString(value);
+          break;
+        case SEARCH_STRING_IGNORE_CASE:
+          testCase.setResponseSearchStringIgnoreCase(value);
+          break;
+        case STRATEGY:
+          testCase.setStrategy(value);
+          break;
+        case GOLDENFILE:
+          String sb = _tsHome + GOLDENFILEDIR + _generalURI + SL + value;
+          testCase.setGoldenFilePath(sb);
+          break;
+        case CONTENT:
+          req.setContent(value);
+          break;
+        case TEST_NAME:
+          // testName = TEST_PROPS.getProperty(key);
+          break;
+        case RESPONSE_MATCH:
+          // setResponseMatch(TEST_PROPS.getProperty(key));
+          break;
+        case REQUEST_HEADERS:
+          req.addRequestHeader(TEST_PROPS.getProperty(key));
+          break;
+        case EXPECT_RESPONSE_BODY:
+          // FIXME
+          // setExpectResponseBody(false);
+          break;
+        case IGNORE_BODY:
+          // FIXME
+          // setIgnoreResponseBody(true);
+          testCase.setGoldenFilePath(null);
+          break;
+        case UNEXPECTED_RESPONSE_MATCH:
+          testCase.setUnexpectedResponseSearchString(value);
+          break;
+        case UNORDERED_SEARCH_STRING:
+          testCase.setUnorderedSearchString(value);
+          break;
+        case USE_SAVED_STATE:
+          _useSavedState = true;
+          break;
+        case SAVE_STATE:
+          _saveState = true;
+          break;
+        case FOLLOW_REDIRECT:
+          logger.debug("##########Found redirect Property");
+          _redirect = true;
+          break;
+        case BASIC_AUTH_USER:
+        case BASIC_AUTH_PASSWD:
+        case BASIC_AUTH_REALM:
+          String user = TEST_PROPS.getProperty(BASIC_AUTH_USER);
+          String password = TEST_PROPS.getProperty(BASIC_AUTH_PASSWD);
+          String realm = TEST_PROPS.getProperty(BASIC_AUTH_REALM);
+          req.setAuthenticationCredentials(user, password,
+              HttpRequest.BASIC_AUTHENTICATION, realm);
+          break;
+        default:
+          // no op
       }
+
     }
   }
 
