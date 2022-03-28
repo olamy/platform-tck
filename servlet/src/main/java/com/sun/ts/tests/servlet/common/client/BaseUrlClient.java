@@ -487,8 +487,9 @@ public abstract class BaseUrlClient {
       if (t != null) {
         logger.warn("Root cause of Failure: " + t.getMessage(), t);
       }
+      logger.error("Test: '" + _testName + "' failed.", tfe);
       throw new RuntimeException("[BaseUrlClient] " + _testName
-          + " failed!  Check output for cause of failure.", tfe);
+          + " failed! Check output for cause of failure.", tfe);
     } finally {
       _useSavedState = false;
       _saveState = false;
@@ -533,6 +534,10 @@ public abstract class BaseUrlClient {
       value = TEST_PROPS.getProperty(key);
 
       switch (key) {
+        case TEST_NAME:
+          testCase.setName(value);
+          _testName = value;
+          break;
         case STATUS_CODE:
           testCase.setExpectedStatusCode(value);
           break;
@@ -563,9 +568,6 @@ public abstract class BaseUrlClient {
           break;
         case CONTENT:
           req.setContent(value);
-          break;
-        case TEST_NAME:
-          // testName = TEST_PROPS.getProperty(key);
           break;
         case RESPONSE_MATCH:
           // setResponseMatch(TEST_PROPS.getProperty(key));
