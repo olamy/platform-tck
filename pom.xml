@@ -136,7 +136,6 @@
         <module>xa</module>
         <module>docker</module>
         <module>junit5-extensions</module>
-        <module>webartifacts/servlet</module>
     </modules>
 
     <dependencyManagement>
