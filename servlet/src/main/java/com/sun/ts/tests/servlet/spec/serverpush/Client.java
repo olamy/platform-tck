@@ -121,8 +121,7 @@ public class Client extends AbstractUrlClient {
       throw new Exception("setup failed:");
     }
 
-    System.out.println(hostname);
-    System.out.println(portnum);
+    logger.debug("hostname:port:{}:{}", hostname, portnum);
     logMsg("setup ok");
   }
 

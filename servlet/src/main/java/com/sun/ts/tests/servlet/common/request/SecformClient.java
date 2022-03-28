@@ -1963,9 +1963,6 @@ public class SecformClient {
    */
   private static void send(PrintWriter out, String s) {
     out.print(s + "\r\n");
-    // if( debugOutputRequests ) {
-    // System.out.println( "REQUEST: " + s );
-    // }
   }
 
   /**

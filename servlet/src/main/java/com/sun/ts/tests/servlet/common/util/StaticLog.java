@@ -65,14 +65,13 @@ public final class StaticLog {
   private static List<String> al = new ArrayList<>();
 
   public static void clear() {
-    // System.out.println("clearing log");
     al.clear();
     if (!al.isEmpty()) {
       // we'll try one more time
       al.clear();
       if (!al.isEmpty()) {
         System.out.println(
-            "ERROR: The StaticLog could not" + " be clear after 2 attempts");
+            "ERROR: The StaticLog could not be clear after 2 attempts");
       }
     } else {
       // System.out.println("log is clear");

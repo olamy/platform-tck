@@ -358,7 +358,6 @@ public class ServletTestUtil {
     int i = 0;
     if (cookie != null) {
       while ((!found) && (i < cookie.length)) {
-        // System.out.println("cookie["+i+"]="+cookie[i].getName());
         if (cookie[i].getName().equals(name)) {
           found = true;
         } else {
