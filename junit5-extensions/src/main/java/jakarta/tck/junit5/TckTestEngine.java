@@ -255,10 +255,11 @@ public class TckTestEngine implements TestEngine {
                 TestSource testSource = testIdentifier.getSource().get();
                 if(testSource instanceof MethodSource) {
                     MethodSource methodSource = (MethodSource) testSource;
-                    LOGGER.info("Finish test:{}#{}, result: {}",
+                    LOGGER.info("Finish test:{}#{}, status: {}, throwable: {}",
                             methodSource.getClassName(),
                             methodSource.getMethodName(),
-                            testExecutionResult.toString());
+                            testExecutionResult.getStatus().toString(),
+                            testExecutionResult.getThrowable().isPresent()?testExecutionResult.getThrowable():"");
                 }
             }
         }
