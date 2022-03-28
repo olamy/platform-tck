@@ -41,28 +41,18 @@ public class URLClient extends AbstractUrlClient {
   @OperateOnDeployment("servlet_js_dispatchtest_web1")
   public URL url2;
 
-  @BeforeEach
-  public void setupDispatchCtx() throws Exception {
-    String ctxRoot = url2.getPath();
-    ctxRoot =  ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot;
-    System.setProperty(DispatchTestServlet.DISPATCH_TEST1_CTX_KEY, ctxRoot);
-    ctxRoot =  url.getPath();
-    ctxRoot =  ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot;
-    System.setProperty(DispatchTestServlet.DISPATCH_TEST_CTX_KEY, ctxRoot);
-  }
-
   /**
    * Deployment for the test
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest_web.war")
             .setWebXML(URLClient.class.getResource("servlet_js_dispatchtest_web.xml"));
   }
 
   @Deployment(testable = false, name = "servlet_js_dispatchtest_web1")
   public static WebArchive getTestArchive1() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest1.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest1_web.war")
             .setWebXML(URLClient.class.getResource("servlet_js_dispatchtest1_web.xml"));
   }
 
