@@ -63,7 +63,7 @@ public class Client extends AbstractUrlClient {
   // here http2 setup
   // @TargetsContainer()
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_spec_serverpush_web.war")
             .setWebXML(Client.class.getResource("servlet_spec_serverpush_web.xml"));
   }  
   

@@ -44,7 +44,7 @@ public class Client extends BaseUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_sec_metadatacomplete_web.war")
             .setWebXML(Client.class.getResource("servlet_sec_metadatacomplete_web.xml"));
   }
 
