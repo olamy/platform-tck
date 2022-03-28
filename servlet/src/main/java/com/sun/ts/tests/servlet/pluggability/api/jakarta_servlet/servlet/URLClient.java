@@ -39,7 +39,7 @@ public class URLClient extends AbstractUrlClient {
             .addClasses(TestServlet1.class, RequestListener1.class)
             .addAsResource(URLClient.class.getResource("servlet_plu_servlet_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
-    return ShrinkWrap.create(WebArchive.class, "servlet_plu_sclistener_web.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_plu_servlet_web.war")
             .addAsLibraries(javaArchive);
   }
 
