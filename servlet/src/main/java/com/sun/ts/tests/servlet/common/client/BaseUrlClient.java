@@ -604,8 +604,7 @@ public abstract class BaseUrlClient {
           String user = TEST_PROPS.getProperty(BASIC_AUTH_USER);
           String password = TEST_PROPS.getProperty(BASIC_AUTH_PASSWD);
           String realm = TEST_PROPS.getProperty(BASIC_AUTH_REALM);
-          req.setAuthenticationCredentials(user, password,
-              HttpRequest.BASIC_AUTHENTICATION, realm);
+          req.setAuthenticationCredentials(user, password, HttpRequest.BASIC_AUTHENTICATION, realm);
           break;
         default:
           // no op

@@ -260,8 +260,7 @@ public class HttpRequest {
         password);
     AuthScope scope = new AuthScope(_host, _port, realm);
     getState().setCredentials(scope, cred);
-    LOGGER.trace("[HttpRequest] Added credentials for '" + username
-        + "' with password '" + password + "' in realm '" + realm + "'");
+    LOGGER.debug("Added credentials for '{}' with password '{}' in realm '{}'", username, password, realm);
 
     _authType = authType;
   }
@@ -280,8 +279,7 @@ public class HttpRequest {
    */
   public void addRequestHeader(String headerName, String headerValue) {
     _method.addRequestHeader(headerName, headerValue);
-    LOGGER.trace("[HttpRequest] Added request header: "
-        + _method.getRequestHeader(headerName).toExternalForm());
+    LOGGER.debug("Added request header: {}", _method.getRequestHeader(headerName).toExternalForm());
   }
 
   public void addRequestHeader(String header) {
@@ -310,8 +308,7 @@ public class HttpRequest {
    */
   public void setRequestHeader(String headerName, String headerValue) {
     _method.setRequestHeader(headerName, headerValue);
-    LOGGER.trace("[HttpRequest] Set request header: "
-        + _method.getRequestHeader(headerName).toExternalForm());
+    LOGGER.trace("Set request header: {}", _method.getRequestHeader(headerName).toExternalForm());
 
   }
 
@@ -375,14 +372,13 @@ public class HttpRequest {
 
       conn.open();
 
-      LOGGER.info("[HttpRequest] Dispatching request: '" + _requestLine
-          + "' to target server at '" + _host + ":" + _port + "'");
+      LOGGER.info("[HttpRequest] Dispatching request: '{}' to target server at '{}:{}'", _requestLine , _host, _port);
 
       addSupportHeaders();
       _headers = _method.getRequestHeaders();
 
-      LOGGER.trace(
-          "########## The real value set: " + _method.getFollowRedirects());
+      LOGGER.debug(
+          "########## The real value set: {}", _method.getFollowRedirects());
 
       client.getHostConfiguration().setHost(_host, _port, protocol);
 
@@ -409,14 +405,12 @@ public class HttpRequest {
 
       conn.open();
 
-      LOGGER.info("[HttpRequest] Dispatching request: '" + _requestLine
-          + "' to target server at '" + _host + ":" + _port + "'");
+      LOGGER.info("Dispatching request: '{}' to target server at '{}:{}'", _requestLine, _host, _port);
 
       addSupportHeaders();
       _headers = _method.getRequestHeaders();
 
-      LOGGER.trace(
-          "########## The real value set: " + _method.getFollowRedirects());
+      LOGGER.debug("########## The real value set: {}", _method.getFollowRedirects());
 
       _method.execute(getState(), conn);
 
@@ -437,19 +431,19 @@ public class HttpRequest {
   }
 
   public String toString() {
-    StringBuffer sb = new StringBuffer(255);
+    StringBuilder sb = new StringBuilder(255);
     sb.append("[REQUEST LINE] -> ").append(_requestLine).append('\n');
 
     if (_headers != null && _headers.length != 0) {
 
       for (Header _header : _headers) {
-        sb.append("       [REQUEST HEADER] -> ");
+        sb.append("[REQUEST HEADER] -> ");
         sb.append(_header.toExternalForm()).append('\n');
       }
     }
 
     if (_contentLength != 0) {
-      sb.append("       [REQUEST BODY LENGTH] -> ").append(_contentLength);
+      sb.append("[REQUEST BODY LENGTH] -> ").append(_contentLength);
       sb.append('\n');
     }
 
@@ -504,14 +498,13 @@ public class HttpRequest {
     // Authentication headers
     // NOTE: Possibly move logic to generic method
     switch (_authType) {
-    case NO_AUTHENTICATION:
-      break;
-    case BASIC_AUTHENTICATION:
-      setBasicAuthorizationHeader();
-      break;
-    case DIGEST_AUTHENTICATION:
-      throw new UnsupportedOperationException(
-          "Digest Authentication is not currently " + "supported");
+      case NO_AUTHENTICATION:
+        break;
+      case BASIC_AUTHENTICATION:
+        setBasicAuthorizationHeader();
+        break;
+      case DIGEST_AUTHENTICATION:
+        throw new UnsupportedOperationException("Digest Authentication is not currently " + "supported");
     }
 
     // A Host header will be added to each request to handle
@@ -548,8 +541,7 @@ public class HttpRequest {
    */
   private void setContentLengthHeader() {
     if (_contentLength > 0) {
-      _method.setRequestHeader("Content-Length",
-          Integer.toString(_contentLength));
+      _method.setRequestHeader("Content-Length", Integer.toString(_contentLength));
     }
   }
 

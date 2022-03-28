@@ -106,7 +106,7 @@ public class Client extends BaseUrlClient {
       password = "j2ee"; //p.getProperty(PASSWORD);
       unauthUsername = "javajoe"; //p.getProperty(UNAUTH_USERNAME);
       unauthPassword = "javajoe";  // p.getProperty(UNAUTH_PASSWORD);
-      realm = "default"; // p.getProperty(BASIC_AUTH_REALM)
+      realm = null; //"default"; // p.getProperty(BASIC_AUTH_REALM)
 
       String pageServletBase = getContextRoot();//"/servlet_sec_annotations_web";
 
@@ -205,7 +205,7 @@ public class Client extends BaseUrlClient {
     TEST_PROPS.setProperty(REQUEST, getRequestLine("POST", pageGuest));
     TEST_PROPS.setProperty(BASIC_AUTH_USER, unauthUsername); // "javajoe"
     TEST_PROPS.setProperty(BASIC_AUTH_PASSWD, unauthPassword); // "javajoe"
-    TEST_PROPS.setProperty(BASIC_AUTH_REALM, realm); // default
+    //TEST_PROPS.setProperty(BASIC_AUTH_REALM, realm); // default
     TEST_PROPS.setProperty(STATUS_CODE, UNAUTHORIZED);
     try {
       invoke();
