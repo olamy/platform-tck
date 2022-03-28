@@ -47,7 +47,7 @@ public class URLClient extends AbstractUrlClient {
             .addClasses(RequestListener7.class, TestServlet3.class)
             .addAsResource(CommonArchives.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_7.xml"),
                     "META-INF/web-fragment.xml");
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_spec_aordering4_web.war")
             .addAsLibraries(CommonArchives.getCommonWebFragmentArchives())
             .addAsLibraries(javaArchive6, javaArchive7)
             .setWebXML(URLClient.class.getResource("servlet_spec_aordering4_web.xml"));

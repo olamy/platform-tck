@@ -36,7 +36,7 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
 
-    WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_spec_aordering_web.war")
             .addClasses(TestServlet1.class, RequestListener.class)
             .addAsLibraries(CommonArchives.getCommonWebFragmentArchives())
             .addAsResource(URLClient.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_3.xml"),
@@ -46,7 +46,6 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_5.xml"),
                     "META-INF/web-fragment.xml")
             .setWebXML(URLClient.class.getResource("servlet_spec_aordering_web.xml"));
-    return webArchive;
   }
 
   /*

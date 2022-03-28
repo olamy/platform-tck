@@ -56,7 +56,7 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "client-test.war")
+    return ShrinkWrap.create(WebArchive.class, "part1.war")
             .addClasses(TestServletWrapper.class, TestServlet.class, HttpTCKServlet.class, ServletTestUtil.class);
   }
 
