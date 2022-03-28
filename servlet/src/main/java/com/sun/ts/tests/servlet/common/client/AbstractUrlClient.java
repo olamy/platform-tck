@@ -102,7 +102,7 @@ public abstract class AbstractUrlClient extends BaseUrlClient {
       sb.append(GET).append(_contextRoot).append(SL);
       sb.append(testValue).append(HTTP10);
     }
-    System.out.println("REQUEST LINE: " + sb.toString());
+    logger.debug("REQUEST LINE: {}", sb);
 
     HttpRequest req = new HttpRequest(sb.toString(), _hostname, _port);
     testCase.setRequest(req);
@@ -152,7 +152,7 @@ public abstract class AbstractUrlClient extends BaseUrlClient {
       sb.append(GET).append(_contextRoot).append(SL);
       sb.append(testValue).append(HTTP10);
     }
-    System.out.println("REQUEST LINE: " + sb.toString());
+    logger.debug("REQUEST LINE: {}", sb);
     HttpRequest req = new HttpRequest(sb.toString(), _hostname, _port);
     testCase.setRequest(req);
 

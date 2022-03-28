@@ -441,7 +441,7 @@ public abstract class BaseUrlClient {
           "[BaseUrlClient] 'tshome' was not set in the " + " ts.jte.");
     }
 
-    logger.info("[BaseUrlClient] Test setup OK using properties {}", p);
+    logger.debug("[BaseUrlClient] Test setup OK using properties {}", p);
   }
 
   /**
