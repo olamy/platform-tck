@@ -47,7 +47,7 @@ public class URLClient extends AbstractUrlClient {
 
   @Deployment(testable = false, name = "servlet_jsh_httpsession2x_web")
   public static WebArchive getTestArchive2() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpsession2x_web.war")
+    return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpsessionx2_web.war")
             .setWebXML(URLClient.class.getResource("servlet_jsh_httpsessionx2_web.xml"));
   }
 
