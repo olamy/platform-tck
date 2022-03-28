@@ -187,11 +187,6 @@ public abstract class BaseUrlClient {
   protected static final String REQUEST_HEADERS = "request_headers";
 
   /**
-   * Goldenfile property
-   */
-  protected static final String GOLDENFILE = "goldenfile";
-
-  /**
    * Search string property
    */
   protected static final String SEARCH_STRING = "search_string";
@@ -562,10 +557,6 @@ public abstract class BaseUrlClient {
         case STRATEGY:
           testCase.setStrategy(value);
           break;
-        case GOLDENFILE:
-          String sb = _tsHome + GOLDENFILEDIR + _generalURI + SL + value;
-          testCase.setGoldenFilePath(sb);
-          break;
         case CONTENT:
           req.setContent(value);
           break;
@@ -578,11 +569,6 @@ public abstract class BaseUrlClient {
         case EXPECT_RESPONSE_BODY:
           // FIXME
           // setExpectResponseBody(false);
-          break;
-        case IGNORE_BODY:
-          // FIXME
-          // setIgnoreResponseBody(true);
-          testCase.setGoldenFilePath(null);
           break;
         case UNEXPECTED_RESPONSE_MATCH:
           testCase.setUnexpectedResponseSearchString(value);

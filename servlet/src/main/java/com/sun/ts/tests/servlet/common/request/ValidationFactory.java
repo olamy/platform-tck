@@ -57,12 +57,12 @@ public class ValidationFactory {
   public static ValidationStrategy getInstance(String validator) {
     try {
       Object o = Thread.currentThread().getContextClassLoader()
-          .loadClass(validator).newInstance();
+          .loadClass(validator).getDeclaredConstructor().newInstance();
       if (o instanceof ValidationStrategy) {
         return (ValidationStrategy) o;
       }
     } catch (Throwable t) {
-      LOGGER.info("[ValidationFactory] Unable to obtain " + "ValidationStrategy instance: " + validator);
+      LOGGER.info("[ValidationFactory] Unable to obtain ValidationStrategy instance: {}", validator);
     }
     return null;
   }

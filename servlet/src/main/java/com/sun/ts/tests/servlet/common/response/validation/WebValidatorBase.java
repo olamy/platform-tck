@@ -38,9 +38,9 @@ import java.util.stream.Collectors;
 /**
  * Base abstract class for WebTestCase validation.
  */
-public abstract class WebValidatorBase implements ValidationStrategy {
+public class WebValidatorBase implements ValidationStrategy {
 
-  protected final Logger logger = LoggerFactory.getLogger(WebValidatorBase.class);
+  private static final Logger logger = LoggerFactory.getLogger(WebValidatorBase.class);
 
   /**
    * Used to detect 4xx class HTTP errors to allow fail fast situations when 4xx
@@ -485,7 +485,9 @@ public abstract class WebValidatorBase implements ValidationStrategy {
    * @throws IOException
    *           if an IO error occurs during validation
    */
-  protected abstract boolean checkGoldenfile() throws IOException;
+  protected boolean checkGoldenfile() throws IOException {
+    return true;
+  }
 
   /**
    * <code>checkReasonPhrase</code> will perform comparisons between the

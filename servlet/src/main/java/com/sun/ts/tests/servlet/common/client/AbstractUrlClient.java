@@ -155,13 +155,6 @@ public abstract class AbstractUrlClient extends BaseUrlClient {
     logger.debug("REQUEST LINE: {}", sb);
     HttpRequest req = new HttpRequest(sb.toString(), _hostname, _port);
     testCase.setRequest(req);
-
-    // set the goldenfile
-    sb = new StringBuffer(50);
-    sb.append(_tsHome).append(GOLDENFILEDIR);
-    sb.append(_generalURI).append(SL);
-    sb.append(testValue).append(GF_SUFFIX);
-    testCase.setGoldenFilePath(sb.toString());
   }
 
   /**
@@ -183,7 +176,7 @@ public abstract class AbstractUrlClient extends BaseUrlClient {
     String result = null;
     initInetAddress();
     if (_addrs.length != 0) {
-      StringBuffer sb = new StringBuffer(32);
+      StringBuilder sb = new StringBuilder(32);
       if (!returnAddresses) {
         // localhost might not show up if aliased
         sb.append("localhost,");

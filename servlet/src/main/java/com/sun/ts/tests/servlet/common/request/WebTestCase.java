@@ -20,16 +20,17 @@
 
 package com.sun.ts.tests.servlet.common.request;
 
-import com.sun.ts.tests.servlet.common.response.validation.TokenizedValidator;
+import com.sun.ts.tests.servlet.common.response.validation.WebValidatorBase;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
 
 /**
  * A TestCase implementation for HTTP-based testing. This allows the user to set
@@ -38,12 +39,11 @@ import java.util.logging.Logger;
  */
 public class WebTestCase implements TestCase {
 
-  private static final Logger LOGGER = Logger.getLogger(WebTestCase.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(WebTestCase.class.getName());
 
-  /**
-   * Tokenized response validation strategy
-   */
-  public static final String TOKENIZED_STRATEGY = TokenizedValidator.class.getName();
+  public static final String BASED_STRATEGY = WebValidatorBase.class.getName();
+
+
 
   /**
    * The request for this case.
@@ -78,11 +78,6 @@ public class WebTestCase implements TestCase {
    * Expected response reason phrase.
    */
   private String _reasonPhrase = null;
-
-  /**
-   * Path to goldenfile.
-   */
-  private String _goldenfilePath = null;
 
   /**
    * A List of strings that will be searched for in the response in the order
@@ -129,7 +124,7 @@ public class WebTestCase implements TestCase {
    * configured properties of the test case.
    */
   public WebTestCase() {
-    _strategy = ValidationFactory.getInstance(TOKENIZED_STRATEGY);
+    _strategy = ValidationFactory.getInstance(BASED_STRATEGY);
   }
 
   /*
@@ -205,16 +200,6 @@ public class WebTestCase implements TestCase {
       _expected = new HashMap<>();
     }
     addHeader(_expected, header);
-  }
-
-  /**
-   * Sets the path to the goldenfile the test case should use.
-   *
-   * @param gfPath
-   *          a fully qualified path including filename.
-   */
-  public void setGoldenFilePath(String gfPath) {
-    _goldenfilePath = gfPath;
   }
 
   /**
@@ -440,15 +425,6 @@ public class WebTestCase implements TestCase {
   }
 
   /**
-   * Returns the path to the goldenfile.
-   *
-   * @return path to the goldenfile
-   */
-  public String getGoldenfilePath() {
-    return _goldenfilePath;
-  }
-
-  /**
    * Returns the state for this particular test case.
    *
    * @return test state
@@ -502,9 +478,7 @@ public class WebTestCase implements TestCase {
     if (strat != null) {
       _strategy = strat;
     } else {
-      LOGGER.info("[WebTestCase][WARNING] An attempt was made to use a "
-          + "non-existing validator (" + validator + ")"
-          + ".  Falling back to the TokenizedValidator");
+      LOGGER.info("[WebTestCase][WARNING] An attempt was made to use a non-existing validator ({}) . Falling back to the TokenizedValidator", validator);
     }
   }
 
@@ -532,14 +506,14 @@ public class WebTestCase implements TestCase {
    *          <headername>:<value>
    */
   private void addHeader(Map<String,Header> map, String headerString) {
-    LOGGER.fine("[WebTestCase] addHeader utility method called: " + headerString);
+    LOGGER.debug("[WebTestCase] addHeader utility method called: {}", headerString);
     StringTokenizer st = new StringTokenizer(headerString, "|");
     while (st.hasMoreTokens()) {
       String head = st.nextToken();
       int colIdx = head.indexOf(':');
       String name = head.substring(0, colIdx).trim();
       String value = head.substring(colIdx + 1).trim();
-      LOGGER.fine("[WebTestCase] Adding test header: " + name + ", " + value);
+      LOGGER.debug("[WebTestCase] Adding test header: {}, {}", name, value);
       Header header = map.get(name);
       if (header != null) {
         map.put(name, createNewHeader(value, header));
