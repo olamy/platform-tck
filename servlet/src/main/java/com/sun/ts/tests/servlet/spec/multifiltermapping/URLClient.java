@@ -39,8 +39,12 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "servlet_spec_multifiltermapping_web.war")
-            .setWebXML(URLClient.class.getResource("servlet_spec_multifiltermapping_web.xml"));
+    WebArchive archive =
+            ShrinkWrap.create(WebArchive.class, "servlet_spec_multifiltermapping_web.war")
+                    .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("api/jakarta_servlet/filterrequestdispatcher/dummy.html"),
+                    "dummy.html")
+              .setWebXML(URLClient.class.getResource("servlet_spec_multifiltermapping_web.xml"));
+    return archive;
   }
 
   /*

@@ -136,6 +136,7 @@
         <module>xa</module>
         <module>docker</module>
         <module>junit5-extensions</module>
+        <module>webartifacts/servlet</module>
     </modules>
 
     <dependencyManagement>
@@ -420,6 +421,11 @@
                 <groupId>javatest</groupId>
                 <artifactId>javatest</artifactId>
                 <version>${javatest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>web-servlet</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
         </dependencies>
