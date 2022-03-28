@@ -20,8 +20,12 @@
 package com.sun.ts.tests.servlet.pluggability.fragment;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.pluggability.common.CommonArchives;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
+import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +42,25 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
+
+    JavaArchive javaArchive1 = ShrinkWrap.create(JavaArchive.class, "fragment-1.jar")
+            .addClasses(TestServlet1.class, TestServlet2.class)
+            .addAsResource(URLClient.class.getResource("servlet_spec_fragment_web-fragment.xml"),
+                    "META-INF/web-fragment.xml");
+    JavaArchive javaArchive2 = ShrinkWrap.create(JavaArchive.class, "fragment-2.jar")
+            .addClasses(TestServlet3.class, TestFilter1.class)
+            .addAsResource(URLClient.class.getResource("servlet_spec_fragment_web-fragment_1.xml"),
+                    "META-INF/web-fragment.xml");
+    JavaArchive javaArchive3 = ShrinkWrap.create(JavaArchive.class, "fragment-3.jar")
+            .addClasses(TestServlet4.class, TestFilter2.class)
+            .addAsResource(URLClient.class.getResource("servlet_spec_fragment_web-fragment_2.xml"),
+                    "META-INF/web-fragment.xml");
+    JavaArchive javaArchive4 = ShrinkWrap.create(JavaArchive.class, "fragment-4.jar")
+            .addClasses(TestServlet5.class, TestFilter3.class)
+            .addAsResource(URLClient.class.getResource("servlet_spec_fragment_web-fragment_3.xml"),
+                    "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "client-test.war")
+            .addAsLibraries(javaArchive1, javaArchive2, javaArchive3, javaArchive4)
             .setWebXML(URLClient.class.getResource("servlet_spec_fragment_web.xml"));
   }
 
