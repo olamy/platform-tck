@@ -401,6 +401,8 @@ public abstract class BaseUrlClient {
     properties.put(TSHOME, Paths.get("target/test-classes").toFile().getName());
     //  TOFIX configuration
     properties.setProperty("servlet_waittime", System.getProperty("servlet_waittime","10"));
+    properties.setProperty("servlet_async_wait", System.getProperty("servlet_async_wait","4"));
+
     setup(null, properties);
   }
 

@@ -19,7 +19,6 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.readlistener;
 
-import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -48,8 +47,8 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "servlet_jsh_readlistener_web.war")
-            .setWebXML(URLClient.class.getResource("servlet_jsh_readlistener_web.xml"));
+    return ShrinkWrap.create(WebArchive.class, "servlet_jsh_readlistener.war")
+            .addClasses(TestServlet.class, TestListener.class);
   }
 
 
@@ -75,7 +74,7 @@ public class URLClient extends AbstractUrlClient {
   public void nioInputTest() throws Exception {
     int sleepInSeconds = Integer
         .parseInt(_props.getProperty("servlet_async_wait").trim());
-    Boolean passed = true;
+    boolean passed = true;
 
     String EXPECTED_RESPONSE = "=onDataAvailable|=Hello|=onDataAvailable|=World"
         + "|=onAllDataRead";
@@ -84,18 +83,17 @@ public class URLClient extends AbstractUrlClient {
     BufferedWriter output = null;
 
     String requestUrl = getContextRoot() + "/" + getServletName();
-    URL url = null;
 
     try {
-      url = getURL("http", _hostname, _port, requestUrl);
+      URL url = getURL("http", _hostname, _port, requestUrl.substring(1));
 
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      TestUtil.logTrace("======= Connecting " + url.toExternalForm());
+      logger.debug("Connecting {}", url.toExternalForm());
       conn.setRequestProperty("Content-type", "text/plain; charset=utf-8");
       conn.setChunkedStreamingMode(5);
       conn.setRequestMethod("POST");
       conn.setDoOutput(true);
-      TestUtil.logTrace("======= Header " + conn.toString());
+      logger.debug(" Header {}", conn);
       conn.connect();
 
       try {
@@ -113,17 +111,16 @@ public class URLClient extends AbstractUrlClient {
           output.close();
         } catch (Exception ex) {
           passed = false;
-          TestUtil
-              .logErr("======= Exception sending message: " + ex.getMessage());
+          logger.error("======= Exception sending message: " + ex.getMessage(), ex);
         }
 
         input = new BufferedReader(
             new InputStreamReader(conn.getInputStream()));
-        String line = null;
-        StringBuffer message_received = new StringBuffer();
+        String line;
+        StringBuilder message_received = new StringBuilder();
 
         while ((line = input.readLine()) != null) {
-          TestUtil.logTrace("======= message received: " + line);
+          logger.debug("======= message received: {}", line);
           message_received.append(line);
         }
         passed = ServletTestUtil.compareString(EXPECTED_RESPONSE,
@@ -131,14 +128,14 @@ public class URLClient extends AbstractUrlClient {
 
       } catch (Exception ex) {
         passed = false;
-        TestUtil.logErr("Exception: " + ex.getMessage());
+        logger.error("Exception: " + ex.getMessage(), ex);
       } finally {
         try {
           if (input != null) {
             input.close();
           }
         } catch (Exception ex) {
-          TestUtil.logErr("Fail to close BufferedReader" + ex.getMessage());
+          logger.error("Fail to close BufferedReader" + ex.getMessage(), ex);
         }
 
         try {
@@ -146,12 +143,12 @@ public class URLClient extends AbstractUrlClient {
             output.close();
           }
         } catch (Exception ex) {
-          TestUtil.logErr("Fail to close BufferedWriter" + ex.getMessage());
+          logger.error("Fail to close BufferedWriter" + ex.getMessage(), ex);
         }
       }
     } catch (Exception ex3) {
       passed = false;
-      TestUtil.logErr("Test" + ex3.getMessage());
+      logger.error("Test" + ex3.getMessage(), ex3);
     }
 
     if (!passed) {
