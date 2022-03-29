@@ -39,11 +39,11 @@ public class URLClient extends AbstractUrlClient {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_aordering_web.war")
             .addClasses(TestServlet1.class, RequestListener.class)
             .addAsLibraries(CommonArchives.getCommonWebFragmentArchives())
-            .addAsResource(URLClient.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_3.xml"),
+            .addAsResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_3.xml",
                     "META-INF/web-fragment.xml")
-            .addAsResource(URLClient.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_4.xml"),
+            .addAsResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_4.xml",
                     "META-INF/web-fragment.xml")
-            .addAsResource(URLClient.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_5.xml"),
+            .addAsResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_5.xml",
                     "META-INF/web-fragment.xml")
             .setWebXML(URLClient.class.getResource("servlet_spec_aordering_web.xml"));
   }

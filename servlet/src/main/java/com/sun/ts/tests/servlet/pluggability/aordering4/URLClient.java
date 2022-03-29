@@ -41,11 +41,11 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     JavaArchive javaArchive6 = ShrinkWrap.create(JavaArchive.class, "fragment-6.jar")
             .addClasses(RequestListener6.class, TestServlet1.class)
-            .addAsResource(CommonArchives.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_6.xml"),
+            .addAsResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_6.xml",
                     "META-INF/web-fragment.xml");
     JavaArchive javaArchive7 = ShrinkWrap.create(JavaArchive.class, "fragment-7.jar")
             .addClasses(RequestListener7.class, TestServlet3.class)
-            .addAsResource(CommonArchives.class.getClassLoader().getResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_7.xml"),
+            .addAsResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_7.xml",
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_aordering4_web.war")
             .addAsLibraries(CommonArchives.getCommonWebFragmentArchives())
