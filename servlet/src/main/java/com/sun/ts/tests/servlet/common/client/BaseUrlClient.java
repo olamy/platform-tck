@@ -55,18 +55,6 @@ public abstract class BaseUrlClient {
   @ArquillianResource @OperateOnDeployment("_DEFAULT_")
   public URL url;
 
-  @BeforeEach
-  public void setup() throws Exception {
-    String ctxRoot = url.getPath();
-    setContextRoot(ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot);
-    Properties properties = new Properties();
-    properties.put(SERVLETHOSTPROP, url.getHost());
-    properties.put(SERVLETPORTPROP, Integer.toString(url.getPort()));
-    // TODO do we really need this??
-    properties.put(TSHOME, Files.createTempDirectory("tshome").toString());
-    setup(null, properties);
-  }
-
   public Status run(String[] args, PrintWriter out, PrintWriter err) {
     return Status.passed("200");
   }
@@ -400,6 +388,21 @@ public abstract class BaseUrlClient {
   public void setGoldenFileDir(String goldenDir) {
     GOLDENFILEDIR = goldenDir;
   }
+
+  @BeforeEach
+  public void setup() throws Exception {
+    String ctxRoot = url.getPath();
+    setContextRoot(ctxRoot.endsWith("/")?ctxRoot.substring(0, ctxRoot.length()-1):ctxRoot);
+    Properties properties = new Properties();
+    properties.put(SERVLETHOSTPROP, url.getHost());
+    properties.put(SERVLETPORTPROP, Integer.toString(url.getPort()));
+    // TODO do we really need this??
+    properties.put(TSHOME, Files.createTempDirectory("tshome").toString());
+    //  TOFIX configuration
+    properties.setProperty("servlet_waittime", System.getProperty("servlet_waittime","10"));
+    setup(null, properties);
+  }
+
 
   /**
    * <code>setup</code> is by the test harness to initialize the tests.

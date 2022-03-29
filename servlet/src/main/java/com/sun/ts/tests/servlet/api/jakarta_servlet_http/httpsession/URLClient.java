@@ -40,6 +40,8 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpsession_web.war")
+            .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("api/jakarta_servlet_http/httpsession/index.html"),
+                    "index.html")
             .setWebXML(URLClient.class.getResource("servlet_jsh_httpsession_web.xml"));
   }
 
@@ -158,6 +160,7 @@ public class URLClient extends AbstractUrlClient {
    */
   @Test
   public void expireHttpSessionTest() throws Exception {
+
     TEST_PROPS.setProperty(APITEST, "getSessionMax");
     TEST_PROPS.setProperty(SAVE_STATE, "true");
     invoke();
