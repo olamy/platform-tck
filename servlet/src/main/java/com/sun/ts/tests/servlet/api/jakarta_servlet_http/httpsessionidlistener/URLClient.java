@@ -42,6 +42,7 @@ public class URLClient extends HttpRequestClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpsessionidlistener_web.war")
+            .addClasses(TCKHttpSessionIDListener.class)
             .setWebXML(URLClient.class.getResource("servlet_jsh_httpsessionidlistener_web.xml"));
   }
 
