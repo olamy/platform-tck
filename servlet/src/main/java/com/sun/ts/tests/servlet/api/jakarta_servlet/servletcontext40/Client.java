@@ -22,8 +22,12 @@ package com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext40;
 
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.pluggability.common.CommonArchives;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener6;
+import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +44,11 @@ public class Client extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
+    JavaArchive javaArchive = ShrinkWrap.create(JavaArchive.class, "tldjar.jar")
+            .addAsResource(Client.class.getResource("listener.tld"), "META-INF/listener.tld");
     return ShrinkWrap.create(WebArchive.class, "servlet_js_servletcontext40_web.war")
+            .addAsLibraries(javaArchive)
+            .addAsWebResource("api/jakarta_servlet/servletcontext40/addJspFile.jsp", "addJspFile.jsp")
             .setWebXML(Client.class.getResource("servlet_js_servletcontext40_web.xml"));
   }
 

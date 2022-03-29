@@ -116,6 +116,7 @@
             <include>**/jakarta.servlet.ServletContainerInitializer</include>
             <include>**/web-fragment*.xml</include>
             <include>**/*.txt</include>
+            <include>**/*.tld</include>
           </includes>
         </resource>
         <resource>

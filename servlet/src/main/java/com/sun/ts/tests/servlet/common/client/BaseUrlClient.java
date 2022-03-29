@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -397,7 +398,7 @@ public abstract class BaseUrlClient {
     properties.put(SERVLETHOSTPROP, url.getHost());
     properties.put(SERVLETPORTPROP, Integer.toString(url.getPort()));
     // TODO do we really need this??
-    properties.put(TSHOME, Files.createTempDirectory("tshome").toString());
+    properties.put(TSHOME, Paths.get("target/test-classes").toFile().getName());
     //  TOFIX configuration
     properties.setProperty("servlet_waittime", System.getProperty("servlet_waittime","10"));
     setup(null, properties);
