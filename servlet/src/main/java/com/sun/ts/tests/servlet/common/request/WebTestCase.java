@@ -157,8 +157,7 @@ public class WebTestCase implements TestCase {
       _response = _request.execute();
     } catch (Throwable t) {
       String message = t.getMessage();
-      throw new Exception("[FATAL] Unexpected failure during "
-          + "test execution." + (message == null ? t.toString() : message), t);
+      throw new Exception("[FATAL] Unexpected failure during test execution." + (message == null ? t.toString() : message), t);
     }
 
     // Validate this test case instance

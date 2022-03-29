@@ -41,8 +41,7 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     WebArchive archive =
             ShrinkWrap.create(WebArchive.class, "servlet_spec_multifiltermapping_web.war")
-                    .addAsWebResource(Thread.currentThread().getContextClassLoader().getResource("api/jakarta_servlet/filterrequestdispatcher/dummy.html"),
-                    "dummy.html")
+                    .addAsWebResource("api/jakarta_servlet/filterrequestdispatcher/dummy.html", "dummy.html")
               .setWebXML(URLClient.class.getResource("servlet_spec_multifiltermapping_web.xml"));
     return archive;
   }

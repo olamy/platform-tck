@@ -38,9 +38,10 @@ public class URLClient extends AbstractUrlClient {
   /**
    * Deployment for the test
    */
-  @Deployment(testable = false)
+  @Deployment()
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_errorpage_web.war")
+            .addAsWebResource("spec/errorpage/HTMLErrorPage.html","HTMLErrorPage.html")
             .setWebXML(URLClient.class.getResource("servlet_spec_errorpage_web.xml"));
   }
 

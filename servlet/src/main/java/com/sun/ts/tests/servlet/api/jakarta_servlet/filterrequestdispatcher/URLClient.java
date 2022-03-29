@@ -28,6 +28,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.URL;
+import java.util.Arrays;
+
 public class URLClient extends AbstractUrlClient {
 
   @BeforeEach
@@ -40,8 +43,12 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "servlet_js_filterrequestdispatcher_web.war")
+    WebArchive webArchive =
+            ShrinkWrap.create(WebArchive.class, "servlet_js_filterrequestdispatcher_web.war")
             .setWebXML(URLClient.class.getResource("servlet_js_filterrequestdispatcher_web.xml"));
+    Arrays.asList("dummy.html","dummyJSP.jsp")
+            .forEach(s -> webArchive.addAsWebResource("api/jakarta_servlet/filterrequestdispatcher/"+ s, s));
+    return webArchive;
   }
 
   /*

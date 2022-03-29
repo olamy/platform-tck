@@ -26,6 +26,9 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 
+import java.net.URL;
+import java.util.Arrays;
+
 public class URLClient extends AbstractUrlClient {
 
   /**
@@ -33,10 +36,13 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "servlet_js_welcomefiles_web.war")
+    WebArchive webArchive =
+            ShrinkWrap.create(WebArchive.class, "servlet_js_welcomefiles_web.war")
             .setWebXML(URLClient.class.getResource("servlet_js_welcomefiles_web.xml"));
+    Arrays.asList("foo/index.html","foo/default.jsp","default.jsp", "foo/order.jsp", "index.html", "catalog/default.jsp")
+            .forEach(s -> webArchive.addAsWebResource("spec/welcomefiles/" +s, s));
+    return webArchive;
   }
-
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
