@@ -69,25 +69,6 @@ public class Client extends SecBasicClient {
    *
    */
 
-  /*
-   * @class.setup_props: webServerHost; webServerPort; user; password; authuser;
-   * authpassword; ts_home;
-   *
-   */
-  public void setup(String[] args, Properties p) throws Exception {
-    props = p;
-
-    // create newarguments to pass into superclass setup method.
-    String[] newargs = new String[2];
-
-    // "servlet" is the flag passed to superclass
-    String argExt = "servlet";
-    newargs[0] = argExt;
-    newargs[1] = argExt; // dummy argument
-
-    // Inform the super class to run servlet related tests
-    super.setup(newargs, p);
-  }
 
   /*
    * @testName: test1

@@ -92,7 +92,7 @@ public abstract class AbstractUrlClient extends BaseUrlClient {
     _testName = testValue;
 
     // set the request
-    StringBuffer sb = new StringBuffer(50);
+    StringBuilder sb = new StringBuilder(50);
     if ((_servlet != null)
             && (TEST_PROPS.getProperty(DONOTUSEServletName) == null)) {
       sb.append(GET).append(_contextRoot).append(SL);

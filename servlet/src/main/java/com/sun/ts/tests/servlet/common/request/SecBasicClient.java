@@ -19,10 +19,11 @@ package com.sun.ts.tests.servlet.common.request;
 
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.BaseUrlClient;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
-public class SecBasicClient extends BaseUrlClient {
+public abstract class SecBasicClient extends BaseUrlClient {
 
   // Constants:
   private static final String USERNAME = "user";
@@ -123,7 +124,7 @@ public class SecBasicClient extends BaseUrlClient {
    * @test_Strategy: 1. Send request to access jspSec.jsp 2. Receive
    * authentication request.
    */
-
+  @Test
   public void test1() throws Exception {
     logMessage(
         "Sending request to validate presence of www-authenticate header...");
@@ -153,7 +154,7 @@ public class SecBasicClient extends BaseUrlClient {
    * page (ensure principal is correct, and ensure that getRemoteUser() returns
    * the correct name)
    */
-
+  @Test
   public void test2() throws Exception {
     logMessage("Sending request with Authroization header...");
 
@@ -190,7 +191,7 @@ public class SecBasicClient extends BaseUrlClient {
    * @test_Strategy: 1. Re-send request with incorrect authentication. 2.
    * Receive authentication request.
    */
-
+  @Test
   public void test3() throws Exception {
     logMessage(
         "Sending an request for a protected resource with invalid username/password...");
@@ -224,7 +225,7 @@ public class SecBasicClient extends BaseUrlClient {
    * correct authentication, but incorrect authorization to access resource 4.
    * Receive error
    */
-
+  @Test
   public void test4() throws Exception {
 
     StringBuffer sb = new StringBuffer(100);
@@ -272,7 +273,7 @@ public class SecBasicClient extends BaseUrlClient {
    * indicate that at least one call to isUserInRole attempted by
    * unprotected.jsp returned true. 4. check that getRemoteUser() returns null.
    */
-
+  @Test
   public void test5() throws Exception {
     StringBuffer sb = new StringBuffer(100);
     sb.append(USER_PRINCIPAL_SEARCH).append("|");
@@ -315,6 +316,7 @@ public class SecBasicClient extends BaseUrlClient {
    * username and password 6. Receive redirect to resource 7. Request resource
    * 8. Receive resource (check isUserInRole for all known roles)
    */
+  @Test
   public void test6() throws Exception {
 
     StringBuffer sb = new StringBuffer(100);
@@ -355,6 +357,7 @@ public class SecBasicClient extends BaseUrlClient {
    * @test_Strategy: 1. send request with incorrect authentication to url +
    * "/j_security_check" 2. Receive authentication request.
    */
+  @Test
   public void test7() throws Exception {
     logMessage(
         "Sending an request for a protected resource with invalid username/password...");
