@@ -36,7 +36,7 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "defaultContextPath.war")
-            .setWebXML(URLClient.class.getResource("defaultContextPath.xml"));
+            .setWebXML(URLClient.class.getResource("servlet_spec_defaultcontextpath_web.xml"));
   }
 
   /*
