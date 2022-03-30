@@ -83,10 +83,20 @@ public abstract class SecBasicClient extends BaseUrlClient {
    *
    *
    */
-  // Note:Based on the input argument setup will intialize JSP or servlet pages
 
   public void setup(String[] args, Properties p) throws Exception {
     super.setup(args, p);
+
+      // TOFIX configurable
+//    user=j2ee
+//    password=j2ee
+//    authuser=javajoe
+//    authpassword=javajoe
+
+    p.setProperty(USERNAME, "j2ee");
+    p.setProperty(PASSWORD, "j2ee");
+    p.setProperty(UNAUTH_USERNAME, "javajoe");
+    p.setProperty(UNAUTH_PASSWORD, "javajoe");
 
     try {
       username = p.getProperty(USERNAME);
@@ -94,19 +104,13 @@ public abstract class SecBasicClient extends BaseUrlClient {
       unauthUsername = p.getProperty(UNAUTH_USERNAME);
       unauthPassword = p.getProperty(UNAUTH_PASSWORD);
 
-      if (args[0].equals("jsp")) {
-        pageSec = pageJspSec;
-        pageGuest = pageJspGuest;
-        pageUnprotected = pageJspUnprotected;
-        pageRoleReverse = pageJspRoleReverse;
 
-      } else {
-        pageSec = pageServletSec;
-        pageGuest = pageServletGuest;
-        pageUnprotected = pageServletUnprotected;
-        pageRoleReverse = pageServletRoleReverse;
+      pageSec = pageServletSec;
+      pageGuest = pageServletGuest;
+      pageUnprotected = pageServletUnprotected;
+      pageRoleReverse = pageServletRoleReverse;
 
-      }
+
     } catch (Exception e) {
       logErr("Error: got exception: ", e);
     }
