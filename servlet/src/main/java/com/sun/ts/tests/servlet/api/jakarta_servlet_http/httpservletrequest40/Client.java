@@ -51,6 +51,7 @@ public class Client extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpservletrequest40_web.war")
+            .addClasses(DispatchServlet.class)
             .setWebXML(Client.class.getResource("servlet_jsh_httpservletrequest40_web.xml"));
   }  
   
@@ -181,19 +182,18 @@ public class Client extends AbstractUrlClient {
   private void simpleTest(String testName, String request, String method,
       String expected) throws Exception {
     try {
-      TestUtil.logMsg("Sending request \"" + request + "\"");
+      logger.debug("Sending request {}", request);
 
       response = WebUtil.sendRequest(method, InetAddress.getByName(_hostname),
           _port, getRequest(request), null, null);
 
     } catch (Exception e) {
-      TestUtil.logErr("Caught exception: " + e.getMessage());
-      e.printStackTrace();
+      logger.error("Caught exception: " + e.getMessage(), e);
       throw new Exception(testName + " failed: ", e);
     }
 
-    TestUtil.logMsg("response.statusToken:" + response.statusToken);
-    TestUtil.logMsg("response.content:" + response.content);
+    logger.debug("response.statusToken: {}", response.statusToken);
+    logger.debug("response.content: {}", response.content);
 
     // Check that the page was found (no error).
     if (response.isError()) {
@@ -202,7 +202,7 @@ public class Client extends AbstractUrlClient {
     }
 
     if (response.content.indexOf(expected) < 0) {
-      TestUtil.logMsg("Expected: " + expected);
+      logger.info("Expected: {}", expected);
       throw new Exception(testName + " failed.");
     }
   }
@@ -216,17 +216,13 @@ public class Client extends AbstractUrlClient {
    */
   @Test
   public void TrailerTest() throws Exception {
-    URL url;
-    Socket socket = null;
-    OutputStream output;
     InputStream input;
 
-    try {
-      url = new URL("http://" + _hostname + ":" + _port + getContextRoot()
-          + "/TrailerTestServlet");
-      socket = new Socket(url.getHost(), url.getPort());
+    URL url = new URL("http://" + _hostname + ":" + _port + getContextRoot()
+            + "/TrailerTestServlet");
+    try (Socket socket = new Socket(url.getHost(), url.getPort());
+         OutputStream output = socket.getOutputStream()) {
       socket.setKeepAlive(true);
-      output = socket.getOutputStream();
 
       String path = url.getPath();
       StringBuffer outputBuffer = new StringBuffer();
@@ -259,29 +255,23 @@ public class Client extends AbstractUrlClient {
       String response = new String(bytes.toByteArray());
       TestUtil.logMsg(response);
       if (response.indexOf("isTrailerFieldsReady: true") < 0) {
-        TestUtil.logErr("isTrailerFieldsReady should be true");
+        logger.error("isTrailerFieldsReady should be true");
         throw new Exception("TrailerTest failed.");
       }
 
       if (response.toLowerCase().indexOf("mytrailer=foo") < 0) {
-        TestUtil.logErr("failed to get trailer field: mytrailer=foo");
+        logger.error("failed to get trailer field: mytrailer=foo");
         throw new Exception("TrailerTest failed.");
       }
 
       if (response.toLowerCase().indexOf("mytrailer2=bar") < 0) {
-        TestUtil.logErr("failed to get trailer field: mytrailer=foo");
+        logger.error("failed to get trailer field: mytrailer=foo");
         throw new Exception("TrailerTest failed.");
       }
     } catch (Exception e) {
       TestUtil.logErr("Caught exception: " + e.getMessage());
       e.printStackTrace();
       throw new Exception("TrailerTest failed: ", e);
-    } finally {
-      try {
-        if (socket != null)
-          socket.close();
-      } catch (Exception e) {
-      }
     }
   }
 
