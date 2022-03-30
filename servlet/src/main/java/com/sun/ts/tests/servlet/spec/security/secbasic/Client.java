@@ -50,6 +50,8 @@ public class Client extends SecBasicClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_sec_secbasic_web.war")
+            .addClasses(GuestPageAnnoTestServlet.class, RoleReverseAnnoTestServlet.class,
+                    ServletSecAnnoTestServlet.class, UnProtectedAnnoTestServlet.class)
             .setWebXML(Client.class.getResource("servlet_sec_secbasic_web.xml"));
   }
 
