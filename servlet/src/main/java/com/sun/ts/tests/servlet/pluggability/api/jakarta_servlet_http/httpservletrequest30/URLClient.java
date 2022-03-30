@@ -70,7 +70,7 @@ public class URLClient extends HttpRequestClient {
   @Test
   public void loginTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
-        "GET " + getContextRoot() + "/" + getContextRoot() + " HTTP/1.1");
+        "GET " + getContextRoot() + "/LoginTestServlet HTTP/1.1");
     TEST_PROPS.setProperty(UNEXPECTED_RESPONSE_MATCH, "Test FAILED");
     TEST_PROPS.setProperty(STATUS_CODE, OK);
     TEST_PROPS.setProperty(SEARCH_STRING, "Test PASSED");
