@@ -402,6 +402,7 @@ public abstract class BaseUrlClient {
     //  TOFIX configuration
     properties.setProperty("servlet_waittime", System.getProperty("servlet_waittime","10"));
     properties.setProperty("servlet_async_wait", System.getProperty("servlet_async_wait","4"));
+    properties.setProperty("logical.hostname.servlet", System.getProperty("logical.hostname.servlet","server"));
 
     setup(null, properties);
   }
