@@ -55,16 +55,6 @@ public class Client extends SecBasicClient {
             .setWebXML(Client.class.getResource("servlet_sec_secbasic_web.xml"));
   }
 
-  // Shared test variables:
-  private Properties props = null;
-
-  
-  // Note: To share the commoncode between servlet and JSP,
-  // the commoncode is kept under
-  // <TS_HOME>/src/com/sun/ts/tests/common/jspservletsec/secbasicClient.java
-  // This subclass(Client.java) is used to flag the superclass
-  // to run servlet related secbasic tests
-  //
 
   /*
    * setup() passes "servlet" as the argument to its parent class setup()

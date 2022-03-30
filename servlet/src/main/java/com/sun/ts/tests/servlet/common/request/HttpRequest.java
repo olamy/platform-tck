@@ -260,6 +260,7 @@ public class HttpRequest {
         password);
     AuthScope scope = new AuthScope(_host, _port, realm);
     getState().setCredentials(scope, cred);
+
     LOGGER.debug("Added credentials for '{}' with password '{}' in realm '{}'", username, password, realm);
 
     _authType = authType;
@@ -528,8 +529,7 @@ public class HttpRequest {
         .getCredentials(new AuthScope(_host, _port, null));
     String authString = null;
     if (cred != null) {
-      authString = "Basic " +Base64.getEncoder().encode((
-              cred.getUserName() + ":" + cred.getPassword()).getBytes()).toString();
+      authString = "Basic " + new String(Base64.getEncoder().encode((cred.getUserName() + ":" + cred.getPassword()).getBytes()));
     } else {
       LOGGER.trace("[HttpRequest] NULL CREDENTIALS");
     }
