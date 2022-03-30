@@ -19,9 +19,6 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -42,6 +39,7 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_servletcontext_web.war")
+            .addClasses(TestServlet.class, GetNamedDispatcherTestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_servletcontext_web.xml"));
   }
 
