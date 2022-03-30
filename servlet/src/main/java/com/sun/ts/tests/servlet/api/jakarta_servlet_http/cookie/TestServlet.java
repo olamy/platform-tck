@@ -836,4 +836,35 @@ public class TestServlet extends HttpTCKServlet {
     }
     ServletTestUtil.printResult(pw, passed);
   }
+
+  public void setPathTest(HttpServletRequest request,
+                          HttpServletResponse response) throws ServletException, IOException {
+
+    PrintWriter pw = response.getWriter();
+    boolean passed = false;
+    Cookie testCookie = new Cookie("name1", "value1");
+    testCookie.setVersion(0);
+
+    String expectedResult = "/servlet_jsh_cookie_web";
+    testCookie.setPath(expectedResult);
+    String result = testCookie.getPath();
+
+    response.addCookie(testCookie);
+    if (result != null) {
+      if (!result.equals(expectedResult)) {
+        passed = false;
+        pw.println(
+                "setPath(" + expectedResult + ") returned an incorrect result");
+        pw.println("Expected = " + expectedResult + " ");
+        pw.println("Actual = |" + result + "| ");
+      } else {
+        passed = true;
+      }
+    } else {
+      passed = false;
+      pw.println("getPath() returned a null result ");
+    }
+    ServletTestUtil.printResult(pw, passed);
+  }
+
 }

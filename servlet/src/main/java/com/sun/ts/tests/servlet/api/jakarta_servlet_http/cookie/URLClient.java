@@ -193,7 +193,7 @@ public class URLClient extends AbstractUrlClient {
   public void getNameTest() throws Exception {
     // version 0
     TEST_PROPS.setProperty(REQUEST_HEADERS, "Cookie: name1=value1; Domain="
-        + _hostname + "; Path=/servlet_jsh_cookie_web");
+        + _hostname + "; Path=" + getContextRoot());
     TEST_PROPS.setProperty(APITEST, "getNameTest");
     invoke();
     // version 1
@@ -333,14 +333,13 @@ public class URLClient extends AbstractUrlClient {
       dateHeader = response.getResponseHeader("testDate").toString();
       CookieSpec spec = CookiePolicy.getCookieSpec(CookiePolicy.NETSCAPE);
 
-      logTrace("Found " + response.getResponseHeaders("Set-Cookie").length
-              + " set-cookie entry");
+      logger.debug("Found {} set-cookie entry",  response.getResponseHeaders("Set-Cookie").length);
 
       boolean foundcookie = false;
       Header[] CookiesHeader = response.getResponseHeaders("Set-Cookie");
       int i = 0;
       while (i < CookiesHeader.length) {
-        logTrace("Checking set-cookiei " + i + ":" + CookiesHeader[i]);
+        logger.debug("Checking set-cookiei {}:{}",i ,CookiesHeader[i]);
         Cookie[] cookies = spec.parse(".eng.com", _port, getServletName(),
             false, CookiesHeader[i]);
         index = findCookie(cookies, "name1");
@@ -431,15 +430,17 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tests method and returns result to client
    */
+  /*
+   * @testName: setPathTest
+   *
+   * @assertion_ids: Servlet:JAVADOC:444
+   *
+   * @test_Strategy: Servlet tests method and returns result to client
+   */
   @Test
   public void setPathTest() throws Exception {
-    TEST_PROPS.setProperty(APITEST, "setPathVer0Test");
-    TEST_PROPS.setProperty(EXPECTED_HEADERS,
-        "Set-Cookie:Path=/"+ getContextRoot());
-    invoke();
-    TEST_PROPS.setProperty(APITEST, "setPathVer1Test");
-    TEST_PROPS.setProperty(EXPECTED_HEADERS,
-        "Set-Cookie:name1=value1##Version=1##Path=/" + getContextRoot());
+    TEST_PROPS.setProperty(APITEST, "setPathTest");
+    TEST_PROPS.setProperty(EXPECTED_HEADERS, "Set-Cookie:Path=" + getContextRoot());
     invoke();
   }
 

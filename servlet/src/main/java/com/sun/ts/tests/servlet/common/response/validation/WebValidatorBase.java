@@ -555,46 +555,44 @@ public class WebValidatorBase implements ValidationStrategy {
     Header[] expected = _case.getExpectedHeaders();
     if (isEmpty(expected)) {
       return true;
-    } else {
-      boolean found = true;
-      Header currentHeader = null;
-      for (Header header : expected) {
-        currentHeader = header;
-        Header resHeader = _res.getResponseHeader(currentHeader.getName());
-        if (resHeader != null) {
-          Handler handler = HandlerFactory.getHandler(currentHeader.getName());
-          if (!handler.invoke(currentHeader, resHeader)) {
-            found = false;
-            break;
-          }
-        } else {
+    }
+    boolean found = true;
+    Header currentHeader = null;
+    for (Header header : expected) {
+      currentHeader = header;
+      Header resHeader = _res.getResponseHeader(currentHeader.getName());
+      if (resHeader != null) {
+        Handler handler = HandlerFactory.getHandler(currentHeader.getName());
+        if (!handler.invoke(currentHeader, resHeader)) {
           found = false;
           break;
         }
-      }
-      if (!found) {
-        StringBuilder sb = new StringBuilder(255);
-        sb.append(" Test {} Unable to find the following header");
-        sb.append(" in the server's response: ");
-        sb.append("{}").append("\n");
-        sb.append(" Response headers received from");
-        sb.append(" server:");
-
-        Header[] resHeaders = _res.getResponseHeaders();
-        sb.append(Arrays.stream(resHeaders)
-                .map(header -> "ResponseHeader ->" + header.toExternalForm())
-                .collect(Collectors.joining("\n\t")));
-
-        sb.append("\n");
-        logger.error(sb.toString(), _case.getName(), currentHeader.toExternalForm());
-
-        return false;
       } else {
-        logger.debug(" Test {} Found expected header: {}",
-                _case.getName(), currentHeader.toExternalForm());
-        return true;
+        found = false;
+        break;
       }
     }
+    if (!found) {
+      StringBuilder sb = new StringBuilder(255);
+      sb.append(" Test {} Unable to find the following header");
+      sb.append(" in the server's response: ");
+      sb.append("{}").append("\n");
+      sb.append(" Response headers received from");
+      sb.append(" server:");
+
+      Header[] resHeaders = _res.getResponseHeaders();
+      sb.append(Arrays.stream(resHeaders)
+              .map(header -> "ResponseHeader ->" + header.toExternalForm())
+              .collect(Collectors.joining("\n\t")));
+
+      sb.append("\n");
+      logger.error(sb.toString(), _case.getName(), currentHeader.toExternalForm());
+
+      return false;
+    }
+    logger.debug(" Test {} Found expected header: {}",
+            _case.getName(), currentHeader.toExternalForm());
+    return true;
   }
 
   /**

@@ -530,7 +530,7 @@ public abstract class BaseUrlClient {
 
     String key = null;
     String value = null;
-    // proces the remainder of the properties
+    // process the remainder of the properties
     for (Enumeration e = TEST_PROPS.propertyNames(); e.hasMoreElements();) {
       key = (String) e.nextElement();
       value = TEST_PROPS.getProperty(key);
