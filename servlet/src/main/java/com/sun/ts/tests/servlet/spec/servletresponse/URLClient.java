@@ -58,14 +58,11 @@ public class URLClient extends AbstractUrlClient {
   @Test
   public void testFlushBufferHttp() throws Exception {
     logger.trace("testFlushBufferHttp");
-    try {
-      URL u = new URL(
-          "http://" + _hostname + ":" + _port + "/" + getContextRoot() + "/HttpTestServlet");
-      logger.trace("URL: http://" + _hostname + ":" + _port + "/" + getContextRoot()
-          + "/HttpTestServlet");
-
-      InputStream is = u.openStream();
-      BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+    URL u = new URL(
+            "http://" + _hostname + ":" + _port + getContextRoot() + "/HttpTestServlet");
+    logger.trace("URL: {}", u);
+    try (InputStream is = u.openStream();
+         BufferedReader bis = new BufferedReader(new InputStreamReader(is))) {
       String line = null;
       long time1 = 0L;
       long time2 = 0L;
@@ -76,28 +73,23 @@ public class URLClient extends AbstractUrlClient {
             && (time1 == 0L)) {
           Calendar cal1 = Calendar.getInstance();
           time1 = cal1.getTimeInMillis();
-          logger.trace("Buffer flush clocked at time " + time1);
+          logger.trace("Buffer flush clocked at time {}", time1);
         }
 
         if (line.contains("Test Failed") && (time2 == 0L)) {
           Calendar cal2 = Calendar.getInstance();
           time2 = cal2.getTimeInMillis();
-          logger.trace("service method exit clocked at time " + time2);
+          logger.trace("service method exit clocked at time {}", time2);
         }
       }
-      bis.close();
-
       if (((time2 - time1) > 5000) && (time1 != 0L) && (time2 != 0L)) {
-        logger.trace(
-            "Test passed.  There is decent time difference between two clocked time.");
+        logger.trace("Test passed.  There is decent time difference between two clocked time.");
       } else {
-        throw new Exception(
-            "Test failed: there is not enough time between two clocked time");
+        throw new Exception( "Test failed: there is not enough time between two clocked time");
       }
 
     } catch (Exception ex) {
-      ex.printStackTrace();
-      throw new Exception("Test failed with the above exception");
+      throw new Exception("Test failed with the above exception:" + ex.getMessage(), ex);
     }
   }
 
@@ -111,18 +103,17 @@ public class URLClient extends AbstractUrlClient {
    * This is done by sleeping a long time between flush and exit in servlet;
    * Then verify time gap on client side.
    */
-
+  @Test
   public void testFlushBuffer() throws Exception {
     logger.trace("testFlushBuffer");
 
-    try {
-      URL u = new URL(
-          "http://" + _hostname + ":" + _port + "/" + getContextRoot() + "/TestServlet");
-      logger.trace(
-          "URL: http://" + _hostname + ":" + _port + "/" + getContextRoot() + "/TestServlet");
+    URL u = new URL(
+            "http://" + _hostname + ":" + _port + getContextRoot() + "/TestServlet");
+    logger.trace("URL: {}}", u);
 
-      InputStream is = u.openStream();
-      BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+    try (InputStream is = u.openStream();
+         BufferedReader bis = new BufferedReader(new InputStreamReader(is))) {
+
       String line = null;
       long time1 = 0L;
       long time2 = 0L;
@@ -133,13 +124,13 @@ public class URLClient extends AbstractUrlClient {
             && (time1 == 0L)) {
           Calendar cal1 = Calendar.getInstance();
           time1 = cal1.getTimeInMillis();
-          logger.trace("Buffer flush clocked at time " + time1);
+          logger.trace("Buffer flush clocked at time {}", time1);
         }
 
         if (line.contains("Test Failed") && (time2 == 0L)) {
           Calendar cal2 = Calendar.getInstance();
           time2 = cal2.getTimeInMillis();
-          logger.trace("service method exit clocked at time " + time2);
+          logger.trace("service method exit clocked at time {}", time2);
         }
       }
 
@@ -154,8 +145,7 @@ public class URLClient extends AbstractUrlClient {
       }
 
     } catch (Exception ex) {
-      ex.printStackTrace();
-      throw new Exception("testFlushBuffer failed with the above exception");
+      throw new Exception("testFlushBuffer failed with the above exception:" + ex.getMessage(), ex);
     }
   }
 
