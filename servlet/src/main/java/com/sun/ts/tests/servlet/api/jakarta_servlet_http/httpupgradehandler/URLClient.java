@@ -17,7 +17,6 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpupgradehandler;
 
-import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -47,7 +46,7 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_upgradehandler_web.war")
-            .setWebXML(URLClient.class.getResource("servlet_jsh_upgradehandler_web.xml"));
+            .addClasses(TestServlet.class);
   }
 
 
@@ -77,24 +76,20 @@ public class URLClient extends AbstractUrlClient {
     String EXPECTED_RESPONSE2 = "onDataAvailable|Hello";
     String EXPECTED_RESPONSE3 = "onDataAvailable|World";
 
-    InputStream input = null;
-    OutputStream output = null;
-    Socket s = null;
-
     String requestUrl = getContextRoot() + "/" + getServletName() + " HTTP/1.1";
 
-    try {
-      URL url = getURL("http", _hostname, _port, requestUrl);
+    URL url = getURL("http", _hostname, _port, requestUrl.substring(1));
+    try (Socket s = new Socket(_hostname, _port);
+         OutputStream output = s.getOutputStream();
+         InputStream input = s.getInputStream()) {
 
-      s = new Socket(_hostname, _port);
-      output = s.getOutputStream();
 
-      StringBuffer reqStr = new StringBuffer("POST "
+      StringBuilder reqStr = new StringBuilder("POST "
           + url.toExternalForm().replace("http://", "").replace(_hostname, "")
-              .replace(":" + Integer.toString(_port), "")
+              .replace(":" + _port, "")
           + CRLF);
       reqStr.append("User-Agent: Java/1.6.0_33" + CRLF);
-      reqStr.append("Host: " + _hostname + ":" + _port + CRLF);
+      reqStr.append("Host: ").append(_hostname).append(":").append(_port).append(CRLF);
       reqStr
           .append("Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2"
               + CRLF);
@@ -103,21 +98,21 @@ public class URLClient extends AbstractUrlClient {
       reqStr.append("Content-type: application/x-www-form-urlencoded" + CRLF);
       reqStr.append(CRLF);
 
-      TestUtil.logMsg("REQUEST=========" + reqStr.toString());
+      logger.debug("REQUEST========= {}", reqStr);
       output.write(reqStr.toString().getBytes());
 
-      TestUtil.logMsg("Writing first chunk");
+      logger.debug("Writing first chunk");
       writeChunk(output, "Hello");
- 
-      TestUtil.logMsg("Writing second chunk");
+
+      logger.debug("Writing second chunk");
       writeChunk(output, "World");
 
-      TestUtil.logMsg("Consuming the response from the server");
+      logger.debug("Consuming the response from the server");
 
       // Consume the response from the server
-      input = s.getInputStream();
+
       int len = -1;
-      byte b[] = new byte[1024];            
+      byte[] b = new byte[1024];
       boolean receivedFirstMessage = false;
       boolean receivedSecondMessage = false;
       boolean receivedThirdMessage = false;
@@ -125,63 +120,30 @@ public class URLClient extends AbstractUrlClient {
       while ((len = input.read(b)) != -1) {
         String line = new String(b, 0, len);
         sb.append(line);
-        TestUtil.logMsg("==============Read from server:" + CRLF + sb + CRLF);
+        logger.debug("==============Read from server: {} {} {}", CRLF, sb, CRLF);
         if (passed1 = ServletTestUtil.compareString(EXPECTED_RESPONSE1, sb.toString())) {
-          TestUtil.logMsg("==============Received first expected response!" + CRLF);
+          logger.debug("==============Received first expected response!");
           receivedFirstMessage = true;
         }
 		if (passed2 = ServletTestUtil.compareString(EXPECTED_RESPONSE2, sb.toString())) {
-          TestUtil.logMsg("==============Received second expected response!" + CRLF);
+          logger.debug("==============Received second expected response!");
           receivedSecondMessage = true;
         }
         if (passed3 = ServletTestUtil.compareString(EXPECTED_RESPONSE3, sb.toString())) {
-          TestUtil.logMsg("==============Received third expected response!" + CRLF);
+          logger.debug("==============Received third expected response!");
           receivedThirdMessage = true;
         }
-        TestUtil.logMsg("receivedFirstMessage : " + receivedFirstMessage);
-        TestUtil.logMsg("receivedSecondMessage : " + receivedSecondMessage);
-        TestUtil.logMsg("receivedThirdMessage : " + receivedThirdMessage);
+        logger.debug("receivedFirstMessage : {}", receivedFirstMessage);
+        logger.debug("receivedSecondMessage : {}", receivedSecondMessage);
+        logger.debug("receivedThirdMessage : {}", receivedThirdMessage);
         if (receivedFirstMessage &&  receivedSecondMessage && receivedThirdMessage) {
           break;
         }
       }
-    } catch (IOException ex2) {
-      TestUtil.logErr("exception caught: " + ex2.getMessage(), ex2);
-    } catch (Exception ex) {
-      TestUtil.logErr(ex.getMessage(), ex);
-    } finally
-
-    {
-      try {
-        if (input != null) {
-          TestUtil.logMsg("Closing input...");
-          input.close();
-          TestUtil.logMsg("Input closed.");
-        }
-      } catch (Exception ex) {
-        TestUtil.logErr("Failed to close input:" + ex.getMessage(), ex);
-      }
-
-      try {
-        if (output != null) {
-          TestUtil.logMsg("Closing output...");
-          output.close();
-          TestUtil.logMsg("Output closed .");
-        }
-      } catch (Exception ex) {
-        TestUtil.logErr("Failed to close output:" + ex.getMessage(), ex);
-      }
-
-      try {
-        if (s != null) {
-          TestUtil.logMsg("Closing socket..." + CRLF);
-          s.close();
-          TestUtil.logMsg("Socked closed.");
-        }
-      } catch (Exception ex) {
-        TestUtil.logErr("Failed to close socket:" + ex.getMessage(), ex);
-      }
+    } catch (Exception ex2) {
+      logger.error("exception caught: " + ex2.getMessage(), ex2);
     }
+
 
     if (!passed1 || !passed2 || !passed3) {
       throw new Exception("Test Failed. ");

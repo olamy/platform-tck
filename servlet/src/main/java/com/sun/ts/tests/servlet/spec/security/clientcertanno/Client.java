@@ -22,11 +22,13 @@ import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
@@ -47,6 +49,7 @@ public class Client extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "clientcertanno_web.war")
+            .addClasses(Serializable.class)
             .setWebXML(Client.class.getResource("clientcertanno_web.xml"));
   }
 
@@ -97,8 +100,7 @@ public class Client extends AbstractUrlClient {
         "securedWebServicePort =" + p.getProperty("securedWebServicePort"));
     
     if (tlsVersion != null) {
-        TestUtil.logMsg(
-            "client.cert.test.jdk.tls.client.protocols =" + tlsVersion);
+        logger.info("client.cert.test.jdk.tls.client.protocols = {}", tlsVersion);
     }
 
   }
@@ -133,6 +135,7 @@ public class Client extends AbstractUrlClient {
    * security-constraint element.
    *
    */
+  @Test
   public void clientCertTest() throws Exception {
 
     String testName = "clientCertTest";
@@ -143,8 +146,8 @@ public class Client extends AbstractUrlClient {
         System.setProperty("jdk.tls.client.protocols", tlsVersion);
     }
 
+    URL newURL = new URL(url);
     try {
-      URL newURL = new URL(url);
 
       // open HttpsURLConnection using TSHttpsURLConnection
       URLConnection httpsURLConn = getHttpsURLConnection(newURL);

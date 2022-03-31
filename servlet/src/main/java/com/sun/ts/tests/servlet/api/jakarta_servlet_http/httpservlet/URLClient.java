@@ -125,6 +125,7 @@ public class URLClient extends AbstractUrlClient {
    * 
    * @test_Strategy: Servlet tries to access a parameter that exists
    */
+  @Test
   public void getInitParameterTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "getInitParameterTest");
     invoke();

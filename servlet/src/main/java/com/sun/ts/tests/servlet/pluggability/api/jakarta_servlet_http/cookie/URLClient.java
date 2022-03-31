@@ -464,6 +464,7 @@ public class URLClient extends AbstractUrlClient {
    * Servlet create Cookie and sets values using Cookie.setMaxAge(-1) Cookie is
    * sent back to client and client verifies them
    */
+  @Test
   public void setMaxAgeNegativeTest() throws Exception {
     TEST_PROPS.setProperty(APITEST, "setMaxAgeNegativeVer0Test");
     TEST_PROPS.setProperty(EXPECTED_HEADERS,
