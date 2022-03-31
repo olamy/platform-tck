@@ -19,7 +19,7 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.servletrequest;
 
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.request.RequestClient;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -28,7 +28,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 
-public class URLClient extends AbstractUrlClient {
+public class URLClient extends RequestClient {
 
 
   @BeforeEach

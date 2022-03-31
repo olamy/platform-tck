@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -397,14 +396,13 @@ public class SecformClient extends BaseUrlClient {
       // Send response to login form with session id cookie and username
       // and incorrect password:
       request = pageSecurityCheck;
-      logMsg("Sending request \"" + request
-          + "\" with incorrect login information.");
+      logger.debug("Sending request {} with incorrect login information.", request);
       Properties postData = new Properties();
       postData.setProperty("j_username", username);
       postData.setProperty("j_password", "incorrect" + password);
       response = WebUtil.sendRequest("POST", InetAddress.getByName(hostname),
           portnum, request, postData, cookies);
-      logMsg("response.statusToken:" + response.statusToken);
+      logger.debug("response.statusToken: {}", response.statusToken);
 
       // Call followRedirect() to make sure we receive the required page
       response = followRedirect(response, 2);
@@ -412,23 +410,22 @@ public class SecformClient extends BaseUrlClient {
       // Check to make sure the user principal is null:
       String searchString = searchFor + "null";
       if (response.content.indexOf(searchString) == -1) {
-        logErr("User principal is not null in error page:");
-        logErr(response.content);
+        logger.error("User principal is not null in error page: {}", response.content);
         throw new Exception("test2 failed.");
       }
 
-      logMsg("User Principal is null as expected.");
+      logger.debug("User Principal is null as expected.");
 
       // Request error page
       request = pageError;
-      logMsg("Sending request \"" + request + "\"");
+      logger.debug("Sending request {}", request);
       errorPageRequestResponse = WebUtil.sendRequest("GET",
           InetAddress.getByName(hostname), portnum, request,
           null, cookies);
 
       // Check that the page was found (no error).
       if (errorPageRequestResponse.isError()) {
-        logErr("Could not find " + request);
+        logger.error("Could not find {}", request);
         throw new Exception("test2  failed.");
       }
 
@@ -436,16 +433,15 @@ public class SecformClient extends BaseUrlClient {
       // i.e Check whether
       // response.content ==errorPageRequestResponse.content
       if (response.content.equals(errorPageRequestResponse.content)) {
-        logMsg("Received the expected error page");
+        logger.debug("Received the expected error page");
       } else {
-        logMsg("Received incorrect error page");
+        logger.error("Received incorrect error page");
         throw new Exception("test2  failed.");
       }
 
     } catch (Exception e) {
-      logErr("Caught exception: " + e.getMessage());
-      e.printStackTrace();
-      throw new Exception("test2 failed: ", e);
+      logger.error("Caught exception: " + e.getMessage(), e);
+      throw new Exception("test2 failed: " + e.getMessage(), e);
     }
   }
 
@@ -475,8 +471,7 @@ public class SecformClient extends BaseUrlClient {
 
       // Send response to login form with session id cookie:
       request = pageSecurityCheck;
-      logMsg("Sending request \"" + request
-          + "\" with login information (as " + unauthUsername + ").");
+      logger.debug("Sending request {} with login information (as {}).", request, unauthUsername);
       Properties postData = new Properties();
       postData.setProperty("j_username", unauthUsername);
       postData.setProperty("j_password", unauthPassword);
@@ -485,7 +480,7 @@ public class SecformClient extends BaseUrlClient {
 
       // Check that the page was found (no error).
       if (response.isError()) {
-        logErr("Could not find " + request);
+        logger.error("Could not find {}", request);
         throw new Exception("test3 failed.");
       }
 
@@ -496,16 +491,14 @@ public class SecformClient extends BaseUrlClient {
       // content. The jsp should output "The user principal is: javajoe"
       String searchString = searchFor + unauthUsername;
       if (response.content.indexOf(searchString) == -1) {
-        logErr("User Principal incorrect.  Page received:");
-        logErr(response.content);
-        logErr("(Should say: \"" + searchString + "\")");
+        logger.error("User Principal incorrect.  Page received: {}", response.content);
+        logger.error("(Should say: {}", searchString);
         throw new Exception("test3 failed.");
       }
-      logMsg("User Principal correct.");
+      logger.debug("User Principal correct.");
     } catch (Exception e) {
-      logErr("Caught exception: " + e.getMessage());
-      e.printStackTrace();
-      throw new Exception("test3 failed: ", e);
+      logErr("Caught exception: " + e.getMessage(), e);
+      throw new Exception("test3 failed: " + e.getMessage(), e);
     }
   }
 
@@ -535,33 +528,32 @@ public class SecformClient extends BaseUrlClient {
       // Send response to login form with session id cookie and username
       // and password:
       request = pageSecurityCheck;
-      logMsg("Sending request \"" + request
-          + "\" with correct login information (" + unauthUsername + ")"
-          + ", but incorrect authorization for this resource.");
+      logger.debug("Sending request {} with correct login information ({}), but incorrect authorization for this resource.",
+              request, unauthUsername);
       Properties postData = new Properties();
       postData.setProperty("j_username", unauthUsername);
       postData.setProperty("j_password", unauthPassword);
       response = WebUtil.sendRequest("POST", InetAddress.getByName(hostname),
           portnum, request, postData, cookies);
 
-      logMsg("response.content = " + response.content);
+      logger.debug("response.content = {}", response.content);
 
       if (response.statusToken.equals("302")) {
         // We should receive a redirection page
         if (response.location == null) {
-          logErr("No redirection to login page received.");
+          logger.error("No redirection to login page received.");
           throw new Exception("test4 failed.");
         }
 
         // Extract location from redirection and format new request:
         request = WebUtil.getRequestFromURL(response.location);
-        logMsg("Redirect to: " + response.location);
+        logger.debug("Redirect to: {}", response.location);
 
         // update cookies if the webserver choose to send cookies
         addNewCookies(cookies, response.cookies);
 
         // Request redirected page (login page):
-        logMsg("Sending request \"" + request + "\"");
+        logger.debug("Sending request {}", request);
         response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
             portnum, request, null, cookies);
       }
@@ -569,45 +561,40 @@ public class SecformClient extends BaseUrlClient {
       // Receive "403" or "404" error code for unauthorized access (forbidden).
       if ((response.statusToken.equals("403"))
           || (response.statusToken.equals("404"))) {
-        logMsg("Status Token " + response.statusToken);
-        logMsg("Received expected unauthorized access error");
+        logger.debug("Status Token {}, Received expected unauthorized access error", response.statusToken);
       } else {
-        logErr(
-            "Did not receive error for unauthorized access: " + request);
-        logMsg("Status Token " + response.statusToken);
-        logErr("Page content:");
-        logErr(response.content);
+        logger.error("Did not receive error for unauthorized access: {}", request);
+        logger.error("Status Token {}", response.statusToken);
+        logger.error("Page content: {}", response.content);
         throw new Exception("test4 failed.");
       }
 
       // Request unprotected page (unprotected.jsp page):
       request = pageUnprotected;
-      logMsg("Sending request \"" + request + "\"");
+      logger.debug("Sending request {}", request);
       response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
           portnum, request, null, null);
 
       // Check that we did not receive an error and that we did not
       // receive a redirection:
       if (response.isError()) {
-        logErr("Error retrieving " + request);
+        logger.error("Error retrieving {}", request);
         throw new Exception("test4 failed.");
       }
 
       // Check that the page returned is the correct one. The principal
       // is not checked.
       String searchString = searchFor;
-      if (response.content.indexOf(searchString) == -1) {
-        logErr("Incorrect page received:");
-        logErr(response.content);
-        logErr("(Should contain: \"" + searchString + "\")");
+      if (!response.content.contains(searchString)) {
+        logger.error("Incorrect page received: {}", response.content);
+        logger.error("(Should contain: {}", searchString);
         throw new Exception("test4 failed.");
       }
-      logMsg("Access to unprotected page granted.");
+      logger.debug("Access to unprotected page granted.");
 
     } catch (Exception e) {
-      logErr("Caught exception: " + e.getMessage());
-      e.printStackTrace();
-      throw new Exception("test4 failed: ", e);
+      logger.error("Caught exception: " + e.getMessage(), e);
+      throw new Exception("test4 failed: " + e.getMessage(), e);
     }
   }
 

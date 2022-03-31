@@ -20,15 +20,13 @@
 
 package com.sun.ts.tests.servlet.spec.security.secform;
 
-import java.util.Properties;
-
 import com.sun.ts.tests.servlet.common.request.SecformClient;
-import com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 /*
  * This  class uses the SecformClient to do most of its actual testing.
