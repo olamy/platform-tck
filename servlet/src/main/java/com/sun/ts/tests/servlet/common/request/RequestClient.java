@@ -82,6 +82,7 @@ public class RequestClient extends AbstractUrlClient {
     invoke();
   }
 
+  @Test
   public void getInputStreamTest() throws Exception {
     String testName = "getInputStreamTest";
     TEST_PROPS.setProperty(REQUEST, "POST " + getContextRoot() + "/"
