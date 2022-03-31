@@ -16,7 +16,6 @@
 
 package com.sun.ts.tests.servlet.spec.security.metadatacomplete;
 
-import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.BaseUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -120,7 +119,7 @@ public class Client extends BaseUrlClient {
    */
   @Test
   public void test1() throws Exception {
-    trace("testing that we can NOT access: " + pageDeny);
+    logger.trace("testing that we can NOT access: {}", pageDeny);
 
     TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test1");
     TEST_PROPS.setProperty(REQUEST, getRequestLine("GET", pageDeny));
@@ -132,7 +131,7 @@ public class Client extends BaseUrlClient {
       // of
       // UNAUTHORIZED (401) so retry and check for FORBIDDEN code. If it still
       // fails then we have an issue.
-      trace(
+      logger.trace(
           "we tested for Status Code=401 but we could have a 403 code, so check for that.");
       TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test1");
       TEST_PROPS.setProperty(REQUEST, getRequestLine("GET", pageDeny));
@@ -140,8 +139,7 @@ public class Client extends BaseUrlClient {
       invoke();
     }
 
-    trace("test1 passed:  we were not allowed to perform GET on servlet: "
-        + pageDeny);
+    logger.trace("test1 passed:  we were not allowed to perform GET on servlet: {}", pageDeny);
   }
 
   /*
@@ -169,12 +167,8 @@ public class Client extends BaseUrlClient {
   @Test
   public void test2() throws Exception {
 
-    StringBuffer sb = new StringBuffer(100);
-    sb.append(USER_PRINCIPAL_SEARCH).append(unauthUsername);
-
     // attempt to POST as "javajoe" should be allowed
-    trace("POST w/ user=" + unauthUsername
-        + " should be allowed due to DD declaration");
+    logger.trace("POST w/ user= {} should be allowed due to DD declaration", unauthUsername);
     TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test2");
     TEST_PROPS.setProperty(REQUEST, getRequestLine("POST", pageGuest));
     TEST_PROPS.setProperty(BASIC_AUTH_USER, unauthUsername);
@@ -186,9 +180,8 @@ public class Client extends BaseUrlClient {
     // the RolesAllowed anno in GuestPageTestServlet should be ignored.
     // note: doGet metho prints out userprincipal name that we are going to
     // check
-    trace("GET w/ user=" + unauthUsername
-        + " should be allowed due to DD declaration");
-    TEST_PROPS.setProperty(SEARCH_STRING, sb.toString());
+    logger.trace("GET w/ user= {} should be allowed due to DD declaration", unauthUsername);
+    TEST_PROPS.setProperty(SEARCH_STRING, USER_PRINCIPAL_SEARCH+unauthUsername);
     TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test2");
     TEST_PROPS.setProperty(REQUEST, getRequestLine("GET", pageGuest));
     TEST_PROPS.setProperty(BASIC_AUTH_USER, unauthUsername); // "javajoe"
@@ -196,9 +189,8 @@ public class Client extends BaseUrlClient {
     TEST_PROPS.setProperty(STATUS_CODE, OK);
     invoke();
 
-    trace(
-        "success - DD's role access was honored while the conflicting annotation was ignored.");
-    trace("test2 passed.");
+    logger.trace("success - DD's role access was honored while the conflicting annotation was ignored.");
+    logger.trace("test2 passed.");
   }
 
   /*
@@ -236,8 +228,7 @@ public class Client extends BaseUrlClient {
     // declaration *but* Post is also set to be accessed only by
     // Manager(javajoe)
     // in DD. So attempts to POST as Administrator=j2ee should fail.
-    trace("Attempting to POST as user= " + username
-        + " should be denied due to DD security.");
+    logger.trace("Attempting to POST as user= {} should be denied due to DD security.", username);
     TEST_PROPS.setProperty(TEST_NAME, "SecurityAnno/Test3");
     TEST_PROPS.setProperty(REQUEST, getRequestLine("POST", pageSec));
     TEST_PROPS.setProperty(BASIC_AUTH_USER, username); // this is username for
@@ -264,8 +255,7 @@ public class Client extends BaseUrlClient {
     }
 
     // now verify that GET can be done by role=Administrator (per DD definition)
-    trace("Attempting to GET as user=" + username
-        + " should be allowed due to DD security.");
+    logger.trace("Attempting to GET as user= {} should be allowed due to DD security.", username);
     TEST_PROPS.setProperty(TEST_NAME, "BasicSec/Test3");
     TEST_PROPS.setProperty(BASIC_AUTH_USER, username); // this is username for
                                                        // Administrator
@@ -274,8 +264,8 @@ public class Client extends BaseUrlClient {
     TEST_PROPS.setProperty(STATUS_CODE, OK);
     invoke();
 
-    trace("Class level annotation setting was overridden by DD.");
-    trace("test3 passed.");
+    logger.trace("Class level annotation setting was overridden by DD.");
+    logger.trace("test3 passed.");
   }
 
   /*
@@ -307,9 +297,9 @@ public class Client extends BaseUrlClient {
     TEST_PROPS.setProperty(STATUS_CODE, OK); // check for status code 401
     invoke();
 
-    trace("Success - DD allowed POST by user=" + unauthUsername);
+    logger.trace("Success - DD allowed POST by user={}", unauthUsername);
 
-    trace("test4 passed.");
+    logger.trace("test4 passed.");
   }
 
   /*
@@ -329,8 +319,7 @@ public class Client extends BaseUrlClient {
   @Test
   public void test5() throws Exception {
 
-    trace("GET w/ user=" + unauthUsername
-        + " should be allowed access as DD leaves this servlet unprotected.");
+    logger.trace("GET w/ user= {} should be allowed access as DD leaves this servlet unprotected.", unauthUsername);
     TEST_PROPS.setProperty(TEST_NAME, "BasicSec/Test5");
     TEST_PROPS.setProperty(BASIC_AUTH_USER, username); // try using valid creds
     TEST_PROPS.setProperty(BASIC_AUTH_PASSWD, password); // and it should still
@@ -338,8 +327,8 @@ public class Client extends BaseUrlClient {
     TEST_PROPS.setProperty(REQUEST, getRequestLine("GET", pageUnprotected));
     TEST_PROPS.setProperty(STATUS_CODE, OK);
     invoke();
-    trace("Class level PermitAll anno returned expected results");
-    trace("test5 passed.");
+    logger.trace("Class level PermitAll anno returned expected results");
+    logger.trace("test5 passed.");
   }
 
   /*
@@ -363,8 +352,7 @@ public class Client extends BaseUrlClient {
   @Test
   public void test6() throws Exception {
 
-    trace(
-        "Sending request to resource where DD allows access to override any restricting annotation...");
+    logger.trace("Sending request to resource where DD allows access to override any restricting annotation...");
     TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test6");
 
     // attempt to GET as "j2ee" should NOT be allowed since the DD only
@@ -372,8 +360,7 @@ public class Client extends BaseUrlClient {
     // defined in GuestPageTestServlet declares that GET can be accessed
     // by Administrator role (e.g. user=j2ee) but this annotation
     // must be completely ignored sine the DD has set metadata-complete=true.
-    trace("GET w/ user=" + username
-        + " should NOT be allowed due to DD declaration");
+    logger.trace("GET w/ user= {} should NOT be allowed due to DD declaration", username);
     TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test6");
     TEST_PROPS.setProperty(REQUEST, getRequestLine("GET", pageGuest));
     TEST_PROPS.setProperty(BASIC_AUTH_USER, username); // "j2ee"
@@ -384,8 +371,7 @@ public class Client extends BaseUrlClient {
     } catch (Exception e) {
       // its possible we were denied access with a FORBIDDEN code
       // so retry with that code - if it still fails then we have an issue.
-      trace("retrying: GET w/ user=" + username
-          + " should still NOT be allowed due to DD declaration");
+      logger.trace("retrying: GET w/ user= {} should still NOT be allowed due to DD declaration", username);
       TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test6");
       TEST_PROPS.setProperty(REQUEST, getRequestLine("GET", pageGuest));
       TEST_PROPS.setProperty(BASIC_AUTH_USER, username); // "j2ee"
@@ -396,8 +382,7 @@ public class Client extends BaseUrlClient {
 
     // attempt to POST as "j2ee" should NOT be allowed since the DD only
     // states to allow Manager role (ie javajoe).
-    trace("POST w/ user=" + username
-        + " should NOT be allowed due to DD declaration");
+    logger.trace("POST w/ user= {} should NOT be allowed due to DD declaration", username);
     TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test6");
     TEST_PROPS.setProperty(REQUEST, getRequestLine("POST", pageGuest));
     TEST_PROPS.setProperty(BASIC_AUTH_USER, username); // "j2ee"
@@ -408,8 +393,7 @@ public class Client extends BaseUrlClient {
     } catch (Exception e) {
       // its possible we were denied access with a FORBIDDEN code
       // so retry with that code - if it still fails then we have an issue.
-      trace("retrying: POST w/ user=" + username
-          + " should still NOT be allowed due to DD declaration");
+      logger.trace("retrying: POST w/ user= {} should still NOT be allowed due to DD declaration", username);
       TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test6");
       TEST_PROPS.setProperty(REQUEST, getRequestLine("POST", pageGuest));
       TEST_PROPS.setProperty(BASIC_AUTH_USER, username); // "j2ee"
@@ -418,9 +402,8 @@ public class Client extends BaseUrlClient {
       invoke();
     }
 
-    trace(
-        "Success - we were not allowed to POST or GET as role=Administrator (user=j2ee).");
-    trace("Test6 passed.");
+    logger.trace("Success - we were not allowed to POST or GET as role=Administrator (user=j2ee).");
+    logger.trace("Test6 passed.");
   }
 
   /**
@@ -434,16 +417,6 @@ public class Client extends BaseUrlClient {
    */
   private static String getRequestLine(String method, String path) {
     return method + " " + path + " HTTP/1.1";
-  }
-
-  /**
-   * Simple wrapper around TestUtil.logTrace().
-   * 
-   * @param message
-   *          - the message to log
-   */
-  private static void trace(String message) {
-    TestUtil.logMsg(CLASS_TRACE_HEADER + message);
   }
 
 }
