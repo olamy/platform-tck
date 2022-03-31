@@ -204,8 +204,9 @@ public class TckTestEngine implements TestEngine {
                     .filter(s -> !myListener.finished.contains(s)).collect(Collectors.toList());
 
             notStarted.forEach(s -> LOGGER.info("not started test: {}", s));
-            notFinished.forEach(s -> LOGGER.info("not finished test: {}", s));
-
+            LOGGER.info("not started {}", notStarted.size());
+            //notFinished.forEach(s -> LOGGER.info("not finished test: {}", s));
+            LOGGER.info("not finished {}", notFinished.size());
         }
 
 
