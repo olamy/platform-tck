@@ -48,6 +48,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class TckTestEngine implements TestEngine {
@@ -189,17 +190,31 @@ public class TckTestEngine implements TestEngine {
             TestPlan testPlan = launcher.discover(launcherDiscoveryRequest);
 
             //TestPlan testPlan = TestPlan.from((Collection<TestDescriptor>) engine.getChildren(), executionRequest.getConfigurationParameters());
-            launcher.execute(testPlan, new MyListener(), summaryGeneratingListener);
+            MyListener myListener = new MyListener();
+            launcher.execute(testPlan, myListener, summaryGeneratingListener);
+
+            TestExecutionSummary summary = summaryGeneratingListener.getSummary();
+            LOGGER.info("Tests found: {} , Succeeded: {}, Failures: {}, Aborted: {}, Skipped: {}" ,
+                    summary.getTestsFoundCount(), summary.getTestsSucceededCount(), summary.getTestsFailedCount(),
+                    summary.getTestsAbortedCount(), summary.getTestsSkippedCount());
+
+            List<String> notStarted = testClassesAndMethods.stream()
+                    .filter(s -> !myListener.started.contains(s)).collect(Collectors.toList());
+            List<String> notFinished = testClassesAndMethods.stream()
+                    .filter(s -> !myListener.finished.contains(s)).collect(Collectors.toList());
+
+            notStarted.forEach(s -> LOGGER.info("not started test: {}", s));
+            notFinished.forEach(s -> LOGGER.info("not finished test: {}", s));
 
         }
 
-        TestExecutionSummary summary = summaryGeneratingListener.getSummary();
-        LOGGER.info("Tests found: {} , Succeeded: {}, Failures: {}, Aborted: {}, Skipped: {}" ,
-                summary.getTestsFoundCount(), summary.getTestsSucceededCount(), summary.getTestsFailedCount(),
-                summary.getTestsAbortedCount(), summary.getTestsSkippedCount());
+
     }
 
     private static class MyListener implements TestExecutionListener {
+
+        private List<String> started = new CopyOnWriteArrayList<>();
+        private List<String> finished = new CopyOnWriteArrayList<>();
 
 
         public MyListener() {
@@ -235,6 +250,7 @@ public class TckTestEngine implements TestEngine {
                     LOGGER.info("Running Test:{}#{}",
                             methodSource.getClassName(),
                             methodSource.getMethodName());
+                    started.add(methodSource.getClassName()+"#"+methodSource.getMethodName());
                 }
 
             }
@@ -260,6 +276,7 @@ public class TckTestEngine implements TestEngine {
                             methodSource.getMethodName(),
                             testExecutionResult.getStatus().toString(),
                             testExecutionResult.getThrowable().isPresent()?testExecutionResult.getThrowable():"");
+                    finished.add(methodSource.getClassName()+"#"+methodSource.getMethodName());
                 }
             }
         }
