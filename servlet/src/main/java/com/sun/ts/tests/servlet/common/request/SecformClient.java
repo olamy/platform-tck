@@ -20,11 +20,13 @@ import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.lib.util.WebUtil.Response;
 import com.sun.ts.tests.servlet.common.client.BaseUrlClient;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -256,6 +258,7 @@ public class SecformClient extends BaseUrlClient {
    * correct and getRemoteUser() still returns the correct username. Also ensure
    * isUserInRole() is still working properly.
    */
+  @Test
   public void test1() throws Exception {
     try {
       // The first part of this test is used in test2 and test3 as
@@ -384,6 +387,7 @@ public class SecformClient extends BaseUrlClient {
    * 3. Send form response with username and incorrect password 4. Receive error
    * page (make sure it is the expected error page)
    */
+  @Test
   public void test2() throws Exception {
     try {
       // The first part of this test is used in test1 and test3 as
@@ -462,6 +466,7 @@ public class SecformClient extends BaseUrlClient {
    * resource (check user principal)
    * 
    */
+  @Test
   public void test3() throws Exception {
     try {
       // The first part of this test is used in test2 and test3 as
@@ -520,6 +525,7 @@ public class SecformClient extends BaseUrlClient {
    * (expected unauthorized error) 5. Send request to access unprotected.jsp 6.
    * Receive unprotected.jsp.
    */
+  @Test
   public void test4() throws Exception {
     try {
       // The first part of this test is used in test1 and test2 as
@@ -623,6 +629,7 @@ public class SecformClient extends BaseUrlClient {
    * unprotected.jsp returned true. 4. Check that the call to getRemoteUser()
    * returned null.
    */
+  @Test
   public void test5() throws Exception {
     try {
       // Request restricted jsp page.
@@ -709,6 +716,7 @@ public class SecformClient extends BaseUrlClient {
    * form response with username and password 4. Receive resource (check
    * isUserInRole for all known roles)
    */
+  @Test
   public void test6() throws Exception {
     try {
       // The first part of this test is used in test2 and test3 as
@@ -782,6 +790,7 @@ public class SecformClient extends BaseUrlClient {
    * insensitive platforms) b) WEB-INF/web.xml c) web-inf/web.xml 4) based on
    * the http return code report test status
    */
+  @Test
   public void test7() {
     List<String> statusCodes;
 
@@ -848,6 +857,7 @@ public class SecformClient extends BaseUrlClient {
    * insensitive platforms) b) META-INF/MANIFEST.MF c) meta-inf/manifest.mf 4)
    * based on the http return code, report test status
    */
+  @Test
   public void test8() throws Exception {
     try {
 
@@ -967,6 +977,7 @@ public class SecformClient extends BaseUrlClient {
    * result
    *
    */
+  @Test
   public void test9() throws Exception {
     try {
       String testURL = null;
@@ -1046,6 +1057,7 @@ public class SecformClient extends BaseUrlClient {
    * getRemoteUser() returns the username, and ensure isUserInRole() is working
    * properly)
    */
+  @Test
   public void test10() throws Exception {
     try {
       requestAndGetLoginPage(pageSample, 10);
@@ -1125,6 +1137,7 @@ public class SecformClient extends BaseUrlClient {
    * 
    *
    */
+  @Test
   public void test11() throws Exception {
     try {
 
@@ -1200,6 +1213,7 @@ public class SecformClient extends BaseUrlClient {
    * Note: test12 is ONLY for JSP Area
    *
    */
+  @Test
   public void test12() throws Exception {
     try {
       // Access Sample.jsp using HTTP method POST
@@ -1266,8 +1280,12 @@ public class SecformClient extends BaseUrlClient {
 
       // Read the contents of Sample.jsp and
       // upload it using HTTP method PUT
-      FileInputStream fstream = new FileInputStream(
-          tshome + "/src/web/jsp/sec/secform/Sample.jsp");
+//      FileInputStream fstream = new FileInputStream(
+//          tshome + "/src/web/jsp/sec/secform/Sample.jsp");
+
+      InputStream fstream =
+              Thread.currentThread().getContextClassLoader().getResourceAsStream("sec/secform/Sample.jsp");
+
       int fileContentLength = fstream.available();
       byte[] byteArray = new byte[1024];
       int bytesRead = fstream.read(byteArray, 0, fileContentLength);
@@ -1345,6 +1363,7 @@ public class SecformClient extends BaseUrlClient {
    * Note: test13 is ONLY for SERVLET Area
    *
    */
+  @Test
   public void test13() throws Exception {
     try {
 
@@ -1401,6 +1420,7 @@ public class SecformClient extends BaseUrlClient {
    * still returns the correct username. Also ensure isUserInRole() is still
    * working properly.
    */
+  @Test
   public void test14() throws Exception {
     try {
       logMsg("\nAccessing  pageSec: " + pageSec);
@@ -1522,6 +1542,7 @@ public class SecformClient extends BaseUrlClient {
    * we did NOT get the requested(and restricted) form back from server.
    * 
    */
+  @Test
   public void test15() throws Exception {
 
     String modifiedPageSec = pageSec + pageSecurityCheck;
@@ -1589,6 +1610,7 @@ public class SecformClient extends BaseUrlClient {
    * servlet performs tasks and sends response data back 3. we parse the data to
    * see if we got desired output
    */
+  @Test
   public void test16() throws Exception {
     try {
 
@@ -1664,6 +1686,7 @@ public class SecformClient extends BaseUrlClient {
    * occurrred on pageServletProgLogout and that it actually did log us out.
    * 
    */
+  @Test
   public void test17() throws Exception {
     try {
       requestAndGetLoginPage(pageServletProgLogout, 1);
@@ -1738,6 +1761,7 @@ public class SecformClient extends BaseUrlClient {
    * servlet performs tasks and sends response data back 3. we parse the data to
    * see if we got desired output
    */
+  @Test
   public void test18() throws Exception {
     try {
 

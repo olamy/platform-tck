@@ -18,4 +18,4 @@
 
 <%@ page contentType="text/plain" %>
 In /include/dynamic_B.jsp
-<jsp:include page="C.jsp"/>
+<jsp:include page="../C.jsp"/>

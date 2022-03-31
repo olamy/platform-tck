@@ -73,6 +73,10 @@
         <groupId>${project.groupId}</groupId>
         <artifactId>web-servlet</artifactId>
       </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>web-jsp</artifactId>
+      </dependency>
 
       <dependency>
         <groupId>org.slf4j</groupId>
