@@ -52,7 +52,11 @@ public class Client extends SecformClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_sec_secform_web.war")
-            .setWebXML(URLClient.class.getResource("servlet_sec_secform_web.xml"));
+            .addAsWebResource("spec/security/secform/login.jsp", "login.jsp")
+            .addAsWebResource("spec/security/secform/error.jsp", "error.jsp")
+            .addClasses(GuestPageAnnoTestServlet.class, RoleReverseAnnoTestServlet.class,
+                    ServletSecAnnoTestServlet.class, UnProtectedAnnoTestServlet.class)
+            .setWebXML(Client.class.getResource("servlet_sec_secform_web.xml"));
   }
 
   // Shared test variables:
@@ -77,18 +81,8 @@ public class Client extends SecformClient {
    *
    */
   public void setup(String[] args, Properties p) throws Exception {
+    super.setup(args, p);
     props = p;
-
-    // create newarguments to pass into superclass setup method.
-    String[] newargs = new String[2];
-
-    // "servlet" flag is passed to the superclass
-    String argExt = new String("servlet");
-    newargs[0] = argExt;
-    newargs[1] = argExt; // dummy argument
-
-    // Inform the super class to run JSP related tests
-    super.setup(newargs, p);
   }
 
   /*

@@ -19,6 +19,7 @@ package com.sun.ts.tests.servlet.common.request;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.lib.util.WebUtil.Response;
+import com.sun.ts.tests.servlet.common.client.BaseUrlClient;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -40,10 +41,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import static com.sun.ts.lib.util.TestUtil.logErr;
-import static com.sun.ts.lib.util.TestUtil.logMsg;
-
-public class SecformClient {
+public class SecformClient extends BaseUrlClient {
   // Configurable constants:
 
   private String protocol = "http";
@@ -177,6 +175,7 @@ public class SecformClient {
    * authpassword; ts_home;
    */
   public void setup(String[] args, Properties p) throws Exception {
+    super.setup(args, p);
     props = p;
 
     try {
@@ -188,26 +187,26 @@ public class SecformClient {
       unauthPassword = p.getProperty(unauthPasswordProp);
       tshome = p.getProperty(tsHomeProp);
 
-      logMsg("username: " + username);
-      logMsg("password: " + password);
+      logger.debug("username: {}", username);
+      logger.debug("password: {}", password);
 
-      if (args[0].equals("jsp")) {
-        pageBase = pageJspBase;
-        pageSec = pageJspSec;
-        pageGuest = pageJspGuest;
-        pageUnprotected = pageJspUnprotected;
-        pageRoleReverse = pageJspRoleReverse;
-        pageOne = pageJspOne;
-        pageTwo = pageJspTwo;
-        pageSample = pageJspSample;
-        pageallRoles = pageJspallRoles;
-
-        // prefix pageJspBase to pageLogin, pageError ,pageSecurityCheck
-        pageLogin = pageJspBase + pageLogin;
-        pageError = pageJspBase + pageError;
-        pageSecurityCheck = pageJspBase + pageSecurityCheck;
-
-      } else {
+//      if (args[0].equals("jsp")) {
+//        pageBase = pageJspBase;
+//        pageSec = pageJspSec;
+//        pageGuest = pageJspGuest;
+//        pageUnprotected = pageJspUnprotected;
+//        pageRoleReverse = pageJspRoleReverse;
+//        pageOne = pageJspOne;
+//        pageTwo = pageJspTwo;
+//        pageSample = pageJspSample;
+//        pageallRoles = pageJspallRoles;
+//
+//        // prefix pageJspBase to pageLogin, pageError ,pageSecurityCheck
+//        pageLogin = pageJspBase + pageLogin;
+//        pageError = pageJspBase + pageError;
+//        pageSecurityCheck = pageJspBase + pageSecurityCheck;
+//
+//      } else {
         pageBase = pageServletBase;
         pageSec = pageServletSec;
         pageGuest = pageServletGuest;
@@ -226,10 +225,10 @@ public class SecformClient {
         pageError = pageServletBase + pageError;
         pageSecurityCheck = pageServletBase + pageSecurityCheck;
 
-      }
+//      }
 
     } catch (Exception e) {
-      logErr("Error: got exception: ", e);
+      logger.error("Error: got exception: " + e.getMessage(), e);
     }
   }
 
@@ -265,20 +264,19 @@ public class SecformClient {
 
       // Send response to login form with session id cookie:
       request = pageSecurityCheck;
-      logMsg(
-          "Sending request \"" + request + "\" with login information.");
+      logger.debug("Sending request '{}' with login information.", request);
       Properties postData = new Properties();
       postData.setProperty("j_username", username);
       postData.setProperty("j_password", password);
       response = WebUtil.sendRequest("POST", InetAddress.getByName(hostname),
           portnum, request, postData, cookies);
 
-      logMsg("response.statusToken:" + response.statusToken);
-      logMsg("response.content:" + response.content);
+      logger.debug("response.statusToken: {}", response.statusToken);
+      logger.debug("response.content: {}", response.content);
 
       // Check that the page was found (no error).
       if (response.isError()) {
-        logErr("Could not find " + request);
+        logger.error("Could not find {}", request);
         throw new Exception("test1 failed.");
       }
 
@@ -286,25 +284,25 @@ public class SecformClient {
       response = followRedirect(response, 1);
 
       // Print response content
-      logMsg("received response content  1: " + response.content);
+      logger.debug("received response content  1: {}", response.content);
 
       // Check to make sure we are authenticated by checking the page
       // content. The jsp should output "The user principal is: j2ee"
       String searchString = searchFor + username;
       if (response.content.indexOf(searchString) == -1) {
-        logErr("User Principal incorrect.  Page received:");
-        logErr(response.content);
-        logErr("(Should say: \"" + searchString + "\")");
+        logger.error("User Principal incorrect.  Page received:");
+        logger.error(response.content);
+        logger.error("(Should say: \"" + searchString + "\")");
         throw new Exception("test1 failed.");
       }
-      logMsg("User Principal correct.");
+      logger.debug("User Principal correct.");
 
       // Check to make sure getRemoteUser returns the user name.
       searchString = searchForGetRemoteUser + username;
       if (response.content.indexOf(searchString) == -1) {
-        logErr("getRemoteUser() did not return " + username + ":");
-        logErr(response.content);
-        logErr("(Should say: \"" + searchString + "\")");
+        logger.error("getRemoteUser() did not return " + username + ":");
+        logger.error(response.content);
+        logger.error("(Should say: \"" + searchString + "\")");
         throw new Exception("test1 failed.");
       }
       logMsg("getRemoteUser() correct.");
@@ -317,9 +315,8 @@ public class SecformClient {
       roleCheck.put("EMP", Boolean.TRUE);
       // roleCheck.put( "Administrator", new Boolean( false ) );
       if (!checkRoles(response.content, roleCheck)) {
-        logErr("isUserInRole() does not work correctly.");
-        logErr("Page Received:");
-        logErr(response.content);
+        logger.error("isUserInRole() does not work correctly. Page Received:");
+        logger.error(response.content);
         throw new Exception("test1 failed.");
       }
       logMsg("isUserInRole() correct.");
@@ -327,50 +324,49 @@ public class SecformClient {
       // Now that we are authenticated, try accessing the resource again
       // to ensure we need not go through the login page again.
       request = pageSec;
-      logMsg("Cookies =" + cookies.toString());
-      logMsg("Re-sending request \"" + request + "\"");
+      logger.debug("Cookies = {}", cookies.toString());
+      logger.debug("Re-sending request {}", request);
       response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
           portnum, request, null, cookies);
 
       // Check that the page was found (no error).
       if (response.isError()) {
-        logErr("Could not find " + pageSec);
+        logger.error("Could not find " + pageSec);
         throw new Exception("test1 failed.");
       }
 
       // Check to make sure we are still authenticated.
       if (response.content.indexOf(searchString) == -1) {
-        logErr("User Principal incorrect.  Page received:");
-        logErr(response.content);
-        logErr("(Should say: \"" + searchString + "\")");
+        logger.error("User Principal incorrect.  Page received:");
+        logger.error(response.content);
+        logger.error("(Should say: \"" + searchString + "\")");
         throw new Exception("test1 failed.");
       }
-      logMsg("User Principal still correct.");
+      logger.debug("User Principal still correct.");
 
       // Check to make sure getRemoteUser still returns the user name.
       searchString = searchForGetRemoteUser + username;
       if (response.content.indexOf(searchString) == -1) {
-        logErr("getRemoteUser() did not return " + username
+        logger.error("getRemoteUser() did not return " + username
             + " after lazy authentication:");
-        logErr(response.content);
-        logErr("(Should say: \"" + searchString + "\")");
+        logger.error(response.content);
+        logger.error("(Should say: \"" + searchString + "\")");
         throw new Exception("test1 failed.");
       }
       logMsg("getRemoteUser() still correct.");
 
       // Check to make sure isUserInRole is still working properly:
       if (!checkRoles(response.content, roleCheck)) {
-        logErr("isUserInRole() does not work correctly.");
-        logErr("Page Received:");
-        logErr(response.content);
+        logger.error("isUserInRole() does not work correctly.");
+        logger.error("Page Received:");
+        logger.error(response.content);
         throw new Exception("test1 failed.");
       }
       logMsg("isUserInRole() still correct.");
 
     } catch (Exception e) {
-      logErr("Caught exception: " + e.getMessage());
-      e.printStackTrace();
-      throw new Exception("test1 failed: ", e);
+      logger.error("Caught exception: " + e.getMessage(), e);
+      throw new Exception("test1 failed: " + e.getMessage(), e);
     }
   }
 
