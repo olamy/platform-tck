@@ -19,22 +19,34 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.writelistener;
 
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.sun.ts.lib.util.TestUtil;
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class URLClient extends AbstractUrlClient {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(URLClient.class);
+  @BeforeEach
+  public void setupServletName() throws Exception {
+    setServletName("TestServlet");
+  }
 
-  // TOFIX
+  /**
+   * Deployment for the test
+   */
+  @Deployment(testable = false)
+  public static WebArchive getTestArchive() throws Exception {
+    return ShrinkWrap.create(WebArchive.class, "writelistener.war")
+            .addClasses(TestServlet.class, TestListener.class);
+  }
 
   /*
    * @class.setup_props: webServerHost; webServerPort; ts_home;
@@ -50,6 +62,7 @@ public class URLClient extends AbstractUrlClient {
    * Writeistener; From Servlet, sends one batch of messages use stream; Verify
    * all message received by client; Verify WriteListener works accordingly
    */
+  @Test
   public void nioOutputTest() throws Exception {
     boolean passed = true;
     String testName = "nioOutputTest";
@@ -58,15 +71,13 @@ public class URLClient extends AbstractUrlClient {
     String requestUrl = getContextRoot() + "/" + getServletName() + "?testname="
         + testName;
 
+    URL url = new URL(getURLString("http", _hostname, _port, requestUrl.substring(1)));
     try {
-
-      URL url = new URL(getURLString("http", _hostname, _port, requestUrl));
-
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      LOGGER.trace("======= Connecting {}", url.toExternalForm());
+      logger.debug("======= Connecting {}", url.toExternalForm());
       conn.setChunkedStreamingMode(5);
       conn.setDoOutput(true);
-      LOGGER.trace("======= Header {}", conn);
+      logger.trace("======= Header {}", conn);
       conn.connect();
 
       try (BufferedReader input = new BufferedReader(
@@ -75,7 +86,7 @@ public class URLClient extends AbstractUrlClient {
         StringBuilder message_received = new StringBuilder();
 
         while ((line = input.readLine()) != null) {
-          LOGGER.trace("======= message received: " + line);
+          logger.debug("======= message received: " + line);
           message_received.append(line);
         }
         passed = ServletTestUtil.compareString(EXPECTED_RESPONSE,
@@ -84,7 +95,7 @@ public class URLClient extends AbstractUrlClient {
       }
     } catch (Exception ex) {
       passed = false;
-      LOGGER.error("Test" + ex.getMessage(), ex);
+      logger.error("Test" + ex.getMessage(), ex);
     }
 
     if (!passed) {
