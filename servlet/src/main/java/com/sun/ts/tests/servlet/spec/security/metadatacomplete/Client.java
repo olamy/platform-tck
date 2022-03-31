@@ -16,16 +16,14 @@
 
 package com.sun.ts.tests.servlet.spec.security.metadatacomplete;
 
-import java.util.Properties;
-
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.BaseUrlClient;
-import com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 /*
  * These tests are going to be similar to the tests that are in 
@@ -48,14 +46,6 @@ public class Client extends BaseUrlClient {
             .setWebXML(Client.class.getResource("servlet_sec_metadatacomplete_web.xml"));
   }
 
-  // Constants:
-  private static final String USERNAME = "user";
-
-  private static final String PASSWORD = "password";
-
-  private static final String UNAUTH_USERNAME = "authuser";
-
-  private static final String UNAUTH_PASSWORD = "authpassword";
 
   private static final String CLASS_TRACE_HEADER = "[Client]: ";
 
@@ -187,8 +177,8 @@ public class Client extends BaseUrlClient {
         + " should be allowed due to DD declaration");
     TEST_PROPS.setProperty(TEST_NAME, "SecAnnotations/Test2");
     TEST_PROPS.setProperty(REQUEST, getRequestLine("POST", pageGuest));
-    TEST_PROPS.setProperty(BASIC_AUTH_USER, unauthUsername); // "javajoe"
-    TEST_PROPS.setProperty(BASIC_AUTH_PASSWD, unauthPassword); // "javajoe"
+    TEST_PROPS.setProperty(BASIC_AUTH_USER, unauthUsername);
+    TEST_PROPS.setProperty(BASIC_AUTH_PASSWD, unauthPassword);
     TEST_PROPS.setProperty(STATUS_CODE, OK);
     invoke();
 

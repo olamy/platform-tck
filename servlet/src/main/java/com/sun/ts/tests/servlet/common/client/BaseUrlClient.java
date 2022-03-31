@@ -200,6 +200,16 @@ public abstract class BaseUrlClient {
    */
   protected static final String BASIC_AUTH_REALM = "basic_auth_realm";
 
+  protected static final String UNAUTH_USERNAME = "authuser";
+
+  protected static final String UNAUTH_PASSWORD = "authpassword";
+
+
+  // Constants:
+  protected static final String USERNAME = "user";
+
+  protected static final String PASSWORD = "password";
+
   /**
    * Unordered search string property
    */
@@ -403,7 +413,13 @@ public abstract class BaseUrlClient {
     properties.setProperty("servlet_waittime", System.getProperty("servlet_waittime","10"));
     properties.setProperty("servlet_async_wait", System.getProperty("servlet_async_wait","4"));
     properties.setProperty("logical.hostname.servlet", System.getProperty("logical.hostname.servlet","server"));
-
+    properties.setProperty(USERNAME, System.getProperty(USERNAME, "j2ee"));
+    properties.setProperty(PASSWORD, System.getProperty(PASSWORD, "j2ee"));
+    properties.setProperty(BASIC_AUTH_PASSWD, System.getProperty(UNAUTH_PASSWORD, "j2ee"));
+    properties.setProperty(BASIC_AUTH_USER, System.getProperty(BASIC_AUTH_USER, "j2ee"));
+    properties.setProperty(BASIC_AUTH_PASSWD, System.getProperty(UNAUTH_PASSWORD, "j2ee"));
+    properties.setProperty(UNAUTH_USERNAME, System.getProperty(UNAUTH_USERNAME, "javajoe"));
+    properties.setProperty(UNAUTH_PASSWORD, System.getProperty(UNAUTH_PASSWORD, "javajoe"));
     setup(null, properties);
   }
 
