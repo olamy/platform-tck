@@ -203,10 +203,10 @@ public class TckTestEngine implements TestEngine {
             List<String> notFinished = testClassesAndMethods.stream()
                     .filter(s -> !myListener.finished.contains(s)).collect(Collectors.toList());
 
-            notStarted.forEach(s -> LOGGER.info("not started test: {}", s));
-            LOGGER.info("not started {}", notStarted.size());
+            notStarted.forEach(s -> LOGGER.debug("not started test: {}", s));
+            LOGGER.debug("not started {}", notStarted.size());
             //notFinished.forEach(s -> LOGGER.info("not finished test: {}", s));
-            LOGGER.info("not finished {}", notFinished.size());
+            LOGGER.debug("not finished {}", notFinished.size());
         }
 
 
