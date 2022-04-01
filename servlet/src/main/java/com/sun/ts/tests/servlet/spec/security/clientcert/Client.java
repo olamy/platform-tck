@@ -16,6 +16,14 @@
 
 package com.sun.ts.tests.servlet.spec.security.clientcert;
 
+import com.sun.ts.lib.util.TestUtil;
+import com.sun.ts.lib.util.WebUtil;
+import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,16 +31,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
-
-import com.sun.ts.lib.util.TestUtil;
-import com.sun.ts.lib.util.WebUtil;
-import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
  * @author Raja Perumal
@@ -93,12 +91,10 @@ public class Client extends AbstractUrlClient {
     portnum = Integer.parseInt(p.getProperty("securedWebServicePort"));
     tlsVersion = p.getProperty("client.cert.test.jdk.tls.client.protocols");
 
-    TestUtil.logMsg(
-        "securedWebServicePort =" + p.getProperty("securedWebServicePort"));
+    logger.debug("securedWebServicePort = {}", p.getProperty("securedWebServicePort"));
     
     if (tlsVersion != null) {
-        TestUtil.logMsg(
-            "client.cert.test.jdk.tls.client.protocols =" + tlsVersion);
+        logger.debug("client.cert.test.jdk.tls.client.protocols = {}", tlsVersion);
     }
 
   }
