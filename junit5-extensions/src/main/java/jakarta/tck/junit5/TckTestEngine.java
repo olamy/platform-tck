@@ -46,6 +46,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -181,12 +182,23 @@ public class TckTestEngine implements TestEngine {
             launcher.registerTestExecutionListeners(listener);
 
             // here we don't want an infinite loop so ignore it self
-            LauncherDiscoveryRequest launcherDiscoveryRequest = LauncherDiscoveryRequestBuilder.request()
-                    .filters(EngineFilter.excludeEngines(ENGINE_ID, "junit-vintage"))
-                    .selectors(
-                        testClassesAndMethods.stream().map(s -> DiscoverySelectors.selectMethod(s)).collect(Collectors.toUnmodifiableList())
-                    )
-                    .build();
+            LauncherDiscoveryRequestBuilder builder = LauncherDiscoveryRequestBuilder.request()
+                    .filters(EngineFilter.excludeEngines(ENGINE_ID, "junit-vintage"));
+            String classesNames = System.getProperty(TckTestEngine.class.getName() + ".classesNames", "");
+            if (classesNames.isEmpty()) {
+                builder.selectors(testClassesAndMethods.stream()
+                        .map(s -> DiscoverySelectors.selectMethod(s)).collect(Collectors.toUnmodifiableList()));
+            } else {
+                List<String> classesAndOrMethod = Arrays.stream(classesNames.split(";")).collect(Collectors.toList());
+                builder.selectors(classesAndOrMethod.stream()
+                        .map(string ->
+                            string.contains("#")? DiscoverySelectors.selectMethod(string):DiscoverySelectors.selectClass(string)
+                        )
+                        .collect(Collectors.toUnmodifiableList()));
+            }
+
+
+            LauncherDiscoveryRequest launcherDiscoveryRequest = builder.build();
             TestPlan testPlan = launcher.discover(launcherDiscoveryRequest);
 
             //TestPlan testPlan = TestPlan.from((Collection<TestDescriptor>) engine.getChildren(), executionRequest.getConfigurationParameters());

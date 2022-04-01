@@ -77,7 +77,6 @@ public class Client extends BaseUrlClient {
    * Deployment for the test
    */
   @Deployment(testable = false)
-  @TargetsContainer("https")
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_sec_annotations_web.war")
             .addClasses(DenyAllServlet.class, GuestPageTestServlet.class, ServletSecTestServlet.class, UnProtectedTestServlet.class)
