@@ -65,13 +65,7 @@ public class Client extends AbstractUrlClient {
   }  
   
 
-  private static final String WEBSERVERHOSTPROP = "webServerHost";
 
-  private static final String WEBSERVERPORTPROP = "webServerPort";
-
-  private static final String USERNAME = "authuser";
-
-  private static final String PASSWORD = "authpassword";
 
   private String requestURI = null;
 
@@ -94,29 +88,10 @@ public class Client extends AbstractUrlClient {
   // TOFIX
   public void setup(String[] args, Properties p) throws Exception {
 
-    boolean pass = true;
-
-    try {
-      authUsername = p.getProperty(USERNAME);
-      authPassword = p.getProperty(PASSWORD);
-      hostname = p.getProperty(WEBSERVERHOSTPROP);
-      if (hostname == null || hostname.equals("")) {
-        pass = false;
-      }
-      try {
-        portnum = Integer.parseInt(p.getProperty(WEBSERVERPORTPROP));
-      } catch (Exception e) {
-        pass = false;
-      }
-    } catch (Exception e) {
-      throw new Exception("setup failed:", e);
-    }
-
-    if (!pass) {
-      logger.error(
-          "Please specify host & port of web server in config properties: {}, {}",WEBSERVERHOSTPROP, WEBSERVERPORTPROP);
-      throw new Exception("setup failed:");
-    }
+    authUsername = p.getProperty(USERNAME);
+    authPassword = p.getProperty(PASSWORD);
+    hostname = p.getProperty(SERVLETHOSTPROP);
+    portnum = Integer.parseInt(p.getProperty(SERVLETPORTPROP));
 
     logger.debug("hostname:port:{}:{}", hostname, portnum);
   }
