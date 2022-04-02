@@ -20,6 +20,7 @@ package com.sun.ts.tests.servlet.spec.serverpush;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import jdk.internal.net.http.ResponseSubscribers;
 import org.apache.commons.codec.binary.Base64;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -61,6 +62,7 @@ public class Client extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_serverpush_web.war")
+            .addAsWebResource("spec/serverpush/index.html")
             .setWebXML(Client.class.getResource("servlet_spec_serverpush_web.xml"));
   }  
   
@@ -470,8 +472,9 @@ public class Client extends AbstractUrlClient {
       builder.cookieHandler(cm);
 
     HttpClient client = builder.version(HttpClient.Version.HTTP_2)
-        .followRedirects(HttpClient.Redirect.ALWAYS)
-        .executor(Executors.newFixedThreadPool(4)).build();
+          .followRedirects(HttpClient.Redirect.ALWAYS)
+          // TODO nThreads configurable
+          .executor(Executors.newFixedThreadPool(6)).build();
     ;
 
     List<HttpResponse<String>> responses = new CopyOnWriteArrayList<>();
@@ -486,8 +489,7 @@ public class Client extends AbstractUrlClient {
 
       client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString(), pushPromiseHandler())
               .thenAccept(pageResponse -> responses.add(pageResponse))
-              .get(1, TimeUnit.MINUTES); //timeout configurable??
-
+              .get(Long.getLong("http2.timeout", 1), TimeUnit.MINUTES);
 
     } catch (Exception e) {
       throw new Exception("Test fail", e);
