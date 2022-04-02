@@ -20,7 +20,6 @@ package com.sun.ts.tests.servlet.spec.serverpush;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import jdk.internal.net.http.ResponseSubscribers;
 import org.apache.commons.codec.binary.Base64;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
