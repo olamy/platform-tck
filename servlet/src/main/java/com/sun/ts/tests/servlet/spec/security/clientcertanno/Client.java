@@ -25,8 +25,10 @@ import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -87,6 +89,7 @@ public class Client extends AbstractUrlClient {
 
   private WebUtil.Response response = null;
 
+  private HostnameVerifier hostnameVerifier;
 
   /*
    * @class.setup_props: webServerHost; webServerPort; securedWebServicePort;
@@ -95,10 +98,10 @@ public class Client extends AbstractUrlClient {
    */
   public void setup(String[] args, Properties p) throws Exception {
 
-    // Read relevant properties:
     hostname = urlHttps.getHost();
 
     if ("localhost".equals(hostname)) {
+      hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
       //for localhost testing only
       HttpsURLConnection
               .setDefaultHostnameVerifier((hostname, sslSession) -> hostname.equals("localhost")? true : false);
@@ -116,6 +119,13 @@ public class Client extends AbstractUrlClient {
         logger.info("client.cert.test.jdk.tls.client.protocols = {}", tlsVersion);
     }
 
+  }
+
+  @AfterEach
+  public void cleanup() {
+    if (hostnameVerifier != null) {
+      HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
+    }
   }
 
   /*
@@ -165,10 +175,10 @@ public class Client extends AbstractUrlClient {
     try (InputStream content = httpsURLConn.getInputStream();
          BufferedReader in = new BufferedReader(new InputStreamReader(content))) {
 
-      String output = "";
+      StringBuilder output = new StringBuilder();
       String line;
       while ((line = in.readLine()) != null) {
-        output = output + line;
+        output.append(line);
         TestUtil.logMsg(line);
       }
 
@@ -180,7 +190,7 @@ public class Client extends AbstractUrlClient {
       // match for username stored in ts.jte.
       //
       String userNameToSearch = username;
-      if (!output.contains(userNameToSearch)) {
+      if (!output.toString().contains(userNameToSearch)) {
         throw new Exception(testName + ": getRemoteUser(): " + "- did not find \""
             + userNameToSearch + "\" in log.");
       } else {
@@ -188,7 +198,7 @@ public class Client extends AbstractUrlClient {
       }
 
       // verify output for expected test result
-      verifyTestOutput(output, testName);
+      verifyTestOutput(output.toString(), testName);
 
 
     } catch (Exception e) {
@@ -196,13 +206,6 @@ public class Client extends AbstractUrlClient {
       throw new Exception(testName + ": FAILED, " + e.getMessage(), e);
     }
 
-  }
-
-  /*
-   * cleanup
-   */
-  public void cleanup() throws Exception {
-    TestUtil.logMsg("cleanup...");
   }
 
 
@@ -217,29 +220,5 @@ public class Client extends AbstractUrlClient {
     }
   }
 
-  public String invokeHttpsURL(URL newURL) throws IOException {
-
-    // open HttpsURLConnection using TSHttpsURLConnection
-    URLConnection httpsURLConn = getHttpsURLConnection(newURL);
-
-    InputStream content = httpsURLConn.getInputStream();
-
-    BufferedReader in = new BufferedReader(new InputStreamReader(content));
-
-    String output = "";
-    String line = "";
-
-    while ((line = in.readLine()) != null) {
-      output = output + line;
-      TestUtil.logMsg(line);
-    }
-
-    logger.debug("Output : {}", output);
-
-    // close connection
-    content.close();
-
-    return output;
-  }
 
 }

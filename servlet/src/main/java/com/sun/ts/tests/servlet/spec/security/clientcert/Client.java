@@ -16,16 +16,20 @@
 
 package com.sun.ts.tests.servlet.spec.security.clientcert;
 
-import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -42,11 +46,15 @@ public class Client extends AbstractUrlClient {
   /**
    * Deployment for the test
    */
-  @Deployment(testable = false)
+  @Deployment(testable = false, name = "webapp-https")
+  @TargetsContainer("https")
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "clientcert_web.war")
             .setWebXML(Client.class.getResource("clientcert_web.xml"));
   }
+
+  @ArquillianResource
+  @OperateOnDeployment("webapp-https") URL urlHttps;
 
   // Configurable constants:
   private String hostname = null;
@@ -76,7 +84,7 @@ public class Client extends AbstractUrlClient {
 
   private WebUtil.Response response = null;
 
-
+  private HostnameVerifier hostnameVerifier;
   /*
    * @class.setup_props: webServerHost; webServerPort; securedWebServicePort;
    * certLoginUserAlias;
@@ -84,19 +92,34 @@ public class Client extends AbstractUrlClient {
    */
   public void setup(String[] args, Properties p) throws Exception {
 
-    TestUtil.logMsg("setup...");
+    hostname = urlHttps.getHost();
 
-    // Read relevant properties:
-    hostname = p.getProperty(webHostProp);
-    portnum = Integer.parseInt(p.getProperty("securedWebServicePort"));
-    tlsVersion = p.getProperty("client.cert.test.jdk.tls.client.protocols");
-
-    logger.debug("securedWebServicePort = {}", p.getProperty("securedWebServicePort"));
-    
-    if (tlsVersion != null) {
-        logger.debug("client.cert.test.jdk.tls.client.protocols = {}", tlsVersion);
+    if ("localhost".equals(hostname)) {
+      hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+      //for localhost testing only
+      HttpsURLConnection
+              .setDefaultHostnameVerifier((hostname, sslSession) -> hostname.equals("localhost")? true : false);
     }
 
+    p.setProperty(webHostProp, hostname);
+
+    portnum = urlHttps.getPort();// Integer.parseInt(p.getProperty("securedWebServicePort"));
+    p.setProperty("securedWebServicePort", Integer.toString(portnum));
+    tlsVersion = p.getProperty("client.cert.test.jdk.tls.client.protocols");
+
+    logger.info("securedWebServicePort = {}", p.getProperty("securedWebServicePort"));
+
+    if (tlsVersion != null) {
+      logger.info("client.cert.test.jdk.tls.client.protocols = {}", tlsVersion);
+    }
+
+  }
+
+  @AfterEach
+  public void cleanup() {
+    if (hostnameVerifier != null) {
+      HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
+    }
   }
 
   /*
@@ -127,27 +150,24 @@ public class Client extends AbstractUrlClient {
   public void clientCertTest() throws Exception {
 
     String testName = "clientCertTest";
-    String url = getURLString("https", hostname, portnum,
-        pageBase + authorizedPage);
+    String url = getURLString("https", hostname, portnum, pageBase.substring(1) + authorizedPage);
     
     if (tlsVersion != null) {
         System.setProperty("jdk.tls.client.protocols", tlsVersion);
     }
 
-    try {
-      URL newURL = new URL(url);
+    URL newURL = new URL(url);
 
-      // open HttpsURLConnection using TSHttpsURLConnection
-      URLConnection httpsURLConn = getHttpsURLConnection(newURL);
+    // open HttpsURLConnection using TSHttpsURLConnection
+    URLConnection httpsURLConn = getHttpsURLConnection(newURL);
+    try (InputStream content = httpsURLConn.getInputStream();
+         BufferedReader in = new BufferedReader(new InputStreamReader(content))) {
 
-      InputStream content = httpsURLConn.getInputStream();
-      BufferedReader in = new BufferedReader(new InputStreamReader(content));
-
-      String output = "";
+      StringBuilder output = new StringBuilder();
       String line;
       while ((line = in.readLine()) != null) {
-        output = output + line;
-        TestUtil.logMsg(line);
+        output.append(line);
+        logger.trace("line: {}", line);
       }
 
       // compare getRemoteUser() obtained from server's response
@@ -161,14 +181,12 @@ public class Client extends AbstractUrlClient {
       if (output.indexOf(userNameToSearch) == -1) {
         throw new Exception(testName + ": getRemoteUser(): " + "- did not find \""
             + userNameToSearch + "\" in log.");
-      } else
-        TestUtil.logMsg("Additional verification done");
+      } else {
+        logger.debug("Additional verification done");
+      }
 
       // verify output for expected test result
-      verifyTestOutput(output, testName);
-
-      // close connection
-      content.close();
+      verifyTestOutput(output.toString(), testName);
 
     } catch (Exception e) {
       throw new Exception(testName + ": FAILED", e);
@@ -176,48 +194,14 @@ public class Client extends AbstractUrlClient {
 
   }
 
-  /*
-   * cleanup
-   */
-  public void cleanup() throws Exception {
-    TestUtil.logMsg("cleanup...");
-  }
-
   public void verifyTestOutput(String output, String testName) throws Exception {
     // check for the occurance of <testName>+": PASSED"
     // message in server's response. If this message is not present
     // report test failure.
-    if (output.indexOf(testName + ": PASSED") == -1) {
-      TestUtil
-          .logMsg("Expected String from the output = " + testName + ": PASSED");
-      TestUtil.logMsg("received output = " + output);
+    if (!output.contains(testName + ": PASSED")) {
+      logger.error("Test {} Not Expected String from the output = {}: PASSED", testName, output);
       throw new Exception(testName + ": FAILED");
     }
-  }
-
-  public String invokeHttpsURL(URL newURL) throws IOException {
-
-    // open HttpsURLConnection using TSHttpsURLConnection
-    URLConnection httpsURLConn = getHttpsURLConnection(newURL);
-
-    InputStream content = httpsURLConn.getInputStream();
-
-    BufferedReader in = new BufferedReader(new InputStreamReader(content));
-
-    String output = "";
-    String line = "";
-
-    while ((line = in.readLine()) != null) {
-      output = output + line;
-      TestUtil.logMsg(line);
-    }
-
-    TestUtil.logMsg("Output :" + output);
-
-    // close connection
-    content.close();
-
-    return output;
   }
 
 }
