@@ -20,10 +20,14 @@ import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,12 +50,16 @@ public class Client extends AbstractUrlClient {
   /**
    * Deployment for the test
    */
-  @Deployment(testable = false)
+  @Deployment(testable = false, name = "webapp-https")
+  @TargetsContainer("https")
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "clientcertanno_web.war")
-            .addClasses(Serializable.class)
+            .addClasses(ServletSecTestServlet.class)
             .setWebXML(Client.class.getResource("clientcertanno_web.xml"));
   }
+
+  @ArquillianResource
+  @OperateOnDeployment("webapp-https") URL urlHttps;
 
   // Configurable constants:
   private String hostname = null;
@@ -68,8 +76,6 @@ public class Client extends AbstractUrlClient {
 
   // Constants:
   private final String webHostProp = "webServerHost";
-
-  private final String webPortProp = "webServerPort";
 
   private final String failString = "FAILED!";
 
@@ -89,15 +95,22 @@ public class Client extends AbstractUrlClient {
    */
   public void setup(String[] args, Properties p) throws Exception {
 
-    TestUtil.logMsg("setup...");
-
     // Read relevant properties:
-    hostname = p.getProperty(webHostProp);
-    portnum = Integer.parseInt(p.getProperty("securedWebServicePort"));
+    hostname = urlHttps.getHost();
+
+    if ("localhost".equals(hostname)) {
+      //for localhost testing only
+      HttpsURLConnection
+              .setDefaultHostnameVerifier((hostname, sslSession) -> hostname.equals("localhost")? true : false);
+    }
+
+    p.setProperty(webHostProp, hostname);
+
+    portnum = urlHttps.getPort();// Integer.parseInt(p.getProperty("securedWebServicePort"));
+    p.setProperty("securedWebServicePort", Integer.toString(portnum));
     tlsVersion = p.getProperty("client.cert.test.jdk.tls.client.protocols");
 
-    TestUtil.logMsg(
-        "securedWebServicePort =" + p.getProperty("securedWebServicePort"));
+    logger.info("securedWebServicePort = {}", p.getProperty("securedWebServicePort"));
     
     if (tlsVersion != null) {
         logger.info("client.cert.test.jdk.tls.client.protocols = {}", tlsVersion);
@@ -140,20 +153,17 @@ public class Client extends AbstractUrlClient {
 
     String testName = "clientCertTest";
     String url = getURLString("https", hostname, portnum,
-        pageBase + authorizedPage);
+        pageBase.substring(1) + authorizedPage);
     
     if (tlsVersion != null) {
         System.setProperty("jdk.tls.client.protocols", tlsVersion);
     }
 
     URL newURL = new URL(url);
-    try {
-
-      // open HttpsURLConnection using TSHttpsURLConnection
-      URLConnection httpsURLConn = getHttpsURLConnection(newURL);
-
-      InputStream content = httpsURLConn.getInputStream();
-      BufferedReader in = new BufferedReader(new InputStreamReader(content));
+    // open HttpsURLConnection using TSHttpsURLConnection
+    URLConnection httpsURLConn = getHttpsURLConnection(newURL);
+    try (InputStream content = httpsURLConn.getInputStream();
+         BufferedReader in = new BufferedReader(new InputStreamReader(content))) {
 
       String output = "";
       String line;
@@ -170,20 +180,20 @@ public class Client extends AbstractUrlClient {
       // match for username stored in ts.jte.
       //
       String userNameToSearch = username;
-      if (output.indexOf(userNameToSearch) == -1) {
+      if (!output.contains(userNameToSearch)) {
         throw new Exception(testName + ": getRemoteUser(): " + "- did not find \""
             + userNameToSearch + "\" in log.");
-      } else
-        TestUtil.logMsg("Additional verification done");
+      } else {
+        logger.debug("Additional verification done");
+      }
 
       // verify output for expected test result
       verifyTestOutput(output, testName);
 
-      // close connection
-      content.close();
 
     } catch (Exception e) {
-      throw new Exception(testName + ": FAILED", e);
+      logger.error(e.getMessage(), e);
+      throw new Exception(testName + ": FAILED, " + e.getMessage(), e);
     }
 
   }
@@ -200,10 +210,9 @@ public class Client extends AbstractUrlClient {
     // check for the occurance of <testName>+": PASSED"
     // message in server's response. If this message is not present
     // report test failure.
-    if (output.indexOf(testName + ": PASSED") == -1) {
-      TestUtil
-          .logMsg("Expected String from the output = " + testName + ": PASSED");
-      TestUtil.logMsg("received output = " + output);
+    if (!output.contains(testName + ": PASSED")) {
+      logger.debug("Expected String from the output = {}: PASSED", testName);
+      logger.debug("received output = {}", output);
       throw new Exception(testName + ": FAILED");
     }
   }
@@ -225,7 +234,7 @@ public class Client extends AbstractUrlClient {
       TestUtil.logMsg(line);
     }
 
-    TestUtil.logMsg("Output :" + output);
+    logger.debug("Output : {}", output);
 
     // close connection
     content.close();

@@ -5,8 +5,10 @@ import org.junit.jupiter.engine.config.CachingJupiterConfiguration;
 import org.junit.jupiter.engine.config.DefaultJupiterConfiguration;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor;
+import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.EngineDiscoveryRequest;
+import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.SelectorResolutionResult;
 import org.junit.platform.engine.TestDescriptor;
@@ -64,6 +66,10 @@ public class TckTestEngine implements TestEngine {
 
     private JupiterTestEngine jupiterTestEngine = new JupiterTestEngine();
 
+    private JupiterConfiguration jupiterConfiguration;
+
+    private UniqueId uniqueId;
+
     public TckTestEngine() {
         try {
             Enumeration<URL> urls = getClass().getClassLoader().getResources("META-INF/tck-tests.txt");
@@ -90,10 +96,11 @@ public class TckTestEngine implements TestEngine {
         if (engine != null) {
             return engine;
         }
-        JupiterConfiguration configuration = new CachingJupiterConfiguration(
+        this.jupiterConfiguration = new CachingJupiterConfiguration(
                 new DefaultJupiterConfiguration(request.getConfigurationParameters()));
-        engine = new JupiterEngineDescriptor(uniqueId, configuration);
-        testClassesAndMethods.forEach(
+        this.engine = new JupiterEngineDescriptor(uniqueId, this.jupiterConfiguration);
+        this.uniqueId = uniqueId;
+        this.testClassesAndMethods.forEach(
                 s -> {
                     UniqueId uid = uniqueId.append("test", s);
                     MethodSource methodSource = MethodSource.from(s.substring(0, s.indexOf('#')), s.substring(s.indexOf('#')+1), "");
@@ -202,7 +209,7 @@ public class TckTestEngine implements TestEngine {
             TestPlan testPlan = launcher.discover(launcherDiscoveryRequest);
 
             //TestPlan testPlan = TestPlan.from((Collection<TestDescriptor>) engine.getChildren(), executionRequest.getConfigurationParameters());
-            MyListener myListener = new MyListener();
+            MyListener myListener = new MyListener(executionRequest.getEngineExecutionListener(), this.jupiterConfiguration, this.uniqueId);
             launcher.execute(testPlan, myListener, summaryGeneratingListener);
 
             TestExecutionSummary summary = summaryGeneratingListener.getSummary();
@@ -228,10 +235,15 @@ public class TckTestEngine implements TestEngine {
 
         private List<String> started = new CopyOnWriteArrayList<>();
         private List<String> finished = new CopyOnWriteArrayList<>();
+        private final EngineExecutionListener executionListener;
+        private final JupiterConfiguration jupiterConfiguration;
+        private final UniqueId uniqueId;
 
 
-        public MyListener() {
-
+        public MyListener(EngineExecutionListener executionListener, JupiterConfiguration jupiterConfiguration, UniqueId uniqueId) {
+            this.executionListener = executionListener;
+            this.jupiterConfiguration = jupiterConfiguration;
+            this.uniqueId = uniqueId;
         }
 
         @Override
@@ -246,12 +258,30 @@ public class TckTestEngine implements TestEngine {
 
         @Override
         public void dynamicTestRegistered(TestIdentifier testIdentifier) {
-            //
+
+            if(testIdentifier.isTest()) {
+                TestSource testSource = testIdentifier.getSource().get();
+                if(testSource instanceof MethodSource) {
+                    MethodSource methodSource = (MethodSource) testSource;
+                    executionListener.dynamicTestRegistered(new TestMethodTestDescriptor(uniqueId, methodSource.getJavaClass(), methodSource.getJavaMethod(),
+                            this.jupiterConfiguration));
+                }
+            }
         }
 
         @Override
         public void executionSkipped(TestIdentifier testIdentifier, String reason) {
-            //
+            if(testIdentifier.isTest()) {
+                TestSource testSource = testIdentifier.getSource().get();
+                if(testSource instanceof MethodSource) {
+                    MethodSource methodSource = (MethodSource) testSource;
+                    LOGGER.info("Skipped Test:{}#{}",
+                            methodSource.getClassName(),
+                            methodSource.getMethodName());
+                    executionListener.executionSkipped(new TestMethodTestDescriptor(uniqueId, methodSource.getJavaClass(), methodSource.getJavaMethod(),
+                            this.jupiterConfiguration), reason);
+                }
+            }
         }
 
         @Override
@@ -263,15 +293,17 @@ public class TckTestEngine implements TestEngine {
                     LOGGER.info("Running Test:{}#{}",
                             methodSource.getClassName(),
                             methodSource.getMethodName());
-                    started.add(methodSource.getClassName()+"#"+methodSource.getMethodName());
+                    started.add(methodSource.getClassName() + "#" + methodSource.getMethodName());
+                    executionListener.executionStarted(new TestMethodTestDescriptor(uniqueId, methodSource.getJavaClass(), methodSource.getJavaMethod(),
+                            this.jupiterConfiguration));
                 }
-
             }
         }
 
         @Override
         public void reportingEntryPublished(TestIdentifier testIdentifier, ReportEntry entry) {
             //
+            //executionListener.reportingEntryPublished();
         }
 
         @Override
@@ -290,6 +322,8 @@ public class TckTestEngine implements TestEngine {
                             testExecutionResult.getStatus().toString(),
                             testExecutionResult.getThrowable().isPresent()?testExecutionResult.getThrowable():"");
                     finished.add(methodSource.getClassName()+"#"+methodSource.getMethodName());
+                    executionListener.executionFinished(new TestMethodTestDescriptor(uniqueId, methodSource.getJavaClass(), methodSource.getJavaMethod(),
+                            this.jupiterConfiguration), testExecutionResult);
                 }
             }
         }
