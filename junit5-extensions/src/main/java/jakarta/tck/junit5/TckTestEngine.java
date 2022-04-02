@@ -171,7 +171,7 @@ public class TckTestEngine implements TestEngine {
     public void execute(ExecutionRequest executionRequest) {
 
         // TODO path configurable via system property
-        Path reportDir = Paths.get("target/surefire-reports");
+        Path reportDir = Paths.get("target/tck-tests-reports");
         if (!Files.exists(reportDir)) {
             try {
                 Files.createDirectories(reportDir);
@@ -181,12 +181,12 @@ public class TckTestEngine implements TestEngine {
             }
         }
         PrintWriter printWriter = new PrintWriter(System.out, true);
-        LegacyXmlReportGeneratingListener listener = new LegacyXmlReportGeneratingListener(reportDir, printWriter);
+        LegacyXmlReportGeneratingListener legacyXmlReportGeneratingListener = new LegacyXmlReportGeneratingListener(reportDir, printWriter);
         SummaryGeneratingListener summaryGeneratingListener = new SummaryGeneratingListener();
 
         try (LauncherSession session = LauncherFactory.openSession()) {
             Launcher launcher = session.getLauncher();
-            launcher.registerTestExecutionListeners(listener);
+            launcher.registerTestExecutionListeners(legacyXmlReportGeneratingListener);
 
             // here we don't want an infinite loop so ignore it self
             LauncherDiscoveryRequestBuilder builder = LauncherDiscoveryRequestBuilder.request()
