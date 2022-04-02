@@ -44,9 +44,12 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Client extends AbstractUrlClient {
 
@@ -487,9 +490,24 @@ public class Client extends AbstractUrlClient {
         requestBuilder.setHeader(e.getKey(), e.getValue());
       }
 
-      client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString(), pushPromiseHandler())
+
+      List<CompletableFuture<HttpResponse<String>>> futureResponses = new CopyOnWriteArrayList<>();
+
+      HttpResponse.PushPromiseHandler<String> pushPromiseHandler =
+              (HttpRequest req, HttpRequest pushPromiseRequest, Function<HttpResponse.BodyHandler<String>, CompletableFuture<HttpResponse<String>>> acceptor) ->
+                      futureResponses.add(acceptor.apply(HttpResponse.BodyHandlers.ofString()));
+
+      client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString(), pushPromiseHandler)
               .thenAccept(pageResponse -> responses.add(pageResponse))
               .get(Long.getLong("http2.timeout", 1), TimeUnit.MINUTES);
+
+      responses.addAll(futureResponses.stream().map(httpResponseCompletableFuture -> {
+        try {
+          return httpResponseCompletableFuture.get(Long.getLong("http2.timeout", 1), TimeUnit.MINUTES);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+          throw new RuntimeException(e.getMessage(), e);
+        }
+      }).collect(Collectors.toList()));
 
     } catch (Exception e) {
       throw new Exception("Test fail", e);
@@ -497,14 +515,12 @@ public class Client extends AbstractUrlClient {
     return responses;
   }
 
-  private HttpResponse.PushPromiseHandler<String> pushPromiseHandler() {
-//    return (HttpRequest initiatingRequest, HttpRequest pushPromiseRequest, Function<HttpResponse.BodyHandler<String>,
-//          CompletableFuture<HttpResponse<String>>> acceptor) -> acceptor.apply(HttpResponse.BodyHandlers.ofString());
-
+  private HttpResponse.PushPromiseHandler<String> pushPromiseHandler(List<HttpResponse<String>> responses) {
     return (HttpRequest initiatingRequest, HttpRequest pushPromiseRequest,
             Function<HttpResponse.BodyHandler<String>, CompletableFuture<HttpResponse<String>>> acceptor) ->
     {
       acceptor.apply(HttpResponse.BodyHandlers.ofString()).thenAccept(resp -> {
+                responses.add(resp);
                 logger.debug(" Pushed response: {}, headers: {}", resp.uri(), resp.headers());
               });
       logger.debug("Promise request: {}", pushPromiseRequest.uri());
