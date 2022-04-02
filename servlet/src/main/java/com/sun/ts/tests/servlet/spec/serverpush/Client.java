@@ -20,7 +20,6 @@ package com.sun.ts.tests.servlet.spec.serverpush;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import org.apache.commons.codec.binary.Base64;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -37,6 +36,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,7 +166,7 @@ public class Client extends AbstractUrlClient {
     headers.put("Range", "bytes=100-");
     String authString = authUsername + ":" + authPassword;
     logger.debug("auth string: {}", authString);
-    byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+    byte[] authEncBytes = Base64.getEncoder().encode(authString.getBytes());
     String authStringEnc = new String(authEncBytes);
 
     CookieManager cm = new CookieManager();
@@ -356,6 +356,7 @@ public class Client extends AbstractUrlClient {
       for (HttpCookie cookie : cookies) {
         if ("JSESSIONID".equals(cookie.getName())) {
           pass = true;
+          break;
         }
       }
 
