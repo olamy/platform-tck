@@ -59,9 +59,6 @@ public class Client extends AbstractUrlClient {
    * Deployment for the test
    */
   @Deployment(testable = false)
-  // TOFIX
-  // here http2 setup
-  // @TargetsContainer()
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_serverpush_web.war")
             .setWebXML(Client.class.getResource("servlet_spec_serverpush_web.xml"));
@@ -96,6 +93,7 @@ public class Client extends AbstractUrlClient {
    */
   // TOFIX
   public void setup(String[] args, Properties p) throws Exception {
+
     boolean pass = true;
 
     try {
@@ -115,18 +113,12 @@ public class Client extends AbstractUrlClient {
     }
 
     if (!pass) {
-      TestUtil.logErr(
-          "Please specify host & port of web server " + "in config properties: "
-              + WEBSERVERHOSTPROP + ", " + WEBSERVERPORTPROP);
+      logger.error(
+          "Please specify host & port of web server in config properties: {}, {}",WEBSERVERHOSTPROP, WEBSERVERPORTPROP);
       throw new Exception("setup failed:");
     }
 
     logger.debug("hostname:port:{}:{}", hostname, portnum);
-    logMsg("setup ok");
-  }
-
-  public void cleanup() throws Exception {
-    TestUtil.logTrace("cleanup");
   }
 
   /*
@@ -143,8 +135,7 @@ public class Client extends AbstractUrlClient {
     Map<String, String> headers = new HashMap<>();
     headers.put("foo", "bar");
     List<HttpResponse<String>> responses = sendRequest(headers, null, null);
-    verfiyResponses(responses,
-        new String[] { "hello", "INDEX from index.html" });
+    verifyResponses(responses, new String[] { "hello", "INDEX from index.html" });
   }
 
   /*
@@ -164,21 +155,20 @@ public class Client extends AbstractUrlClient {
       response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
           portnum, getRequest(requestURI), null, null);
 
-      TestUtil.logMsg("response.statusToken:" + response.statusToken);
-      TestUtil.logMsg("response.content:" + response.content);
+      logger.debug("response.statusToken: {}", response.statusToken);
+      logger.debug("response.content: {}", response.content);
 
       // Check that the page was found (no error).
       if (response.isError()) {
-        TestUtil.logErr("Could not find " + requestURI);
+        logger.error("Could not find {}", requestURI);
         throw new Exception("getNullPushBuilderTest failed.");
       }
 
-      if (response.content.indexOf("Get Null PushBuilder") < 0) {
+      if (!response.content.contains("Get Null PushBuilder")) {
         throw new Exception("getNullPushBuilderTest failed.");
       }
     } catch (Exception e) {
-      TestUtil.logErr("Caught exception: " + e.getMessage());
-      e.printStackTrace();
+      logger.error("Caught exception: " + e.getMessage(), e);
       throw new Exception("getNullPushBuilderTest failed: ", e);
     }
   }
@@ -199,7 +189,7 @@ public class Client extends AbstractUrlClient {
     headers.put("If-Match", "*");
     headers.put("Range", "bytes=100-");
     String authString = authUsername + ":" + authPassword;
-    logMsg("auth string: " + authString);
+    logger.debug("auth string: {}", authString);
     byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
     String authStringEnc = new String(authEncBytes);
 
@@ -208,8 +198,9 @@ public class Client extends AbstractUrlClient {
     headers.put("Referer", requestURI + "/test");
 
     List<HttpResponse<String>> responses = sendRequest(headers, null, cm);
-    if (responses.size() != 1)
+    if (responses.size() != 1) {
       throw new Exception("Test fail");
+    }
     String sessionid = responses.get(0)
             .headers()
             .allValues("set-cookie")
@@ -219,8 +210,7 @@ public class Client extends AbstractUrlClient {
             .orElse(null);
 
     if (sessionid == null) {
-      throw new Exception("Test fail: new session ID should be used as the "
-          + "PushBuilder's session ID.");
+      throw new Exception("Test fail: new session ID should be used as the PushBuilder's session ID.");
     }
 
     sessionid = sessionid
@@ -231,7 +221,7 @@ public class Client extends AbstractUrlClient {
       sessionid = sessionid.substring(0, sessionid.indexOf("."));
     }
 
-    logMsg("Sessionid in cookie: " + sessionid);
+    logger.debug("Sessionid in cookie: {}", sessionid);
 
     String response = responses.get(0).body();
 
@@ -297,32 +287,30 @@ public class Client extends AbstractUrlClient {
   public void serverPushSessionTest() throws Exception {
     try {
       requestURI = getContextRoot() + "/TestServlet3?generateSession=true";
-      TestUtil.logMsg("Sending request \"" + requestURI + "\"");
+      logger.debug("Sending request {}", requestURI);
 
       response = WebUtil.sendRequest("GET", InetAddress.getByName(hostname),
           portnum, getRequest(requestURI), null, null);
-      TestUtil.logMsg("The new sessionid is :" + response.content);
+      logger.debug("The new sessionid is : {}", response.content);
 
       // Check that the page was found (no error).
       if (response.isError()) {
-        TestUtil.logErr("Could not find " + requestURI);
+        logger.error("Could not find {}", requestURI);
         throw new Exception("serverPushSessionTest failed.");
       }
 
       requestURI = "http://" + hostname + ":" + portnum + getContextRoot()
           + "/TestServlet3;jsessionid=" + response.content.trim();
-      TestUtil.logMsg("Sending request \"" + requestURI + "\"");
-      List<HttpResponse<String>> responses = sendRequest(new HashMap<>(), null,
-          null);
+      logger.debug("Sending request {}", requestURI);
+      List<HttpResponse<String>> responses = sendRequest(new HashMap<>(), null, null);
       String responseStr = responses.get(0).body();
 
-      TestUtil.logMsg("The test result :" + responseStr);
+      logger.debug("The test result : {}", responseStr);
       if (responseStr.indexOf("Test success") < 0) {
         throw new Exception("serverPushSessionTest failed.");
       }
     } catch (Exception e) {
-      TestUtil.logErr("Caught exception: " + e.getMessage());
-      e.printStackTrace();
+      logger.error("Caught exception: " + e.getMessage(), e);
       throw new Exception("serverPushSessionTest failed: ", e);
     }
   }
@@ -342,17 +330,14 @@ public class Client extends AbstractUrlClient {
     headers.put("foo", "bar");
     CookieManager cm = new CookieManager();
     List<HttpResponse<String>> responses = sendRequest(headers, null, cm);
-    verfiyResponses(responses,
-        new String[] { "add cookies [foo,bar] [baz,qux] to response",
-            "INDEX from index.html" });
+    verifyResponses(responses, new String[] { "add cookies [foo,bar] [baz,qux] to response", "INDEX from index.html" });
     boolean cookieExisted = false;
     String pbCookies = "";
     try {
       for (HttpResponse<String> r : responses) {
-        if (r.body().indexOf("Cookie header in PushBuilder: ") >= 0) {
+        if (r.body().contains("Cookie header in PushBuilder: ")) {
           cookieExisted = true;
-          pbCookies = r.body()
-              .substring(r.body().indexOf("Cookie header in PushBuilder: "));
+          pbCookies = r.body().substring(r.body().indexOf("Cookie header in PushBuilder: "));
           break;
         }
       }
@@ -360,18 +345,15 @@ public class Client extends AbstractUrlClient {
         throw new Exception("Wrong Responses");
       }
 
-      if (pbCookies.indexOf("foo") < 0 || pbCookies.indexOf("bar") < 0) {
-        throw new Exception(
-            "The Cookie header 'foo=bar' should be added to the PushBuilder.");
+      if (!pbCookies.contains("foo") || !pbCookies.contains("bar")) {
+        throw new Exception("The Cookie header 'foo=bar' should be added to the PushBuilder.");
       }
 
-      if (pbCookies.indexOf("baz") >= 0 || pbCookies.indexOf("qux") >= 0) {
-        throw new Exception(
-            "the maxAge for Cookie 'baz=qux' is <= 0, it should be removed from the builder");
+      if (pbCookies.contains("baz") || pbCookies.contains("qux")) {
+        throw new Exception("the maxAge for Cookie 'baz=qux' is <= 0, it should be removed from the builder");
       }
     } catch (Exception e) {
-      TestUtil.logErr("Caught exception: " + e.getMessage());
-      e.printStackTrace();
+      logger.error("Caught exception: " + e.getMessage(), e);
       throw new Exception("serverPushSessionTest failed: ", e);
     }
   }
@@ -385,8 +367,7 @@ public class Client extends AbstractUrlClient {
    */
   @Test
   public void serverPushSessionTest2() throws Exception {
-    requestURI = "http://" + hostname + ":" + portnum + getContextRoot()
-        + "/TestServlet5";
+    requestURI = "http://" + hostname + ":" + portnum + getContextRoot() + "/TestServlet5";
     Map<String, String> headers = new HashMap<>();
     CookieManager cm = new CookieManager();
     cm.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
@@ -529,9 +510,9 @@ public class Client extends AbstractUrlClient {
       }
 
       client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString(), pushPromiseHandler())
-              .thenAccept(pageResponse -> {
-                responses.add(pageResponse);
-              }).completeOnTimeout(null, 1, TimeUnit.MINUTES); //timeout configurable??
+              .thenAccept(pageResponse -> responses.add(pageResponse))
+              .get(1, TimeUnit.MINUTES); //timeout configurable??
+
 
     } catch (Exception e) {
       throw new Exception("Test fail", e);
@@ -539,9 +520,19 @@ public class Client extends AbstractUrlClient {
     return responses;
   }
 
-  private static HttpResponse.PushPromiseHandler<String> pushPromiseHandler() {
-    return (HttpRequest initiatingRequest, HttpRequest pushPromiseRequest, Function<HttpResponse.BodyHandler<String>,
-          CompletableFuture<HttpResponse<String>>> acceptor) -> acceptor.apply(HttpResponse.BodyHandlers.ofString());
+  private HttpResponse.PushPromiseHandler<String> pushPromiseHandler() {
+//    return (HttpRequest initiatingRequest, HttpRequest pushPromiseRequest, Function<HttpResponse.BodyHandler<String>,
+//          CompletableFuture<HttpResponse<String>>> acceptor) -> acceptor.apply(HttpResponse.BodyHandlers.ofString());
+
+    return (HttpRequest initiatingRequest, HttpRequest pushPromiseRequest,
+            Function<HttpResponse.BodyHandler<String>, CompletableFuture<HttpResponse<String>>> acceptor) ->
+    {
+      acceptor.apply(HttpResponse.BodyHandlers.ofString()).thenAccept(resp -> {
+                logger.debug(" Pushed response: {}, headers: {}", resp.uri(), resp.headers());
+              });
+      logger.debug("Promise request: {}", pushPromiseRequest.uri());
+      logger.debug("Promise request: {}", pushPromiseRequest.headers());
+    };
   }
 
   private void printResponse(HttpResponse<String> response) {
@@ -555,7 +546,7 @@ public class Client extends AbstractUrlClient {
             .map(String::trim).reduce(String::concat).orElse("hallo")));
   }
 
-  private void verfiyResponses(List<HttpResponse<String>> responses,
+  private void verifyResponses(List<HttpResponse<String>> responses,
       String[] expectedResponses) throws Exception {
     if (responses.size() == 0) {
       throw new Exception("No Responses, expected responses are "

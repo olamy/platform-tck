@@ -226,6 +226,9 @@ public class TckTestEngine implements TestEngine {
             LOGGER.debug("not started {}", notStarted.size());
             //notFinished.forEach(s -> LOGGER.info("not finished test: {}", s));
             LOGGER.debug("not finished {}", notFinished.size());
+        } catch (Throwable e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         }
 
 
