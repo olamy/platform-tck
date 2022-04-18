@@ -32,8 +32,8 @@ public class TestListener implements ServletContextListener {
     StringBuffer comment = new StringBuffer("Testing_Session_Cookie_Config");
     String domain = "sun.com";
     String path = "/" + sce.getServletContext().getServletContextName() + "/TestServlet";
-    Boolean isSecure = true;
-    Boolean httpOnly = false;
+    boolean isSecure = true;
+    boolean httpOnly = false;
     int maxage = 50000;
     String name = "TCK_Cookie_Name";
 

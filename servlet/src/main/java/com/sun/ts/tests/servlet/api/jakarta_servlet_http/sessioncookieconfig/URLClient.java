@@ -65,11 +65,11 @@ public class URLClient extends AbstractUrlClient {
   @Test
   public void constructortest1() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
-        "GET " + getContextRoot() + "/TestServlet?testname=constructortest1 HTTP/1.1");
+            "GET /servlet_jsh_sessioncookieconfig_web/TestServlet?testname=constructortest1 HTTP/1.1");
     TEST_PROPS.setProperty(EXPECTED_HEADERS,
-        "Set-Cookie:" + "TCK_Cookie_Name=" + "##Expires="
-            + "##Path=" + getContextRoot() + "/TestServlet"
-            + "##Secure");
+            "Set-Cookie:" + "TCK_Cookie_Name=" + "##Expires="
+                    + "##Path=/servlet_jsh_sessioncookieconfig_web/TestServlet"
+                    + "##Secure");
     invoke();
   }
 
