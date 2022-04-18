@@ -20,9 +20,6 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequestwrapper;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.request.HttpRequestClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -43,6 +40,7 @@ public class URLClient extends HttpRequestClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_HSReqWrapper_web.war")
+            .addClass(TCKHttpSessionIDListener.class)
             .setWebXML(URLClient.class.getResource("servlet_jsh_HSReqWrapper_web.xml"));
   }
 
