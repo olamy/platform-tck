@@ -67,9 +67,6 @@ public class Client extends AbstractUrlClient {
             .addAsWebResource("spec/serverpush/index.html")
             .setWebXML(Client.class.getResource("servlet_spec_serverpush_web.xml"));
   }  
-  
-
-
 
   private String requestURI = null;
 
@@ -92,8 +89,8 @@ public class Client extends AbstractUrlClient {
   // TOFIX
   public void setup(String[] args, Properties p) throws Exception {
 
-    authUsername = p.getProperty(USERNAME);
-    authPassword = p.getProperty(PASSWORD);
+    authUsername = p.getProperty(UNAUTH_USERNAME);
+    authPassword = p.getProperty(UNAUTH_PASSWORD);
     hostname = p.getProperty(SERVLETHOSTPROP);
     portnum = Integer.parseInt(p.getProperty(SERVLETPORTPROP));
 
@@ -167,13 +164,13 @@ public class Client extends AbstractUrlClient {
     headers.put("foo", "bar");
     headers.put("If-Match", "*");
     headers.put("Range", "bytes=100-");
-    String authString = authUsername + ":" + authPassword;
+
+    String authString = "Basic " + new String(Base64.getEncoder().encode((authUsername + ":" + authPassword).getBytes()));
+
     logger.debug("auth string: {}", authString);
-    byte[] authEncBytes = Base64.getEncoder().encode(authString.getBytes());
-    String authStringEnc = new String(authEncBytes);
 
     CookieManager cm = new CookieManager();
-    headers.put("Authorization", "Basic " + authStringEnc);
+    headers.put("Authorization", authString);
     headers.put("Referer", requestURI + "/test");
 
     List<HttpResponse<String>> responses = sendRequest(headers, null, cm);
@@ -285,7 +282,7 @@ public class Client extends AbstractUrlClient {
       String responseStr = responses.get(0).body();
 
       logger.debug("The test result : {}", responseStr);
-      if (responseStr.indexOf("Test success") < 0) {
+      if (!responseStr.contains("Test success")) {
         throw new Exception("serverPushSessionTest failed.");
       }
     } catch (Exception e) {
@@ -402,7 +399,7 @@ public class Client extends AbstractUrlClient {
     HttpRequest pushReq = null;
 
     for (HttpResponse<String> response : responses) {
-      if (response.uri().toString().indexOf("index.html") >= 0) {
+      if (response.uri().toString().contains("index.html")) {
         pushResp = response;
         pushReq = response.request();
       }
@@ -431,8 +428,7 @@ public class Client extends AbstractUrlClient {
 
     logMsg("Current query string of the push request is "
         + pushReq.uri().getQuery());
-    if (pushReq.uri().getQuery() == null || pushReq.uri().getQuery()
-        .indexOf("querystring=1&querystring=2") < 0) {
+    if (pushReq.uri().getQuery() == null || !pushReq.uri().getQuery().contains("querystring=1&querystring=2")) {
       throw new Exception(
           "test fail: could not find correct querystring \"querystring=1&querystring=2\"");
     }
@@ -454,14 +450,14 @@ public class Client extends AbstractUrlClient {
     List<HttpResponse<String>> responses = sendRequest(headers, null, null);
     HttpResponse<String> servletResp = null;
     for (HttpResponse<String> response : responses) {
-      if (response.uri().toString().indexOf("TestServlet7") >= 0) {
+      if (response.uri().toString().contains("TestServlet7")) {
         servletResp = response;
       }
     }
 
     if (servletResp == null)
       throw new Exception("can not get servlet response");
-    if (servletResp.body().indexOf("test passed") < 0) {
+    if (!servletResp.body().contains("test passed")) {
       throw new Exception("test fail");
     }
   }
@@ -477,8 +473,8 @@ public class Client extends AbstractUrlClient {
     HttpClient client = builder.version(HttpClient.Version.HTTP_2)
           .followRedirects(HttpClient.Redirect.ALWAYS)
           // TODO nThreads configurable
-          .executor(Executors.newFixedThreadPool(6)).build();
-    ;
+          .executor(Executors.newFixedThreadPool(3))
+          .build();
 
     List<HttpResponse<String>> responses = new CopyOnWriteArrayList<>();
 
@@ -486,10 +482,7 @@ public class Client extends AbstractUrlClient {
       // GET
       HttpRequest.Builder requestBuilder = HttpRequest
           .newBuilder(new URI(requestURI)).version(HttpClient.Version.HTTP_2);
-      for (Map.Entry<String, String> e : headers.entrySet()) {
-        requestBuilder.setHeader(e.getKey(), e.getValue());
-      }
-
+      headers.forEach(requestBuilder::header);
 
       List<CompletableFuture<HttpResponse<String>>> futureResponses = new CopyOnWriteArrayList<>();
 
@@ -498,7 +491,7 @@ public class Client extends AbstractUrlClient {
                       futureResponses.add(acceptor.apply(HttpResponse.BodyHandlers.ofString()));
 
       client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString(), pushPromiseHandler)
-              .thenAccept(pageResponse -> responses.add(pageResponse))
+              .thenAccept(responses::add)
               .get(Long.getLong("http2.timeout", 1), TimeUnit.MINUTES);
 
       responses.addAll(futureResponses.stream().map(httpResponseCompletableFuture -> {
@@ -513,19 +506,6 @@ public class Client extends AbstractUrlClient {
       throw new Exception("Test fail", e);
     }
     return responses;
-  }
-
-  private HttpResponse.PushPromiseHandler<String> pushPromiseHandler(List<HttpResponse<String>> responses) {
-    return (HttpRequest initiatingRequest, HttpRequest pushPromiseRequest,
-            Function<HttpResponse.BodyHandler<String>, CompletableFuture<HttpResponse<String>>> acceptor) ->
-    {
-      acceptor.apply(HttpResponse.BodyHandlers.ofString()).thenAccept(resp -> {
-                responses.add(resp);
-                logger.debug(" Pushed response: {}, headers: {}", resp.uri(), resp.headers());
-              });
-      logger.debug("Promise request: {}", pushPromiseRequest.uri());
-      logger.debug("Promise request: {}", pushPromiseRequest.headers());
-    };
   }
 
   private void printResponse(HttpResponse<String> response) {
@@ -555,7 +535,7 @@ public class Client extends AbstractUrlClient {
       boolean found = false;
       for (HttpResponse<String> r : responses) {
         logMsg(r.body());
-        if (r.body().indexOf(s) >= 0) {
+        if (r.body().contains(s)) {
           found = true;
           break;
         }

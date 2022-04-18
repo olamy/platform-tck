@@ -65,7 +65,6 @@ public abstract class AbstractUrlClient extends BaseUrlClient {
   }
 
   protected void setTestProperties(WebTestCase testCase) {
-
     setStandardProperties(TEST_PROPS.getProperty(STANDARD), testCase);
     setApiTestProperties(TEST_PROPS.getProperty(APITEST), testCase);
     super.setTestProperties(testCase);
