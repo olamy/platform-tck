@@ -20,6 +20,7 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet.dispatchtest;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -47,6 +48,7 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
             .setWebXML(URLClient.class.getResource("servlet_js_dispatchtest_web.xml"));
   }
 

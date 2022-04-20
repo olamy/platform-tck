@@ -21,7 +21,7 @@
     <display-name>SerJaxSerHttpHttpSerRequest31</display-name>
     <servlet>
         <servlet-name>TestServlet</servlet-name>
-        <servlet-class>com.sun.ts.tests.servlet.common.request.HttpRequestTestServlet</servlet-class>
+        <servlet-class>com.sun.ts.tests.servlet.common.servlets.HttpRequestTestServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>TestServlet</servlet-name>

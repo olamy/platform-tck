@@ -20,7 +20,8 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet.asynccontext;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import com.sun.ts.tests.servlet.common.request.HttpRequestTestServlet;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
+import com.sun.ts.tests.servlet.common.servlets.HttpRequestTestServlet;
 import com.sun.ts.tests.servlet.common.servlets.GenericTCKServlet;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -44,8 +45,7 @@ public class URLClient extends AbstractUrlClient {
             .addClasses(ACListener.class, ACListener1.class, ACListener2.class)
             .addClasses(ACListenerBad.class, AsyncTests.class, AsyncTestServlet.class)
             .addClasses(RequestWrapper.class, ResponseWrapper.class)
-            // common part
-            .addClasses(HttpRequestTestServlet.class, GenericTCKServlet.class)
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
             .setWebXML(URLClient.class.getResource("servlet_js_asynccontext_web.xml"));
   }
 

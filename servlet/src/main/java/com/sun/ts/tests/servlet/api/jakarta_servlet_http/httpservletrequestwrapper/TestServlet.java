@@ -22,7 +22,7 @@ package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequestwrap
 
 import java.io.IOException;
 
-import com.sun.ts.tests.servlet.common.request.HttpRequestTestServlet;
+import com.sun.ts.tests.servlet.common.servlets.HttpRequestTestServlet;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -21,6 +21,7 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.common.util.Data;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -45,6 +46,7 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     WebArchive webArchive =
             ShrinkWrap.create(WebArchive.class, "servlet_js_filterrequestdispatcher_web.war")
+                    .addAsLibraries(CommonServlets.getCommonServletsArchive())
             .setWebXML(URLClient.class.getResource("servlet_js_filterrequestdispatcher_web.xml"));
     Arrays.asList("dummy.html","dummyJSP.jsp")
             .forEach(s -> webArchive.addAsWebResource("api/jakarta_servlet/filterrequestdispatcher/"+ s, s));
