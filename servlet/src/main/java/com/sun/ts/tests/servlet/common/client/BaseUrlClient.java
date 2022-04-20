@@ -20,7 +20,6 @@
 
 package com.sun.ts.tests.servlet.common.client;
 
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.request.HttpRequest;
 import com.sun.ts.tests.servlet.common.request.WebTestCase;
 import org.apache.commons.httpclient.HttpState;
@@ -34,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -55,10 +53,6 @@ public abstract class BaseUrlClient {
 
   @ArquillianResource @OperateOnDeployment("_DEFAULT_")
   public URL url;
-
-  public Status run(String[] args, PrintWriter out, PrintWriter err) {
-    return Status.passed("200");
-  }
 
   /**
    * Properties parameters

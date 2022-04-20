@@ -20,15 +20,10 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet.singlethreadmodel;
 
-import java.io.PrintWriter;
-import java.util.Properties;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {

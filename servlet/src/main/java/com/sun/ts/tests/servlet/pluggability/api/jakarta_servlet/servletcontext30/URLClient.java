@@ -19,9 +19,6 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.servletcontext30;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;

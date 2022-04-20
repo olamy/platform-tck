@@ -19,9 +19,6 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpsessionidlistener;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.request.HttpRequestClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

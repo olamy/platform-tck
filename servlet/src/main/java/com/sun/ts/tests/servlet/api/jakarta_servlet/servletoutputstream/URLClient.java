@@ -24,9 +24,6 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servletoutputstream;
 
-import java.io.PrintWriter;
-
-import com.sun.javatest.Status;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
