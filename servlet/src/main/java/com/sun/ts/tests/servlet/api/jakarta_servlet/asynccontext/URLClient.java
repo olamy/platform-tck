@@ -19,20 +19,14 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.asynccontext;
 
-import java.io.PrintWriter;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.Properties;
-
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.request.HttpRequestTestServlet;
+import com.sun.ts.tests.servlet.common.servlets.GenericTCKServlet;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit5.ArquillianExtension;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 public class URLClient extends AbstractUrlClient {
 
@@ -47,6 +41,11 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_asynccontext_web.war")
+            .addClasses(ACListener.class, ACListener1.class, ACListener2.class)
+            .addClasses(ACListenerBad.class, AsyncTests.class, AsyncTestServlet.class)
+            .addClasses(RequestWrapper.class, ResponseWrapper.class)
+            // common part
+            .addClasses(HttpRequestTestServlet.class, GenericTCKServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_asynccontext_web.xml"));
   }
 

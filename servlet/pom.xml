@@ -111,18 +111,11 @@
             <include>**/*.tld</include>
           </includes>
         </resource>
-        <resource>
-          <directory>src/main/resources</directory>
-        </resource>
       </resources>
       <plugins>
         <plugin>
           <groupId>org.mortbay.jetty</groupId>
           <artifactId>tck-extract-tests-maven-plugin</artifactId>
-          <version>1.0.0-SNAPSHOT</version>
-          <configuration>
-            <tckTestsFile>${project.build.outputDirectory}/META-INF/tck-tests.txt</tckTestsFile>
-          </configuration>
           <executions>
             <execution>
               <id>generate-tck-tests-list</id>
