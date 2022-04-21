@@ -25,7 +25,6 @@ import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
@@ -37,6 +36,12 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_genericfilter_web.war")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(GetFilterName_Filter.class, GetFilterNameTestServlet.class, GetInitParam_Filter.class, GetInitParamNull_Filter.class,
+                        GetInitParamNames_Filter.class, GetInitParamNamesNull_Filter.class, GetInitParamNamesNullTestServlet.class,
+                        GetInitParamNamesTestServlet.class, GetInitParamNamesNull_Filter.class, GetInitParamNullTestServlet.class,
+                        GetInitParamTestServlet.class, GetServletContext_Filter.class, GetServletContextTestServlet.class,
+                        InitFilter_Filter.class, InitFilterConfig_Filter.class, InitFilterConfigTestServlet.class,
+                        InitFilterTestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_genericfilter_web.xml"));
   }
 
