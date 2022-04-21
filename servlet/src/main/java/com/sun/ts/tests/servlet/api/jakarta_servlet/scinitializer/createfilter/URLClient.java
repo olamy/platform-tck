@@ -19,7 +19,9 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.scinitializer.createfilter;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateFilter;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -41,6 +43,9 @@ public class URLClient extends AbstractUrlClient {
     return ShrinkWrap.create(WebArchive.class, "servlet_sci_createfilter_web.war")
             .addAsResource(URLClient.class.getResource("jakarta.servlet.ServletContainerInitializer"),
                     "META-INF/services/jakarta.servlet.ServletContainerInitializer")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(CreateFilter.class, TCKServletContainerInitializer.class,
+                        TestListener.class, TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_sci_createfilter_web.xml"));
   }
 

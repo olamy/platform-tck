@@ -41,6 +41,7 @@ public class URLClient extends AbstractUrlClient {
     return ShrinkWrap.create(WebArchive.class, "servlet_sci_addservlet_web.war")
             .addAsResource(URLClient.class.getResource("jakarta.servlet.ServletContainerInitializer"),
                     "META-INF/services/jakarta.servlet.ServletContainerInitializer")
+            .addClasses(TCKServletContainerInitializer.class, TestListener.class, TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_sci_addservlet_web.xml"));
   }
 
