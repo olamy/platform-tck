@@ -36,6 +36,11 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_filterconfig_web.war")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(GetFilterName_Filter.class, GetFilterNameTestServlet.class, GetInitParam_Filter.class,
+                        GetInitParamNames_Filter.class, GetInitParamNamesNull_Filter.class,
+                        GetInitParamNamesNullTestServlet.class, GetInitParamNamesTestServlet.class,
+                        GetInitParamNull_Filter.class, GetInitParamNullTestServlet.class, GetInitParamTestServlet.class,
+                        GetServletContext_Filter.class, GetServletContextTestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_filterconfig_web.xml"));
   }
 

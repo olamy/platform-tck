@@ -49,17 +49,22 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest_web.war")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
-            .addClasses(DispatchTests.class, DispatchTests1.class, DispatchTests2.class, DispatchTests3.class, DispatchTests4.class,
-                    DispatchTests5.class, DispatchTests6.class, DispatchTests10.class, DispatchTests11.class, DispatchTests12.class,
-                    DispatchTests13.class, DispatchTests14.class, DispatchTests15.class, DispatchTests16.class, DispatchTests17.class,
-                    DispatchTests18.class, DispatchTests19.class, DispatchTests20.class, DispatchTestServlet.class, TestListener.class,
-                    TestListener0.class, TestListener1.class, TestListener2.class, TestListener3.class)
+            .addClasses(DispatchTestServlet.class, DispatchTests.class, DispatchTests1.class, DispatchTests2.class,
+                        DispatchTests3.class, DispatchTests4.class, DispatchTests5.class, DispatchTests6.class, TestListener.class,
+                        TestListener0.class, TestListener1.class, TestListener2.class, TestListener3.class,
+                        DispatchTestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_dispatchtest_web.xml"));
   }
 
   @Deployment(testable = false, name = "servlet_js_dispatchtest_web1")
   public static WebArchive getTestArchive1() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest1_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(DispatchTests10.class, DispatchTests11.class, DispatchTests12.class,
+                        DispatchTests13.class, DispatchTests14.class, DispatchTests15.class,
+                        DispatchTests16.class, DispatchTests17.class, DispatchTests18.class,
+                        DispatchTests19.class,DispatchTests20.class,
+                        DispatchTestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_dispatchtest1_web.xml"));
   }
 

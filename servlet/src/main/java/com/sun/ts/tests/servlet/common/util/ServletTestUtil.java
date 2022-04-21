@@ -45,11 +45,6 @@ public class ServletTestUtil {
 
   private static Logger LOGGER = LoggerFactory.getLogger(ServletTestUtil.class);
 
-
-  public static JavaArchive getUtilServletsArchive() {
-    return ShrinkWrap.create(JavaArchive.class, "common-utils.jar")
-            .addClasses(Data.class, StaticLog.class, ServletTestUtil.class);
-  }
   /**
    * Private as this class contains only public static methods.
    */

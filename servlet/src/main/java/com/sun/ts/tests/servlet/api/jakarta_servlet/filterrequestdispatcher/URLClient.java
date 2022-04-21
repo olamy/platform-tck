@@ -29,7 +29,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.net.URL;
 import java.util.Arrays;
 
 public class URLClient extends AbstractUrlClient {
@@ -47,6 +46,10 @@ public class URLClient extends AbstractUrlClient {
     WebArchive webArchive =
             ShrinkWrap.create(WebArchive.class, "servlet_js_filterrequestdispatcher_web.war")
                     .addAsLibraries(CommonServlets.getCommonServletsArchive())
+                    .addClasses(DummyServlet.class, ErrorPage.class, ForwardedServlet.class,
+                                ForwardTest1Servlet.class, ForwardTestServlet.class, IncludedServlet.class,
+                                IncludeTest1Servlet.class, IncludeTestServlet.class, RequestTestServlet.class,
+                                Test_Filter.class, TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_filterrequestdispatcher_web.xml"));
     Arrays.asList("dummy.html","dummyJSP.jsp")
             .forEach(s -> webArchive.addAsWebResource("api/jakarta_servlet/filterrequestdispatcher/"+ s, s));
