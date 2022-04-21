@@ -43,6 +43,7 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_scattributelistener40_web.war")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(SCAttributeListener40.class, TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_scattributelistener40_web.xml"));
   }
 

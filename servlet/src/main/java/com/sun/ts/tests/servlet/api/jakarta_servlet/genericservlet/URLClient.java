@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
-
   @BeforeEach
   public void setupServletName() throws Exception {
     setServletName("TestServlet");
@@ -43,6 +42,9 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_genericservlet_web.war")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(DestroyTestServlet.class, Init_ServletConfigServletExceptionTestServlet.class,
+                        Init_ServletConfigTestServlet.class, InitServletExceptionTestServlet.class,
+                        InitTestServlet.class, ServiceTestServlet.class, ServletErrorPage.class, TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_genericservlet_web.xml"));
   }
 
