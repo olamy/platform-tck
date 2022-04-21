@@ -9,15 +9,12 @@ pipeline {
     string( defaultValue: 'servlet-module-atleast', description: 'GIT branch name to build TCK (master/servlet-module-atleast)',
             name: 'TCK_BRANCH' )
 
-    string( defaultValue: 'jetty-11.0.x', description: 'GIT branch name to build Jetty (jetty-11.0.x)',
-            name: 'JETTY_BRANCH' )
-
     choice(
             description: 'TCK Github org',
             name: 'GITHUB_ORG_TCK',
             choices: ['olamy','eclipse-ee4j']
     )
-    string( defaultValue: 'jdk11', description: 'JDK to build Jetty', name: 'JDKBUILD' )
+    string( defaultValue: 'jdk11', description: 'JDK to use', name: 'JDKBUILD' )
   }
 
   stages {
