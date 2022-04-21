@@ -22,6 +22,8 @@ package com.sun.ts.tests.servlet.common.util;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +45,11 @@ public class ServletTestUtil {
 
   private static Logger LOGGER = LoggerFactory.getLogger(ServletTestUtil.class);
 
+
+  public static JavaArchive getUtilServletsArchive() {
+    return ShrinkWrap.create(JavaArchive.class, "common-utils.jar")
+            .addClasses(Data.class, StaticLog.class, ServletTestUtil.class);
+  }
   /**
    * Private as this class contains only public static methods.
    */

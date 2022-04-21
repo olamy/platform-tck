@@ -49,6 +49,7 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_dispatchtest_web.war")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(DispatchTests.class)
             .setWebXML(URLClient.class.getResource("servlet_js_dispatchtest_web.xml"));
   }
 

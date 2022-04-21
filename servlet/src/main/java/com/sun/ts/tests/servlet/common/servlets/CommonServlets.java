@@ -12,14 +12,11 @@ public class CommonServlets {
         // nothing
     }
 
-    public static List<JavaArchive> getCommonServletsArchive() {
-        JavaArchive javaArchive1 = ShrinkWrap.create(JavaArchive.class, "common-servlets.jar")
+    public static JavaArchive getCommonServletsArchive() {
+        return ShrinkWrap.create(JavaArchive.class, "common-servlets.jar")
                 .addClasses(GenericCheckTestResultServlet.class, GenericTCKServlet.class,
                             HttpCheckTestResultServlet.class, HttpRequestTestServlet.class,
                             HttpTCKServlet.class);
-
-
-        return Arrays.asList(javaArchive1);
     }
 
 }
