@@ -19,7 +19,30 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext305;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterNotFound;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSCAttributeListenerClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSCAttributeListenerString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSRAttributeListenerClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSRAttributeListenerString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSRListenerClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSRListenerString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletNotFound;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadFilter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateFilter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateSCAttributeListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateSRAttributeListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateSRListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext301.AddGenericEventListenerClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext304.CreateGenericEventListener;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -41,6 +64,15 @@ public class URLClient extends AbstractUrlClient {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_servletcontext305_web.war")
             .addAsResource(URLClient.class.getResource("jakarta.servlet.ServletContainerInitializer"),
                     "META-INF/services/jakarta.servlet.ServletContainerInitializer")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(AddSCListenerClass.class, AddSCListenerString.class, CreateSCListener.class,
+                    TestContainerInitializer.class, TestServlet.class, AddServletString.class, AddFilterString.class,
+                    AddFilterClass.class, AddServletClass.class, CreateServlet.class, CreateFilter.class, AddServletNotFound.class,
+                    AddFilterNotFound.class, AddSCAttributeListenerClass.class, CreateSCAttributeListener.class,
+                    AddSRListenerClass.class, CreateSRListener.class, AddSRAttributeListenerClass.class, CreateSRAttributeListener.class,
+                    BadServlet.class, BadFilter.class, BadListener.class, AddGenericEventListenerClass.class, CreateGenericEventListener.class,
+                    AddServletString.class, AddFilterString.class, AddSCAttributeListenerString.class, AddSRListenerString.class,
+                    AddSRAttributeListenerString.class)
             .setWebXML(URLClient.class.getResource("servlet_js_servletcontext305_web.xml"));
   }
 

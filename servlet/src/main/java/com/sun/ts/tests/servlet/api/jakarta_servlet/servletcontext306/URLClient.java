@@ -19,7 +19,14 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext306;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateFilter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -39,6 +46,9 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_servletcontext306_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(TestServlet.class, AddServletString.class, AddServletClass.class, CreateServlet.class,
+                    AddFilterString.class, AddFilterClass.class, CreateFilter.class)
             .setWebXML(URLClient.class.getResource("servlet_js_servletcontext306_web.xml"));
   }
 
