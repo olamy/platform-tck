@@ -20,7 +20,10 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servlet;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.sclistener40.SCListener40;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.sclistener40.TestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -34,6 +37,10 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_servlet_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(CoreServletTest.class, DoDestroyedTestServlet.class, DoInit1TestServlet.class,
+                    DoInit2TestServlet.class, DoServiceTestServlet.class, DoServletConfigTestServlet.class,
+                    DoServletInfoTestServlet.class, PUTestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_servlet_web.xml"));
   }
 
