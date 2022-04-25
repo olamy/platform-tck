@@ -22,7 +22,7 @@
  * $URL$ $LastChangedDate$
  */
 
-package com.sun.ts.tests.servlet.common.request;
+package com.sun.ts.tests.servlet.common.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;

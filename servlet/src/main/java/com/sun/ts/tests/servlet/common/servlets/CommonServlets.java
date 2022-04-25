@@ -17,8 +17,8 @@ public class CommonServlets {
 
     public static JavaArchive getCommonServletsArchive() {
         return ShrinkWrap.create(JavaArchive.class, "common-servlets.jar")
-                .addClasses(GenericCheckTestResultServlet.class, GenericTCKServlet.class,
-                            HttpCheckTestResultServlet.class, HttpRequestTestServlet.class,
+                .addClasses(GenericCheckTestResultServlet.class, GenericTCKServlet.class, RequestTestServlet.class,
+                            HttpCheckTestResultServlet.class, HttpRequestTestServlet.class, RequestTests.class,
                             HttpTCKServlet.class, Data.class, StaticLog.class, ServletTestUtil.class);
     }
 

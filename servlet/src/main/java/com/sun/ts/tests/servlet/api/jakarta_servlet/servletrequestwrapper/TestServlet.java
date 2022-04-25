@@ -60,7 +60,7 @@ package com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper;
 
 import java.io.IOException;
 
-import com.sun.ts.tests.servlet.common.request.RequestTestServlet;
+import com.sun.ts.tests.servlet.common.servlets.RequestTestServlet;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;

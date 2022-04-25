@@ -17,7 +17,7 @@
 /*
  * $Id$
  */
-package com.sun.ts.tests.servlet.common.request;
+package com.sun.ts.tests.servlet.common.servlets;
 
 import java.io.BufferedReader;
 import java.io.IOException;
