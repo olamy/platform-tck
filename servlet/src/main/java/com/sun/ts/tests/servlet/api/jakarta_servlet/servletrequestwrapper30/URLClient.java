@@ -19,11 +19,15 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper30;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequest30.TestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequest30.AsyncTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequest30.AsyncTests;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequest30.SecondServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
@@ -34,6 +38,9 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_servletrequestwrapper30_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(AsyncTestServletWrapper.class, ErrorServletWrapper.class, TestServletWrapper.class,
+                    TestServlet.class, AsyncTestServlet.class, AsyncTests.class, SecondServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_servletrequestwrapper30_web.xml"));
   }
 

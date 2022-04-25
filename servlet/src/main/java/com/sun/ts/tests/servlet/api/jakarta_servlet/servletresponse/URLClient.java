@@ -20,7 +20,9 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servletresponse;
 
+import com.sun.ts.tests.servlet.common.servlets.GenericCheckTestResultServlet;
 import com.sun.ts.tests.servlet.common.response.ResponseClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -40,6 +42,8 @@ public class URLClient extends ResponseClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_servletresponse_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(SetCharacterEncodingTestServlet.class, GenericCheckTestResultServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_servletresponse_web.xml"));
   }
   /*

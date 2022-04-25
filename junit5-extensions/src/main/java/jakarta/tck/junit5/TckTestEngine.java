@@ -197,7 +197,11 @@ public class TckTestEngine implements TestEngine {
                         .map(s -> DiscoverySelectors.selectMethod(s)).collect(Collectors.toUnmodifiableList()));
             } else {
                 List<String> classesAndOrMethod = Arrays.stream(classesNames.split(";")).collect(Collectors.toList());
-                builder.selectors(classesAndOrMethod.stream()
+                List<String> reduced = testClassesAndMethods.stream()
+                        .filter(s ->
+                            classesAndOrMethod.stream().filter(s1 -> s.contains(s1)).findAny().isPresent()
+                        ).collect(Collectors.toList());
+                builder.selectors(reduced.stream()
                         .map(string ->
                             string.contains("#")? DiscoverySelectors.selectMethod(string):DiscoverySelectors.selectClass(string)
                         )

@@ -1,5 +1,7 @@
 package com.sun.ts.tests.servlet.common.servlets;
 
+import com.sun.ts.tests.servlet.common.response.ResponseTestServlet;
+import com.sun.ts.tests.servlet.common.response.ResponseTests;
 import com.sun.ts.tests.servlet.common.util.Data;
 import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
 import com.sun.ts.tests.servlet.common.util.StaticLog;
@@ -19,7 +21,8 @@ public class CommonServlets {
         return ShrinkWrap.create(JavaArchive.class, "common-servlets.jar")
                 .addClasses(GenericCheckTestResultServlet.class, GenericTCKServlet.class, RequestTestServlet.class,
                             HttpCheckTestResultServlet.class, HttpRequestTestServlet.class, RequestTests.class,
-                            HttpTCKServlet.class, Data.class, StaticLog.class, ServletTestUtil.class);
+                            HttpTCKServlet.class, Data.class, StaticLog.class, ServletTestUtil.class,
+                            ResponseTests.class, ResponseTestServlet.class);
     }
 
 }

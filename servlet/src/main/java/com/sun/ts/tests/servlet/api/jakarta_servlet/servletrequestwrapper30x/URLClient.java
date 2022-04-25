@@ -20,6 +20,7 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper30x;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -27,14 +28,14 @@ import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
 
-  private static final String CONTEXT_ROOT = "/servlet_js_servletrequestwrapper30x_web";
-
   /**
    * Deployment for the test
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_servletrequestwrapper30x_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(IsWrapperForTest.class, TCKServletRequestsubWrapper.class, TCKServletRequestWrapper.class)
             .setWebXML(URLClient.class.getResource("servlet_js_servletrequestwrapper30x_web.xml"));
   }
 
