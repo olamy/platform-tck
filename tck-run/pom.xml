@@ -93,7 +93,6 @@
             </properties>
 
             <dependencies>
-                <!-- The actual Arquillian connector -->
                 <dependency>
                     <groupId>org.omnifaces.arquillian</groupId>
                     <artifactId>arquillian-glassfish-server-managed</artifactId>

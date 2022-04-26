@@ -2,7 +2,9 @@ package com.sun.ts.tests.servlet.common.util;
 
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.InvocationException;
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.core.spi.ObserverMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +21,7 @@ public class TCKLoadableExtension implements LoadableExtension {
     }
 
 
-    public static class TCKDeploymentExceptionObserver  {
+    public static class TCKDeploymentExceptionObserver {
 
         /**
          * this will fail the build when Arquillian deployment fail
@@ -27,6 +29,11 @@ public class TCKLoadableExtension implements LoadableExtension {
         public void invoke(@Observes DeploymentException e) {
             LOGGER.error("Fail to deploy: " + e.getMessage(), e);
         }
+
+        public void invoke(@Observes InvocationException e) {
+            LOGGER.error("Fail to deploy: " + e.getMessage(), e);
+        }
+
     }
 
 

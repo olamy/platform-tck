@@ -21,6 +21,7 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet.singlethreadmodel;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -44,6 +45,8 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_singlethreadmodel_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(SingleModelTestServlet.class, STMClientServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_js_singlethreadmodel_web.xml"));
   }
 
@@ -84,7 +87,7 @@ public class URLClient extends AbstractUrlClient {
   @Test
   public void singleModelTest() throws Exception {
     TEST_PROPS.setProperty(REQUEST,
-        "GET /" + getContextRoot() + "/STMClient?count=" + NTHREADS
+        "GET " + getContextRoot() + "/STMClient?count=" + NTHREADS
             + " HTTP/1.1");
     TEST_PROPS.setProperty(STATUS_CODE, OK);
     invoke();
