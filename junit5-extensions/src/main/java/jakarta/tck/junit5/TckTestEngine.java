@@ -220,7 +220,11 @@ public class TckTestEngine implements TestEngine {
             LOGGER.info("Tests found: {} , Succeeded: {}, Failures: {}, Aborted: {}, Skipped: {}" ,
                     summary.getTestsFoundCount(), summary.getTestsSucceededCount(), summary.getTestsFailedCount(),
                     summary.getTestsAbortedCount(), summary.getTestsSkippedCount());
-
+            if (summary.getTestsFoundCount() != (summary.getTestsSucceededCount() + summary.getTestsFailedCount()
+                    + summary.getTestsAbortedCount() + summary.getTestsSkippedCount() )) {
+                LOGGER.error("tests count is not correct");
+                throw new RuntimeException("tests count is not correct");
+            }
             List<String> notStarted = testClassesAndMethods.stream()
                     .filter(s -> !myListener.started.contains(s)).collect(Collectors.toList());
             List<String> notFinished = testClassesAndMethods.stream()
@@ -230,6 +234,7 @@ public class TckTestEngine implements TestEngine {
             LOGGER.debug("not started {}", notStarted.size());
             //notFinished.forEach(s -> LOGGER.info("not finished test: {}", s));
             LOGGER.debug("not finished {}", notFinished.size());
+
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
             throw e;
