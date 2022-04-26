@@ -45,7 +45,8 @@ public class Client extends AbstractUrlClient {
     JavaArchive javaArchive = ShrinkWrap.create(JavaArchive.class, "tldjar.jar")
             .addAsResource(Client.class.getResource("listener.tld"), "META-INF/listener.tld");
     return ShrinkWrap.create(WebArchive.class, "servlet_js_servletcontext40_web.war")
-            .addAsLibraries(javaArchive, CommonServlets.getCommonServletsArchive())
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addAsLibraries(javaArchive)
             .addClasses(AddListener.class, TestListener.class, TestServlet.class, TestServlet2.class)
             .addAsWebResource("api/jakarta_servlet/servletcontext40/addJspFile.jsp", "addJspFile.jsp")
             .setWebXML(Client.class.getResource("servlet_js_servletcontext40_web.xml"));

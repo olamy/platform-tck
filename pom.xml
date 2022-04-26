@@ -89,6 +89,8 @@
         <webservices-tools.version>3.0.0</webservices-tools.version>
         <javatest.version>5.0</javatest.version>
         <slf4j.version>1.7.36</slf4j.version>
+
+        <surefire.failIfNoSpecifiedTests>false</surefire.failIfNoSpecifiedTests>
     </properties>
 
     <modules>
@@ -442,6 +444,14 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>web-jsp</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>1.7.0.Alpha10</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
         </dependencies>

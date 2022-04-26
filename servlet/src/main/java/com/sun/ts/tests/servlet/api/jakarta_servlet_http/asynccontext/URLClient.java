@@ -20,6 +20,7 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.asynccontext;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -40,6 +41,9 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_asynccontext_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(ACListener.class, ACListener1.class, ACListener2.class, ACListenerBad.class,
+                    AsyncTests.class, AsyncTestServlet.class, RequestWrapper.class, ResponseWrapper.class)
             .setWebXML(URLClient.class.getResource("servlet_jsh_asynccontext_web.xml"));
   }
 

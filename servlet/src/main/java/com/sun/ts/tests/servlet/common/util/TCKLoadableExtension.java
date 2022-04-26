@@ -4,7 +4,6 @@ import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.InvocationException;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.core.spi.ObserverMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -191,15 +191,15 @@ public class TckTestEngine implements TestEngine {
             // here we don't want an infinite loop so ignore it self
             LauncherDiscoveryRequestBuilder builder = LauncherDiscoveryRequestBuilder.request()
                     .filters(EngineFilter.excludeEngines(ENGINE_ID, "junit-vintage"));
-            String classesNames = System.getProperty(TckTestEngine.class.getName() + ".classesNames", "");
+            String classesNames = System.getProperty("test", "");
             if (classesNames.isEmpty()) {
                 builder.selectors(testClassesAndMethods.stream()
-                        .map(s -> DiscoverySelectors.selectMethod(s)).collect(Collectors.toUnmodifiableList()));
+                        .map(DiscoverySelectors::selectMethod).collect(Collectors.toUnmodifiableList()));
             } else {
                 List<String> classesAndOrMethod = Arrays.stream(classesNames.split(";")).collect(Collectors.toList());
                 List<String> reduced = testClassesAndMethods.stream()
                         .filter(s ->
-                            classesAndOrMethod.stream().filter(s1 -> s.contains(s1)).findAny().isPresent()
+                                classesAndOrMethod.stream().anyMatch(s::contains)
                         ).collect(Collectors.toList());
                 builder.selectors(reduced.stream()
                         .map(string ->
@@ -212,19 +212,9 @@ public class TckTestEngine implements TestEngine {
             LauncherDiscoveryRequest launcherDiscoveryRequest = builder.build();
             TestPlan testPlan = launcher.discover(launcherDiscoveryRequest);
 
-            //TestPlan testPlan = TestPlan.from((Collection<TestDescriptor>) engine.getChildren(), executionRequest.getConfigurationParameters());
             MyListener myListener = new MyListener(executionRequest.getEngineExecutionListener(), this.jupiterConfiguration, this.uniqueId);
             launcher.execute(testPlan, myListener, summaryGeneratingListener);
 
-            TestExecutionSummary summary = summaryGeneratingListener.getSummary();
-            LOGGER.info("Tests found: {} , Succeeded: {}, Failures: {}, Aborted: {}, Skipped: {}" ,
-                    summary.getTestsFoundCount(), summary.getTestsSucceededCount(), summary.getTestsFailedCount(),
-                    summary.getTestsAbortedCount(), summary.getTestsSkippedCount());
-            if (summary.getTestsFoundCount() != (summary.getTestsSucceededCount() + summary.getTestsFailedCount()
-                    + summary.getTestsAbortedCount() + summary.getTestsSkippedCount() )) {
-                LOGGER.error("tests count is not correct");
-                throw new RuntimeException("tests count is not correct");
-            }
             List<String> notStarted = testClassesAndMethods.stream()
                     .filter(s -> !myListener.started.contains(s)).collect(Collectors.toList());
             List<String> notFinished = testClassesAndMethods.stream()
@@ -240,6 +230,19 @@ public class TckTestEngine implements TestEngine {
             throw e;
         }
 
+        TestExecutionSummary summary = summaryGeneratingListener.getSummary();
+        LOGGER.info("Tests found: {} , Succeeded: {}, Failures: {}, Aborted: {}, Skipped: {}" ,
+                summary.getTestsFoundCount(), summary.getTestsSucceededCount(), summary.getTestsFailedCount(),
+                summary.getTestsAbortedCount(), summary.getTestsSkippedCount());
+        if (summary.getTestsFoundCount() != (summary.getTestsSucceededCount() + summary.getTestsFailedCount()
+                + summary.getTestsAbortedCount() + summary.getTestsSkippedCount() )) {
+            String message = "tests count is not correct";
+            throw new RuntimeException(message);
+        }
+        if (summary.getTestsFoundCount() < 1 && Boolean.getBoolean("failIfNoTests") ) {
+            String message = "No tests found";
+            throw new RuntimeException(message);
+        }
 
     }
 
@@ -321,7 +324,7 @@ public class TckTestEngine implements TestEngine {
         @Override
         public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
             // skip root
-            if (!testIdentifier.getParentId().isPresent()){
+            if (testIdentifier.getParentId().isEmpty()){
                 return;
             }
             if (testIdentifier.isTest()) {

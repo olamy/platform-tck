@@ -34,6 +34,8 @@
 
     <properties>
         <arquillian.core.version>1.7.0.Alpha10</arquillian.core.version>
+        <test></test>
+        <failIfNoTests>true</failIfNoTests>
     </properties>
 
     <dependencies>
@@ -134,6 +136,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <failIfNoTests>false</failIfNoTests>
                             <includeJUnit5Engines>
                                 <includeJUnit5Engine>jakarta-tck-test-engine</includeJUnit5Engine>
                             </includeJUnit5Engines>
@@ -146,7 +149,8 @@
                             </dependenciesToScan>
                             <systemPropertyVariables>
                                 <glassfish.home>${glassfish.root}/glassfish7</glassfish.home>
-                                <jakarta.tck.junit5.TckTestEngine.classesNames>${classesNamesTests}</jakarta.tck.junit5.TckTestEngine.classesNames>
+                                <test>${test}</test>
+                                <failIfNoTests>${failIfNoTests}</failIfNoTests>
                                 <http2.timeout>${http2.timeout}</http2.timeout>
                             </systemPropertyVariables>
                         </configuration>

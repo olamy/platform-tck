@@ -24,6 +24,7 @@ package com.sun.ts.tests.servlet.api.jakarta_servlet_http.cookie;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.request.HttpRequest;
 import com.sun.ts.tests.servlet.common.request.HttpResponse;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.common.util.Data;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Header;
@@ -52,7 +53,10 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
+
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_cookie_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_jsh_cookie_web.xml"));
   }
 
