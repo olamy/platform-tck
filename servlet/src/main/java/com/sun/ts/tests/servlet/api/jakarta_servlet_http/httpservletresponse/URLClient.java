@@ -27,6 +27,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 
 public class URLClient extends HttpResponseClient {
 
@@ -41,11 +42,16 @@ public class URLClient extends HttpResponseClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpservletresponse_web.war")
-            .addAsLibraries(CommonServlets.getCommonServletsArchive())
-            .addClasses(GetContentTypeNullTestServlet.class, RedirectedTestServlet.class,
-                    ServletErrorPage.class, SetCharacterEncodingTestServlet.class)
-            .setWebXML(URLClient.class.getResource("servlet_jsh_httpservletresponse_web.xml"));
+    try {
+      return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpservletresponse_web.war")
+              .addAsLibraries(CommonServlets.getCommonServletsArchive())
+              .addClasses(GetContentTypeNullTestServlet.class, RedirectedTestServlet.class,
+                      ServletErrorPage.class, SetCharacterEncodingTestServlet.class)
+              .setWebXML(URLClient.class.getResource("servlet_jsh_httpservletresponse_web.xml"));
+    } catch (Throwable e) {
+      LoggerFactory.getLogger(URLClient.class).error(e.getMessage(), e);
+      throw e;
+    }
   }
 
   /*
