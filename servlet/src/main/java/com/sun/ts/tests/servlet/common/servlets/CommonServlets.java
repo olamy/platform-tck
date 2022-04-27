@@ -24,14 +24,18 @@ public class CommonServlets {
 
     private CommonServlets() {
 
+        List<JavaArchive> archives = new ArrayList<>();
+
         File[] files = Maven.resolver().loadPomFromFile("pom.xml")
                 .resolve("org.slf4j:slf4j-simple")
                 .withTransitivity()
                 .asFile();
-        List<JavaArchive> archives =
+        List<JavaArchive> slf4jJars =
                 Arrays.stream(files).map(file -> ShrinkWrap.createFromZipFile(JavaArchive.class, file))
                         .collect(Collectors.toList());
-//        List<JavaArchive> archives = new ArrayList<>();
+
+        //archives.addAll(slf4jJars);
+
         archives.add(ShrinkWrap.create(JavaArchive.class, "common-servlets.jar")
                 .addClasses(GenericCheckTestResultServlet.class, GenericTCKServlet.class, RequestTestServlet.class,
                         HttpCheckTestResultServlet.class, HttpRequestTestServlet.class, RequestTests.class,
