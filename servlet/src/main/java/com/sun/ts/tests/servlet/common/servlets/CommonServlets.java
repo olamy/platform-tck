@@ -1,5 +1,6 @@
 package com.sun.ts.tests.servlet.common.servlets;
 
+import com.sun.ts.tests.servlet.common.response.HttpResponseTestServlet;
 import com.sun.ts.tests.servlet.common.response.ResponseTestServlet;
 import com.sun.ts.tests.servlet.common.response.ResponseTests;
 import com.sun.ts.tests.servlet.common.util.Data;
@@ -35,7 +36,7 @@ public class CommonServlets {
                 .addClasses(GenericCheckTestResultServlet.class, GenericTCKServlet.class, RequestTestServlet.class,
                         HttpCheckTestResultServlet.class, HttpRequestTestServlet.class, RequestTests.class,
                         HttpTCKServlet.class, Data.class, StaticLog.class, ServletTestUtil.class,
-                        ResponseTests.class, ResponseTestServlet.class));
+                        ResponseTests.class, ResponseTestServlet.class, HttpResponseTestServlet.class));
 
         javaArchives = archives.toArray(new JavaArchive[0]);
 

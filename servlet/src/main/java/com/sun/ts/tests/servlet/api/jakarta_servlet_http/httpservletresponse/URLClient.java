@@ -43,6 +43,8 @@ public class URLClient extends HttpResponseClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpservletresponse_web.war")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(GetContentTypeNullTestServlet.class, RedirectedTestServlet.class,
+                    ServletErrorPage.class, SetCharacterEncodingTestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_jsh_httpservletresponse_web.xml"));
   }
 
