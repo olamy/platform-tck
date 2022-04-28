@@ -22,6 +22,7 @@ package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest40;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -51,7 +52,10 @@ public class Client extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpservletrequest40_web.war")
-            .addClasses(DispatchServlet.class)
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(DispatchServlet.class, ForwardFilter.class, ForwardServlet.class,
+                    IncludeServlet.class, NamedForwardServlet.class, NamedIncludeServlet.class,
+                    TestServlet.class, TrailerTestServlet.class, Utilities.class)
             .setWebXML(Client.class.getResource("servlet_jsh_httpservletrequest40_web.xml"));
   }  
   

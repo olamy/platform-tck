@@ -21,6 +21,7 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest1;
 
 import com.sun.ts.tests.servlet.common.request.HttpRequestClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -40,7 +41,7 @@ public class URLClient extends HttpRequestClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpservletrequest1_web.war")
-            ici
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
             .setWebXML(URLClient.class.getResource("servlet_jsh_httpservletrequest1_web.xml"));
   }
 

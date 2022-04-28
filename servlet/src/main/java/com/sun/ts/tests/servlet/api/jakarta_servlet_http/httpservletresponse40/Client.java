@@ -22,6 +22,7 @@ package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletresponse40;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.lib.util.WebUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -44,6 +45,8 @@ public class Client extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpservletresponse40_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(TrailerTestServlet.class, TrailerTestServlet2.class)
             .setWebXML(Client.class.getResource("servlet_jsh_httpservletresponse40_web.xml"));
   }
 
@@ -64,8 +67,7 @@ public class Client extends AbstractUrlClient {
 
     String response = simpleTest("TrailerTestWithHTTP10", "HTTP/1.0",
         "/TrailerTestServlet");
-    if (response
-        .indexOf("Get IllegalStateException when call setTrailerFields") < 0) {
+    if (!response.contains("Get IllegalStateException when call setTrailerFields")) {
       TestUtil.logErr(
           "The underlying protocol is HTTP 1.0, the IllegalStateException should be thrown");
       throw new Exception("TrailerTestWithHTTP10 failed.");
@@ -85,8 +87,7 @@ public class Client extends AbstractUrlClient {
 
     String response = simpleTest("TrailerTestResponseCommitted", "HTTP/1.1",
         "/TrailerTestServlet2");
-    if (response
-        .indexOf("Get IllegalStateException when call setTrailerFields") < 0) {
+    if (!response.contains("Get IllegalStateException when call setTrailerFields")) {
       TestUtil.logErr(
           "The response has been committed, the IllegalStateException should be thrown");
       throw new Exception("TrailerTestResponseCommitted failed.");
@@ -136,19 +137,16 @@ public class Client extends AbstractUrlClient {
 
   private String simpleTest(String testName, String protocol,
       String servletPath) throws Exception {
-    URL url;
-    Socket socket = null;
-    OutputStream output;
-    InputStream input;
 
-    try {
-      url = new URL(
-          "http://" + _hostname + ":" + _port + getContextRoot() + servletPath);
-      TestUtil.logMsg("access " + url.toString());
-      socket = new Socket(url.getHost(), url.getPort());
+    URL url = new URL(
+            "http://" + _hostname + ":" + _port + getContextRoot() + servletPath);
+
+    TestUtil.logMsg("access " + url.toString());
+    try (Socket socket = new Socket(url.getHost(), url.getPort());
+         OutputStream output = socket.getOutputStream();
+         InputStream input = socket.getInputStream()) {
+
       socket.setKeepAlive(true);
-      output = socket.getOutputStream();
-
       String path = url.getPath();
       StringBuffer outputBuffer = new StringBuffer();
       outputBuffer.append("POST " + path + " " + protocol + DELIMITER);
@@ -162,7 +160,6 @@ public class Client extends AbstractUrlClient {
       output.write(outputBytes);
       output.flush();
 
-      input = socket.getInputStream();
       ByteArrayOutputStream bytes = new ByteArrayOutputStream();
       int read = 0;
       while ((read = input.read()) >= 0) {
@@ -175,12 +172,6 @@ public class Client extends AbstractUrlClient {
       TestUtil.logErr("Caught exception: " + e.getMessage());
       e.printStackTrace();
       throw new Exception(testName + " failed: ", e);
-    } finally {
-      try {
-        if (socket != null)
-          socket.close();
-      } catch (Exception e) {
-      }
     }
   }
 }
