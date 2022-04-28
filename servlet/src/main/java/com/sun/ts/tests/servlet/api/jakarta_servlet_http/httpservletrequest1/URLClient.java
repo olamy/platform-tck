@@ -40,6 +40,7 @@ public class URLClient extends HttpRequestClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpservletrequest1_web.war")
+            ici
             .setWebXML(URLClient.class.getResource("servlet_jsh_httpservletrequest1_web.xml"));
   }
 

@@ -23,31 +23,25 @@ public class CommonServlets {
     private final JavaArchive[] javaArchives;
 
     private CommonServlets() {
-        try {
-            List<JavaArchive> archives = new ArrayList<>();
+        List<JavaArchive> archives = new ArrayList<>();
 
-            File[] files = Maven.configureResolver().workOffline().loadPomFromFile("pom.xml")
-                    .resolve("org.slf4j:slf4j-simple")
-                    .withTransitivity()
-                    .asFile();
-            List<JavaArchive> slf4jJars =
-                    Arrays.stream(files).map(file -> ShrinkWrap.createFromZipFile(JavaArchive.class, file))
-                            .collect(Collectors.toList());
+        File[] files = Maven.configureResolver().workOffline().loadPomFromFile("pom.xml")
+                .resolve("org.slf4j:slf4j-simple")
+                .withTransitivity()
+                .asFile();
+        List<JavaArchive> slf4jJars =
+                Arrays.stream(files).map(file -> ShrinkWrap.createFromZipFile(JavaArchive.class, file))
+                        .collect(Collectors.toList());
 
-            //archives.addAll(slf4jJars);
+        //archives.addAll(slf4jJars);
 
-            archives.add(ShrinkWrap.create(JavaArchive.class, "common-servlets.jar")
-                    .addClasses(GenericCheckTestResultServlet.class, GenericTCKServlet.class, RequestTestServlet.class,
-                            HttpCheckTestResultServlet.class, HttpRequestTestServlet.class, RequestTests.class,
-                            HttpTCKServlet.class, Data.class, StaticLog.class, ServletTestUtil.class,
-                            ResponseTests.class, ResponseTestServlet.class, HttpResponseTestServlet.class));
+        archives.add(ShrinkWrap.create(JavaArchive.class, "common-servlets.jar")
+                .addClasses(GenericCheckTestResultServlet.class, GenericTCKServlet.class, RequestTestServlet.class,
+                        HttpCheckTestResultServlet.class, HttpRequestTestServlet.class, RequestTests.class,
+                        HttpTCKServlet.class, Data.class, StaticLog.class, ServletTestUtil.class,
+                        ResponseTests.class, ResponseTestServlet.class, HttpResponseTestServlet.class));
 
-            javaArchives = archives.toArray(new JavaArchive[0]);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage(), e);
-        }
-
+        javaArchives = archives.toArray(new JavaArchive[0]);
     }
 
     public static JavaArchive[] getCommonServletsArchive() {
