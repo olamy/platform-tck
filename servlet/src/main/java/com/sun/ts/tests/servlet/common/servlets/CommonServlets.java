@@ -26,7 +26,7 @@ public class CommonServlets {
         try {
             List<JavaArchive> archives = new ArrayList<>();
 
-            File[] files = Maven.resolver().loadPomFromFile("pom.xml")
+            File[] files = Maven.configureResolver().workOffline().loadPomFromFile("pom.xml")
                     .resolve("org.slf4j:slf4j-simple")
                     .withTransitivity()
                     .asFile();
