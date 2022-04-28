@@ -137,6 +137,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <failIfNoTests>false</failIfNoTests>
+                            <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
                             <includeJUnit5Engines>
                                 <includeJUnit5Engine>jakarta-tck-test-engine</includeJUnit5Engine>
                             </includeJUnit5Engines>
