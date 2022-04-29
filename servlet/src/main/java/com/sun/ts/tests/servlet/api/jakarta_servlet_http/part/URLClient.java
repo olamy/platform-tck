@@ -21,7 +21,7 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.part;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import com.sun.ts.tests.servlet.common.servlets.HttpTCKServlet;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -54,7 +54,8 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "part.war")
-            .addClasses(TestServlet.class, HttpTCKServlet.class, ServletTestUtil.class);
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(TestServlet.class);
   }
 
   /*

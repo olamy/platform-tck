@@ -24,6 +24,7 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpsessionx;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -42,12 +43,17 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpsessionx_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_jsh_httpsessionx_web.xml"));
   }
 
   @Deployment(testable = false, name = "servlet_jsh_httpsession2x_web")
   public static WebArchive getTestArchive2() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_httpsessionx2_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(ExpireHttpSession.class, GetNewSession.class,
+                    InvalidateHttpSession.class, SetMaxInterval.class)
             .setWebXML(URLClient.class.getResource("servlet_jsh_httpsessionx2_web.xml"));
   }
 

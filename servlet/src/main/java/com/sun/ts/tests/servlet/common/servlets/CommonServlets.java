@@ -1,5 +1,7 @@
 package com.sun.ts.tests.servlet.common.servlets;
 
+import com.sun.ts.tests.servlet.api.common.sharedfiles.HSessionAttributeListener;
+import com.sun.ts.tests.servlet.api.common.sharedfiles.HSessionListener;
 import com.sun.ts.tests.servlet.common.response.HttpResponseTestServlet;
 import com.sun.ts.tests.servlet.common.response.ResponseTestServlet;
 import com.sun.ts.tests.servlet.common.response.ResponseTests;
@@ -39,7 +41,8 @@ public class CommonServlets {
                 .addClasses(GenericCheckTestResultServlet.class, GenericTCKServlet.class, RequestTestServlet.class,
                         HttpCheckTestResultServlet.class, HttpRequestTestServlet.class, RequestTests.class,
                         HttpTCKServlet.class, Data.class, StaticLog.class, ServletTestUtil.class,
-                        ResponseTests.class, ResponseTestServlet.class, HttpResponseTestServlet.class));
+                        ResponseTests.class, ResponseTestServlet.class, HttpResponseTestServlet.class,
+                        HSessionListener.class, HSessionAttributeListener.class));
 
         javaArchives = archives.toArray(new JavaArchive[0]);
     }

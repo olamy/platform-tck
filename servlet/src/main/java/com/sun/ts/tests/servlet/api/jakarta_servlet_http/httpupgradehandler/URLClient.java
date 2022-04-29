@@ -18,6 +18,7 @@
 package com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpupgradehandler;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.common.util.ServletTestUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -46,7 +47,8 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_jsh_upgradehandler_web.war")
-            .addClasses(TestServlet.class);
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(TCKHttpUpgradeHandler.class, TCKReadListener.class, TestServlet.class);
   }
 
 
