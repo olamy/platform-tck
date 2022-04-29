@@ -170,6 +170,19 @@
                     </plugin>
                 </plugins>
             </build>
+            <repositories>
+                <repository>
+                    <name>Jakarta Staging</name>
+                    <id>jakarta.staging</id>
+                    <url>https://jakarta.oss.sonatype.org/content/repositories/staging/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
         </profile>
     </profiles>
 
