@@ -21,6 +21,7 @@ package com.sun.ts.tests.servlet.pluggability.aordering2;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.pluggability.common.CommonArchives;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener5;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener6;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
@@ -38,12 +39,12 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     JavaArchive javaArchive6 = ShrinkWrap.create(JavaArchive.class, "fragment-6.jar")
-            .addClasses(RequestListener6.class, TestServlet1.class)
             .addAsResource("com/sun/ts/tests/servlet/pluggability/common/web-fragment_6.xml",
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_aordering2_web.war")
             .addAsLibraries(CommonArchives.getCommonWebFragmentArchives())
             .addAsLibraries(javaArchive6)
+            .addClasses(TestServlet1.class, RequestListener.class)
             .setWebXML(URLClient.class.getResource("servlet_spec_aordering2_web.xml"));
   }
 

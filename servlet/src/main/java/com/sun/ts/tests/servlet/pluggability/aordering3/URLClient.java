@@ -21,6 +21,7 @@ package com.sun.ts.tests.servlet.pluggability.aordering3;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.pluggability.common.CommonArchives;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener6;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -43,6 +44,7 @@ public class URLClient extends AbstractUrlClient {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_aordering3_web.war")
             .addAsLibraries(CommonArchives.getCommonWebFragmentArchives())
             .addAsLibraries(javaArchive6)
+            .addClasses(RequestListener.class, TestServlet1.class)
             .setWebXML(URLClient.class.getResource("servlet_spec_aordering3_web.xml"));
   }
 

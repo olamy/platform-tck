@@ -21,15 +21,10 @@ package com.sun.ts.tests.servlet.pluggability.aordering1;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.pluggability.common.CommonArchives;
-import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
-import com.sun.ts.tests.servlet.pluggability.common.RequestListener2;
-import com.sun.ts.tests.servlet.pluggability.common.RequestListener3;
-import com.sun.ts.tests.servlet.pluggability.common.RequestListener4;
-import com.sun.ts.tests.servlet.pluggability.common.RequestListener5;
+import com.sun.ts.tests.servlet.pluggability.common.RequestListener;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +37,7 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_aordering1_web.war")
             .addAsLibraries(CommonArchives.getCommonWebFragmentArchives())
+            .addClasses(TestServlet1.class, RequestListener.class)
             .setWebXML(URLClient.class.getResource("servlet_spec_aordering1_web.xml"));
   }
 
