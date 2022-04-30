@@ -19,7 +19,12 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.filter;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filter.DoFilterTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filter.DoFilter_Filter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filter.InitFilterConfigTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filter.InitFilter_Filter;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -41,6 +46,9 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getResource("servlet_plu_filter_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_filter_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(DoFilter_Filter.class, InitFilter_Filter.class, DoFilterTestServlet.class,
+                    InitFilterConfigTestServlet.class)
             .addAsLibraries(javaArchive);
   }
 

@@ -19,7 +19,20 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.filterconfig;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetFilterName_Filter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetInitParamNull_Filter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetInitParam_Filter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetInitParamNames_Filter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetServletContext_Filter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetInitParamNamesNull_Filter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetServletContextTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetInitParamNullTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetInitParamTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetInitParamNamesNullTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetInitParamNamesTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterconfig.GetFilterNameTestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -41,6 +54,11 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getResource("servlet_plu_filterconfig_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_filterconfig_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(GetFilterName_Filter.class, GetInitParam_Filter.class, GetInitParamNames_Filter.class,
+                    GetServletContext_Filter.class, GetInitParamNull_Filter.class, GetInitParamNamesNull_Filter.class,
+                    GetServletContextTestServlet.class, GetInitParamNullTestServlet.class, GetInitParamTestServlet.class,
+                    GetInitParamNamesNullTestServlet.class, GetInitParamNamesTestServlet.class, GetFilterNameTestServlet.class)
             .addAsLibraries(javaArchive);
   }
 
