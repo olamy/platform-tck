@@ -19,9 +19,16 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.asynccontext;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.asynccontext.AsyncTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.asynccontext.AsyncTests;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.asynccontext.ResponseWrapper;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.asynccontext.RequestWrapper;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.asynccontext.ACListener2;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.asynccontext.ACListenerBad;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -45,7 +52,11 @@ public class URLClient extends AbstractUrlClient {
             .addClasses(TestServlet1.class, RequestListener1.class)
             .addAsResource(URLClient.class.getResource("servlet_plu_asynccontext_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
+
     return ShrinkWrap.create(WebArchive.class, "asynccontext_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(AsyncTestServlet.class, AsyncTests.class, ResponseWrapper.class, RequestWrapper.class,
+                    ACListener2.class, ACListenerBad.class)
             .addAsLibraries(javaArchive);
   }
 
