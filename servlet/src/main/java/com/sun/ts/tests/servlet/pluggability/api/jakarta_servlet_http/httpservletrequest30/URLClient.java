@@ -19,7 +19,9 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet_http.httpservletrequest30;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest30.LoginTestServlet;
 import com.sun.ts.tests.servlet.common.request.HttpRequestClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -46,6 +48,8 @@ public class URLClient extends HttpRequestClient {
             .addAsResource(URLClient.class.getResource("servlet_pluh_httpservletrequest30_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_pluh_httpservletrequest30_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(LoginTestServlet.class)
             .addAsLibraries(javaArchive);
   }
 

@@ -19,7 +19,11 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet_http.httpsession;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpsession.ExpireHttpSession;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpsession.GetLastAccessedTime;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpsession.TestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -46,6 +50,8 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getResource("servlet_pluh_httpsession_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_pluh_httpsession_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(ExpireHttpSession.class, GetLastAccessedTime.class, TestServlet.class)
             .addAsLibraries(javaArchive);
   }
 

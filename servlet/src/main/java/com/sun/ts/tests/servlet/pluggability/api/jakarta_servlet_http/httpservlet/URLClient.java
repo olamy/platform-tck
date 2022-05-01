@@ -19,7 +19,13 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet_http.httpservlet;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservlet.DestroyTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservlet.InitTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservlet.Init_ServletConfigTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservlet.ServiceTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservlet.TestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -46,6 +52,9 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getResource("servlet_pluh_httpservlet_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_pluh_httpservlet_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(DestroyTestServlet.class, Init_ServletConfigTestServlet.class,
+                    InitTestServlet.class, ServiceTestServlet.class, TestServlet.class)
             .addAsLibraries(javaArchive);
   }
 

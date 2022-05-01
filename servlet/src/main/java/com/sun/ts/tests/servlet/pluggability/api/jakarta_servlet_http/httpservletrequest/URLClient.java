@@ -19,7 +19,15 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet_http.httpservletrequest;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest.GetParameterNamesEmptyEnumTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest.GetQueryStringNullTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest.GetReaderUnsupportedEncodingExceptionTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest.GetServletPathEmptyStringTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest.SetCharacterEncodingTest;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest.SetCharacterEncodingUnsupportedEncodingExceptionTest;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletrequest.getServletContextTest;
 import com.sun.ts.tests.servlet.common.request.HttpRequestClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.common.util.Data;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
@@ -48,6 +56,11 @@ public class URLClient extends HttpRequestClient {
             .addAsResource(URLClient.class.getResource("servlet_pluh_httpservletrequest_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_pluh_httpservletrequest_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(GetParameterNamesEmptyEnumTestServlet.class, GetQueryStringNullTestServlet.class,
+                    GetReaderUnsupportedEncodingExceptionTestServlet.class,
+                    getServletContextTest.class, GetServletPathEmptyStringTestServlet.class,
+                    SetCharacterEncodingTest.class, SetCharacterEncodingUnsupportedEncodingExceptionTest.class)
             .addAsLibraries(javaArchive);
   }
 

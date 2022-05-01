@@ -19,7 +19,12 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet_http.httpservletresponse;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletresponse.GetContentTypeNullTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletresponse.RedirectedTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletresponse.ServletErrorPage;
+import com.sun.ts.tests.servlet.api.jakarta_servlet_http.httpservletresponse.SetCharacterEncodingTestServlet;
 import com.sun.ts.tests.servlet.common.response.HttpResponseClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -47,6 +52,9 @@ public class URLClient extends HttpResponseClient {
             .addAsResource(URLClient.class.getResource("servlet_pluh_httpservletresponse_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_pluh_httpservletresponse_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(GetContentTypeNullTestServlet.class, RedirectedTestServlet.class,
+                    ServletErrorPage.class, SetCharacterEncodingTestServlet.class)
             .addAsLibraries(javaArchive);
   }
 
