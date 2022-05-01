@@ -19,7 +19,20 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.registration;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.registration.TestListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.registration.TestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletNotFound;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterNotFound;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadFilter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateFilter;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -42,10 +55,14 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     JavaArchive javaArchive = ShrinkWrap.create(JavaArchive.class, "fragment-1.jar")
-            .addClasses(TestServlet1.class, RequestListener1.class)
+            .addClasses(TestServlet1.class, RequestListener1.class, AddServletString.class, AddServletClass.class,
+                    AddFilterClass.class, CreateServlet.class, CreateFilter.class, AddServletNotFound.class,
+                    AddFilterNotFound.class, BadServlet.class, BadFilter.class, BadListener.class)
             .addAsResource(URLClient.class.getResource("servlet_plu_registration_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_registration_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(TestListener.class, TestServlet.class)
             .addAsLibraries(javaArchive);
   }
 

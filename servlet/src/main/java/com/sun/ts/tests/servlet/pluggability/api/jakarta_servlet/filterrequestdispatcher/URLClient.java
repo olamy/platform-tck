@@ -19,10 +19,22 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.filterrequestdispatcher;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.DummyServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.ErrorPage;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.ForwardTest1Servlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.ForwardTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.ForwardedServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.IncludeTest1Servlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.IncludeTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.IncludedServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.RequestTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.TestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.common.util.Data;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.filterrequestdispatcher.Test_Filter;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -47,6 +59,11 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getResource("servlet_plu_filterrequestdispatcher_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_filterrequestdispatcher_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(DummyServlet.class, ErrorPage.class, ForwardedServlet.class,
+                    ForwardTest1Servlet.class, ForwardTestServlet.class, IncludedServlet.class,
+                    IncludeTest1Servlet.class, IncludeTestServlet.class, RequestTestServlet.class,
+                    Test_Filter.class, TestServlet.class)
             .addAsLibraries(javaArchive);
   }
 
