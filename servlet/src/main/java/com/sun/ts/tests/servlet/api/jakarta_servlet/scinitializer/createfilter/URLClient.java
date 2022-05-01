@@ -19,7 +19,6 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.scinitializer.createfilter;
 
-import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateFilter;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;

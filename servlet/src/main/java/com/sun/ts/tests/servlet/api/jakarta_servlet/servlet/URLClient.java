@@ -20,8 +20,6 @@
 
 package com.sun.ts.tests.servlet.api.jakarta_servlet.servlet;
 
-import com.sun.ts.tests.servlet.api.jakarta_servlet.sclistener40.SCListener40;
-import com.sun.ts.tests.servlet.api.jakarta_servlet.sclistener40.TestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;

@@ -19,7 +19,11 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.scattributeevent;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.scattributeevent.SCAttributeEventListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.scattributeevent.SCAttributeListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.scattributeevent.TestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -46,6 +50,8 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getResource("servlet_plu_scattributeevent_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_scattributeevent_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(SCAttributeEventListener.class, SCAttributeListener.class, TestServlet.class)
             .addAsLibraries(javaArchive);
   }
 
