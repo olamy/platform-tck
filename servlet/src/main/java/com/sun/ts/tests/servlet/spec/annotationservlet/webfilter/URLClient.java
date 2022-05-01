@@ -20,6 +20,7 @@
 package com.sun.ts.tests.servlet.spec.annotationservlet.webfilter;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -39,10 +40,8 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_annotationservlet_webfilter_web.war")
-            .addClass(Servlet1.class)
-            .addClass(TestFilter1.class)
-            .addClass(TestFilter2.class)
-            .addClass(TestServlet.class)
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(Servlet1.class, TestFilter1.class, TestFilter2.class, TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_annotationservlet_webfilter_web.xml"));
   }
 
