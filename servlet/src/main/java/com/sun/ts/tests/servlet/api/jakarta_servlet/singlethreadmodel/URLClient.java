@@ -33,11 +33,6 @@ public class URLClient extends AbstractUrlClient {
 
   // NTHREADS = new Integer(p.getProperty(CTHREADS)).intValue();
   private static int NTHREADS = 0;
-//
-//  @BeforeEach
-//  public void setupServletName() throws Exception {
-//    setServletName("TestServlet");
-//  }
 
   /**
    * Deployment for the test

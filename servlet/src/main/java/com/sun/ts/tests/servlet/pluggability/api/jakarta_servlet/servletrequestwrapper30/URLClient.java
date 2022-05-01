@@ -19,7 +19,15 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.servletrequestwrapper30;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequest30.AsyncTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequest30.AsyncTests;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequest30.SecondServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequest30.TestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper30.AsyncTestServletWrapper;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper30.ErrorServletWrapper;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper30.TestServletWrapper;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -41,6 +49,9 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getResource("servlet_plu_servletrequestwrapper30_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_servletrequestwrapper30_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(AsyncTestServletWrapper.class, ErrorServletWrapper.class, TestServletWrapper.class,
+                    TestServlet.class, AsyncTestServlet.class, AsyncTests.class, SecondServlet.class)
             .addAsLibraries(javaArchive1);
   }
 

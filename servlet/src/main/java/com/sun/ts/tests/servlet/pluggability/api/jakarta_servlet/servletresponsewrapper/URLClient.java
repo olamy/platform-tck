@@ -19,7 +19,11 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.servletresponsewrapper;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletresponsewrapper.SetCharacterEncodingTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletresponsewrapper.TestServlet;
 import com.sun.ts.tests.servlet.common.response.HttpResponseClient;
+import com.sun.ts.tests.servlet.common.response.ResponseTestServlet;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -46,6 +50,8 @@ public class URLClient extends HttpResponseClient {
             .addAsResource(URLClient.class.getResource("servlet_plu_servletresponsewrapper_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_servletresponsewrapper_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(SetCharacterEncodingTestServlet.class, TestServlet.class, ResponseTestServlet.class)
             .addAsLibraries(javaArchive);
   }
 

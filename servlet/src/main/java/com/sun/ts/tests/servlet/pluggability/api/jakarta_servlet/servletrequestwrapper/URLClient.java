@@ -19,7 +19,13 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.servletrequestwrapper;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper.SetCharacterEncodingTest;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper.SetCharacterEncodingTestWrapper;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper.SetCharacterEncodingUnsupportedEncodingExceptionTest;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper.SetCharacterEncodingUnsupportedEncodingExceptionTestWrapper;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletrequestwrapper.TestServlet;
 import com.sun.ts.tests.servlet.common.request.RequestClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -46,6 +52,11 @@ public class URLClient extends RequestClient {
             .addAsResource(URLClient.class.getResource("servlet_plu_servletrequestwrapper_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_servletrequestwrapper_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(SetCharacterEncodingTest.class, SetCharacterEncodingTestWrapper.class,
+                    SetCharacterEncodingUnsupportedEncodingExceptionTest.class,
+                    SetCharacterEncodingUnsupportedEncodingExceptionTestWrapper.class,
+                    TestServlet.class)
             .addAsLibraries(javaArchive1);
   }
 

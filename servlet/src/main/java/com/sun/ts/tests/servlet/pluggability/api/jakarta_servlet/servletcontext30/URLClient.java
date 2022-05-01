@@ -19,9 +19,40 @@
  */
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.servletcontext30;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterNotFound;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSCAttributeListenerClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSCAttributeListenerString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSCListenerClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSCListenerString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSRAttributeListenerClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSRAttributeListenerString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSRListenerClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddSRListenerString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletNotFound;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadFilter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateFilter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateSCAttributeListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateSCListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateSRAttributeListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateSRListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.DuplicateFilterClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.DuplicateFilterString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.DuplicateServletClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.DuplicateServletString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.FilterTestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
 import com.sun.ts.tests.servlet.pluggability.common.TestServlet1;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.TestListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.TestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletString;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -46,6 +77,14 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getResource("servlet_plu_servletcontext30_web-fragment.xml"),
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_servletcontext30.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(AddFilterClass.class, AddFilterNotFound.class, AddFilterString.class, AddSCAttributeListenerClass.class,
+                    AddSCAttributeListenerString.class, AddSCListenerClass.class, AddSCListenerString.class, AddServletClass.class,
+                    AddServletNotFound.class, AddServletString.class, AddSRAttributeListenerClass.class, AddSRAttributeListenerString.class,
+                    AddSRListenerClass.class, AddSRListenerString.class, BadFilter.class, BadListener.class, BadServlet.class,
+                    CreateFilter.class, CreateSCAttributeListener.class, CreateSCListener.class, CreateServlet.class, CreateSRAttributeListener.class,
+                    CreateSRListener.class, DuplicateFilterClass.class, DuplicateFilterString.class, DuplicateServletClass.class, DuplicateServletString.class,
+                    FilterTestServlet.class, TestListener.class, TestServlet.class)
             .addAsLibraries(javaArchive);
   }
 
