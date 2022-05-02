@@ -21,6 +21,7 @@
 package com.sun.ts.tests.servlet.spec.httpservletresponse;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -28,8 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class URLClient extends AbstractUrlClient {
-
-  private static final String CONTEXT_ROOT = "/";
 
   @BeforeEach
   public void setupServletName() throws Exception {
@@ -42,6 +41,8 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_httpservletresponse_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(HttpTestServlet.class, RedirectedTestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_spec_httpservletresponse_web.xml"));
   }
 

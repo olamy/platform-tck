@@ -21,6 +21,12 @@
 package com.sun.ts.tests.servlet.spec.multifiltermapping;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
+import com.sun.ts.tests.servlet.spec.requestmap.TestServlet1;
+import com.sun.ts.tests.servlet.spec.requestmap.TestServlet2;
+import com.sun.ts.tests.servlet.spec.requestmap.TestServlet3;
+import com.sun.ts.tests.servlet.spec.requestmap.TestServlet4;
+import com.sun.ts.tests.servlet.spec.requestmap.TestServlet5;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -39,11 +45,14 @@ public class URLClient extends AbstractUrlClient {
    */
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
-    WebArchive archive =
-            ShrinkWrap.create(WebArchive.class, "servlet_spec_multifiltermapping_web.war")
-                    .addAsWebResource("api/jakarta_servlet/filterrequestdispatcher/dummy.html", "dummy.html")
-              .setWebXML(URLClient.class.getResource("servlet_spec_multifiltermapping_web.xml"));
-    return archive;
+    return ShrinkWrap.create(WebArchive.class, "servlet_spec_multifiltermapping_web.war")
+            .addAsWebResource("api/jakarta_servlet/filterrequestdispatcher/dummy.html", "dummy.html")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(ErrorPage.class, Test_ErrorFilter.class, Test_ForwardFilter.class, Test_IncludeFilter.class,
+                    TestServlet1.class, TestServlet2.class, TestServlet3.class, TestServlet4.class, TestServlet5.class,
+                    Test_RequestFilter.class, TestServlet.class, TestServlet6.class, TestServlet7.class)
+            .setWebXML(URLClient.class.getResource("servlet_spec_multifiltermapping_web.xml"));
+
   }
 
   /*

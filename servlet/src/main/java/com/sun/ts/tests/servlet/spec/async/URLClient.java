@@ -20,6 +20,7 @@
 package com.sun.ts.tests.servlet.spec.async;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -33,6 +34,10 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_async_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(Filter4.class, Filter5.class, Filter6.class, Filter7.class, Filter8.class, Filter9.class,
+                    Filter10.class, Servlet1.class, Servlet2.class, Servlet3.class, Servlet4.class, Servlet5.class,
+                    Servlet6.class, Servlet7.class, Servlet8.class, Servlet9.class, Servlet10.class, TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_spec_async_web.xml"));
   }
 

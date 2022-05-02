@@ -40,6 +40,7 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_dirstruct_web.war")
+            .addClasses(ClassFileTestServlet.class, JarFileTestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_spec_dirstruct_web.xml"));
   }
 

@@ -21,7 +21,11 @@
 package com.sun.ts.tests.servlet.spec.errorpage1;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.common.util.Data;
+import com.sun.ts.tests.servlet.spec.errorpage.ServletErrorPage;
+import com.sun.ts.tests.servlet.spec.errorpage.SecondServletErrorPage;
+import com.sun.ts.tests.servlet.spec.errorpage.TestException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -41,6 +45,9 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_errorpage1_web.war")
+            .addAsLibraries(CommonServlets.getCommonServletsArchive())
+            .addClasses(TestServlet.class, TestServletException.class, TestException.class, ServletErrorPage.class,
+                    SecondServletErrorPage.class)
             .setWebXML(URLClient.class.getResource("servlet_spec_errorpage1_web.xml"));
   }
 
