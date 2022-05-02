@@ -21,6 +21,7 @@
 package com.sun.ts.tests.servlet.spec.servletresponse;
 
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
+import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -41,6 +42,7 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_servletresponse_web.war")
+            .addClasses(HttpTestServlet.class, TestServlet.class)
             .setWebXML(URLClient.class.getResource("servlet_spec_servletresponse_web.xml"));
   }
 

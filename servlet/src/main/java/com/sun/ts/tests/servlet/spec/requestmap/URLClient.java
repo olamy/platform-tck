@@ -34,6 +34,8 @@ public class URLClient extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_requestmap_web.war")
+            .addClasses(TestServlet1.class, TestServlet2.class, TestServlet3.class,
+                    TestServlet4.class, TestServlet5.class)
             .setWebXML(URLClient.class.getResource("servlet_js_requestmap_web.xml"));
   }
 
