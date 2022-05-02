@@ -89,7 +89,7 @@
 
             <properties>
                 <glassfish.root>${project.build.directory}/glassfish-root</glassfish.root>
-                <glassfish.version>7.0.0-M2</glassfish.version>
+                <glassfish.version>7.0.0-M4</glassfish.version>
                 <classesNamesTests></classesNamesTests>
                 <http2.timeout></http2.timeout>
             </properties>
