@@ -26,5 +26,5 @@ package com.sun.ts.tests.servlet.common.request;
  * implementation.
  */
 public interface ValidationStrategy {
-  boolean validate(WebTestCase testCase);
+  boolean validate(WebTestCase testCase) throws Exception;
 }

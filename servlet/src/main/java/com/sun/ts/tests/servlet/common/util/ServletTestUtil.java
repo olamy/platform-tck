@@ -231,14 +231,13 @@ public class ServletTestUtil {
       if (searchIdx < 0) {
         found = false;
         StringBuffer sb = new StringBuffer(255);
-        sb.append("[ServletTestUtil] Unable to find the following ");
-        sb.append("search string in the server's ");
-        sb.append("response: '").append(search).append("' at index: ");
-        sb.append(startIdx);
-        sb.append("\n[ServletTestUtil] Server's response:\n");
-        sb.append("-------------------------------------------\n");
-        sb.append(actual);
-        sb.append("\n-------------------------------------------\n");
+        sb.append("[ServletTestUtil] Unable to find the following search string in the server's response: '")
+          .append(search).append("' at index: ")
+          .append(startIdx)
+          .append("\n[ServletTestUtil] Server's response:\n")
+          .append("-------------------------------------------\n")
+          .append(actual)
+          .append("\n-------------------------------------------\n");
         LOGGER.debug(sb.toString());
         break;
       }

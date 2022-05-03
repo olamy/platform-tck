@@ -84,7 +84,7 @@ public class WebValidatorBase implements ValidationStrategy {
    * <li>Check the goldenfile</li>
    * </ul>
    */
-  public boolean validate(WebTestCase testCase) {
+  public boolean validate(WebTestCase testCase) throws Exception {
     _res = testCase.getResponse();
     _req = testCase.getRequest();
     _case = testCase;
@@ -94,7 +94,7 @@ public class WebValidatorBase implements ValidationStrategy {
       if (!checkStatusCode() || !checkReasonPhrase() || !checkExpectedHeaders()
           || !checkUnexpectedHeaders() || !checkSearchStrings()
           || !checkSearchStringsNoCase() || !checkUnorderedSearchStrings()
-          || !checkUnexpectedSearchStrings() || !checkGoldenfile()) {
+          || !checkUnexpectedSearchStrings()) {
         return false;
       }
     } catch (IOException ioe) {
@@ -241,7 +241,7 @@ public class WebValidatorBase implements ValidationStrategy {
    * @throws IOException
    *           if an IO error occurs during validation
    */
-  protected boolean checkSearchStrings() throws IOException {
+  protected boolean checkSearchStrings() throws Exception {
     List<String> list = _case.getSearchStrings();
     boolean found = true;
     if (list != null && !list.isEmpty()) {
@@ -265,14 +265,15 @@ public class WebValidatorBase implements ValidationStrategy {
                 _case.getName(), search, startIdx);
         if (searchIdx < 0) {
           found = false;
-          String sb = " Test {} Unable to find the following " +
-                  "search string in the server's response: \n'{}'\n at index: {}" +
+          String sb = " Test %s Unable to find the following " +
+                  "search string in the server's response: \n'%s'\n at index: %s" +
                   "\n Server's response:\n" +
                   "-------------------------------------------\n" +
-                  "{}}" +
+                  "%s" +
                   "\n-------------------------------------------\n";
-          logger.error(sb, _case.getName(), search, startIdx, responseBody);
-          break;
+          String result = String.format(sb, _case.getName(), search, startIdx, responseBody);
+          logger.error(result);
+          throw new Exception(result);
         }
 
         logger.debug(" Test {} Found search string: '{}' at index '{}' in the server's response",
@@ -314,7 +315,7 @@ public class WebValidatorBase implements ValidationStrategy {
    * @throws IOException
    *           if an IO error occurs during validation
    */
-  protected boolean checkSearchStringsNoCase() throws IOException {
+  protected boolean checkSearchStringsNoCase() throws Exception {
     List<String> list = _case.getSearchStringsNoCase();
     boolean found = true;
     if (list != null && !list.isEmpty()) {
@@ -339,15 +340,15 @@ public class WebValidatorBase implements ValidationStrategy {
                 _case.getName(), search, startIdx);
         if (searchIdx < 0) {
           found = false;
-          String sb = " Test {} Unable to find the following " +
-                  "search string in the server's " +
-                  "response: \n'{}'\n at index: {}" +
+          String sb = " Test %s Unable to find the following search string in the server's " +
+                  "response: \n'%s'\n at index: %s" +
                   "\n Server's response:\n" +
                   "-------------------------------------------\n" +
-                  "{}}" +
+                  "%s" +
                   "\n-------------------------------------------\n";
-          logger.error(sb, _case.getName(), search, searchIdx, responseBody);
-          break;
+          String result = String.format(sb, _case.getName(), search, searchIdx, responseBody);
+          logger.error(result);
+          throw new Exception(result);
         }
 
         logger.debug(" Test {} Found search string: '{}' at index '{}' in the server's response",
@@ -384,7 +385,7 @@ public class WebValidatorBase implements ValidationStrategy {
    * @throws IOException
    *           if an IO error occurs during validation
    */
-  protected boolean checkUnorderedSearchStrings() throws IOException {
+  protected boolean checkUnorderedSearchStrings() throws Exception {
     List<String> list = _case.getUnorderedSearchStrings();
     boolean found = true;
     if (list != null && !list.isEmpty()) {
@@ -396,15 +397,16 @@ public class WebValidatorBase implements ValidationStrategy {
                 _case.getName(), search);
         if (searchIdx < 0) {
           found = false;
-          String sb = " Test {} Unable to find the following " +
+          String sb = " Test %s Unable to find the following " +
                   "search string in the server's " +
-                  "response: \n' {}" +
+                  "response: \n' %s" +
                   "\n Server's response:\n" +
                   "-------------------------------------------\n" +
-                  "{}" +
+                  "%s" +
                   "\n-------------------------------------------\n";
-          logger.error(sb, _case.getName(), search, responseBody);
-          break;
+          String result = String.format(sb, _case.getName(), search, responseBody);
+          logger.error(result);
+          throw new Exception(result);
         }
 
         logger.debug(" Test {} Found search string: '{}' at index '{}' in the server's response",
@@ -458,34 +460,6 @@ public class WebValidatorBase implements ValidationStrategy {
         }
       }
     }
-    return true;
-  }
-
-  /**
-   * <code>checkGoldenFile</code> compare the server's response with the
-   * configured goldenfile
-   * <ul>
-   * <li>Check the goldenfile</li>
-   * <ul>
-   * <li>
-   * <p>
-   * If goldenfile is null, return true.
-   * </p>
-   * </li>
-   * <li>
-   * <p>
-   * If goldenfile is not null, compare the goldenfile with the response. If
-   * equal, return true, otherwise display error and return false.
-   * <p>
-   * </li>
-   * </ul>
-   * </ul>
-   *
-   * @return boolen result of check
-   * @throws IOException
-   *           if an IO error occurs during validation
-   */
-  protected boolean checkGoldenfile() throws IOException {
     return true;
   }
 
@@ -551,7 +525,7 @@ public class WebValidatorBase implements ValidationStrategy {
    *
    * @return boolen result of check
    */
-  protected boolean checkExpectedHeaders() {
+  protected boolean checkExpectedHeaders() throws Exception {
     Header[] expected = _case.getExpectedHeaders();
     if (isEmpty(expected)) {
       return true;
@@ -586,12 +560,11 @@ public class WebValidatorBase implements ValidationStrategy {
               .collect(Collectors.joining("\n\t")));
 
       sb.append("\n");
-      logger.error(sb.toString(), _case.getName(), currentHeader.toExternalForm());
-
-      return false;
+      String result = String.format(sb.toString(), _case.getName(), currentHeader.toExternalForm());
+      logger.error(result);
+      throw new Exception(result);
     }
-    logger.debug(" Test {} Found expected header: {}",
-            _case.getName(), currentHeader.toExternalForm());
+    logger.debug(" Test {} Found expected header: {}", _case.getName(), currentHeader.toExternalForm());
     return true;
   }
 

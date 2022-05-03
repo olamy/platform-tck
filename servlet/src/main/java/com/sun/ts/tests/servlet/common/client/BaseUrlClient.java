@@ -500,8 +500,7 @@ public abstract class BaseUrlClient {
         logger.warn("Root cause of Failure: " + t.getMessage(), t);
       }
       logger.error("Test: '" + _testName + "' failed.", tfe);
-      throw new RuntimeException("[BaseUrlClient] " + _testName
-          + " failed! Check output for cause of failure.", tfe);
+      throw new RuntimeException("[BaseUrlClient] " + _testName + " failed! Check output for cause of failure.", tfe);
     } finally {
       _useSavedState = false;
       _saveState = false;
