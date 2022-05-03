@@ -20,7 +20,13 @@
 package com.sun.ts.tests.servlet.pluggability.api.jakarta_servlet.servlet;
 
 import com.sun.ts.tests.servlet.api.jakarta_servlet.servlet.CoreServletTest;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servlet.DoDestroyedTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servlet.DoInit1TestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servlet.DoInit2TestServlet;
 import com.sun.ts.tests.servlet.api.jakarta_servlet.servlet.DoServiceTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servlet.DoServletConfigTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servlet.DoServletInfoTestServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servlet.PUTestServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.pluggability.common.RequestListener1;
@@ -44,7 +50,9 @@ public class URLClient extends AbstractUrlClient {
                     "META-INF/web-fragment.xml");
     return ShrinkWrap.create(WebArchive.class, "servlet_plu_servlet_web.war")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
-            .addClasses(DoServiceTestServlet.class, CoreServletTest.class)
+            .addClasses(DoServletInfoTestServlet.class, DoDestroyedTestServlet.class, DoInit2TestServlet.class,
+                    DoServletConfigTestServlet.class, PUTestServlet.class, DoServiceTestServlet.class,
+                    DoInit1TestServlet.class, CoreServletTest.class )
             .addAsLibraries(javaArchive);
   }
 
