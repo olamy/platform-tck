@@ -89,6 +89,7 @@
 
             <properties>
                 <glassfish.root>${project.build.directory}/glassfish-root</glassfish.root>
+                <glassfish.bin.directory>${glassfish.root}/glassfish7/bin</glassfish.bin.directory>
                 <glassfish.version>7.0.0-M4</glassfish.version>
                 <classesNamesTests></classesNamesTests>
                 <http2.timeout></http2.timeout>
@@ -111,7 +112,7 @@
                         <executions>
                             <execution>
                                 <id>unpack</id>
-                                <phase>process-test-classes</phase>
+                                <phase>generate-test-resources</phase>
                                 <goals>
                                     <goal>unpack</goal>
                                 </goals>
@@ -132,6 +133,156 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>StopDomain1</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${glassfish.bin.directory}/asadmin</executable>
+                                    <arguments>
+                                        <argument>stop-domain</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>StartDomain1</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${glassfish.bin.directory}/asadmin</executable>
+                                    <arguments>
+                                        <argument>start-domain</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>Enable Trace requests</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${glassfish.bin.directory}/asadmin</executable>
+                                    <arguments>
+                                        <argument>set</argument>
+                                        <argument>server-config.network-config.protocols.protocol.http-listener-1.http.trace-enabled=true</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>Delete User j2ee</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${glassfish.bin.directory}/asadmin</executable>
+                                    <arguments>
+                                        <argument>--passwordfile</argument>
+                                        <argument>src/test/resources/j2ee.pass</argument>
+                                        <argument>delete-file-user</argument>
+                                        <argument>j2ee</argument>
+                                    </arguments>
+                                    <successCodes>
+                                        <successCode>0</successCode>
+                                        <successCode>1</successCode>
+                                    </successCodes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>Add User j2ee</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${glassfish.bin.directory}/asadmin</executable>
+                                    <arguments>
+                                        <argument>--passwordfile</argument>
+                                        <argument>src/test/resources/j2ee.pass</argument>
+                                        <argument>create-file-user</argument>
+                                        <argument>--groups</argument>
+                                        <argument>staff:mgr</argument>
+                                        <argument>j2ee</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>Delete User javajoe</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${glassfish.bin.directory}/asadmin</executable>
+                                    <arguments>
+                                        <argument>--passwordfile</argument>
+                                        <argument>src/test/resources/javajoe.pass</argument>
+                                        <argument>delete-file-user</argument>
+                                        <argument>javajoe</argument>
+                                    </arguments>
+                                    <successCodes>
+                                        <successCode>0</successCode>
+                                        <successCode>1</successCode>
+                                    </successCodes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>Add User javajoe</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${glassfish.bin.directory}/asadmin</executable>
+                                    <arguments>
+                                        <argument>--passwordfile</argument>
+                                        <argument>src/test/resources/javajoe.pass</argument>
+                                        <argument>create-file-user</argument>
+                                        <argument>--groups</argument>
+                                        <argument>guest</argument>
+                                        <argument>javajoe</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>list users</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${glassfish.bin.directory}/asadmin</executable>
+                                    <arguments>
+                                        <argument>list-file-users</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>StopDomain</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${glassfish.bin.directory}/asadmin</executable>
+                                    <arguments>
+                                        <argument>stop-domain</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
