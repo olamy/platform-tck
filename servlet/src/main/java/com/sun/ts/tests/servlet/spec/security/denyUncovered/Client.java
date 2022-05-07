@@ -23,11 +23,9 @@ import java.util.Properties;
 import com.sun.ts.lib.util.BASE64Encoder;
 import com.sun.ts.lib.util.TestUtil;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
-import com.sun.ts.tests.servlet.spec.annotationservlet.webfilter.URLClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -56,6 +54,8 @@ public class Client extends AbstractUrlClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_sec_denyUncovered_web.war")
+            .addClasses(AllMethodsAllowedAnno.class, ExcludeAuthConstraint.class, PartialDDServlet.class,
+                    TestServlet.class)
             .setWebXML(Client.class.getResource("servlet_sec_denyUncovered_web.xml"));
   }
 
@@ -103,7 +103,7 @@ public class Client extends AbstractUrlClient {
   public void cleanup() throws Exception {
   }
 
-  /**
+  /*
    * @testName: testAllMethodsAllowedAnno
    *
    * @assertion_ids: Servlet:SPEC:310
@@ -153,7 +153,7 @@ public class Client extends AbstractUrlClient {
     TestUtil.logMsg("testAllMethodsAllowedAnno : PASSED");
   }
 
-  /**
+  /*
    * @testName: testAccessToMethodAllowed
    *
    * @assertion_ids: Servlet:SPEC:309;
@@ -189,7 +189,7 @@ public class Client extends AbstractUrlClient {
     TestUtil.logMsg("testAccessToMethodAllowed : PASSED");
   }
 
-  /**
+  /*
    * @testName: testDenySomeUncovered
    *
    * @assertion_ids: Servlet:SPEC:309;
@@ -225,7 +225,7 @@ public class Client extends AbstractUrlClient {
     TestUtil.logMsg("testDenySomeUncovered : PASSED");
   }
 
-  /**
+  /*
    * @testName: testExcludeAuthConstraint
    *
    * @assertion_ids: Servlet:SPEC:309;
@@ -266,7 +266,7 @@ public class Client extends AbstractUrlClient {
     TestUtil.logMsg("testExcludeAuthConstraint : PASSED");
   }
 
-  /**
+  /*
    * @testName: testPartialDDServlet
    *
    * @assertion_ids: Servlet:SPEC:309;
