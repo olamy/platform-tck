@@ -24,6 +24,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 
+import java.net.URL;
 import java.util.Properties;
 
 /*
@@ -102,11 +103,11 @@ public class Client extends BaseUrlClient {
 
     // TOFIX configurable
     try {
-      username = "j2ee";//  p.getProperty(USERNAME);
-      password = "j2ee"; //p.getProperty(PASSWORD);
-      unauthUsername = "javajoe"; //p.getProperty(UNAUTH_USERNAME);
-      unauthPassword = "javajoe";  // p.getProperty(UNAUTH_PASSWORD);
-      realm = null; //"default"; // p.getProperty(BASIC_AUTH_REALM)
+      username = System.getProperty("tck.servlet.username", "j2ee");
+      password = System.getProperty("tck.servlet.password", "j2ee");
+      unauthUsername = System.getProperty("tck.servlet.unauth.username", "javajoe");
+      unauthPassword = System.getProperty("tck.servlet.unauth.password", "javajoe");
+      realm = System.getProperty("tck.servlet.realm", "");
 
       String pageServletBase = getContextRoot();//"/servlet_sec_annotations_web";
 

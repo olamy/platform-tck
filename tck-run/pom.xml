@@ -157,11 +157,16 @@
                                 <glassfish.postBootCommands>
                                     set server-config.network-config.protocols.protocol.http-listener-1.http.trace-enabled=true
                                     delete-file-user --passwordfile src/test/resources/j2ee.pass j2ee
-                                    create-file-user --passwordfile src/test/resources/j2ee.pass --groups staff:mgr j2ee
+                                    create-file-user --passwordfile src/test/resources/j2ee.pass --groups Administrator:Employee j2ee
                                     delete-file-user --passwordfile src/test/resources/javajoe.pass javajoe
-                                    create-file-user --passwordfile src/test/resources/javajoe.pass --groups guest javajoe
+                                    create-file-user --passwordfile src/test/resources/javajoe.pass --groups VP:Manager javajoe
                                     list-file-users
                                 </glassfish.postBootCommands>
+                                <tck.servlet.username>j2ee</tck.servlet.username>
+                                <tck.servlet.password>j2ee</tck.servlet.password>
+                                <tck.servlet.unauth.username>javajoe</tck.servlet.unauth.username>
+                                <tck.servlet.unauth.password>javajoe</tck.servlet.unauth.password>
+                                <tck.servlet.realm></tck.servlet.realm>
                             </systemPropertyVariables>
                         </configuration>
                         <dependencies>
