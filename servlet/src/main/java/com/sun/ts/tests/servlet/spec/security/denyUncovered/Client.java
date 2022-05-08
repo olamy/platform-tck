@@ -124,15 +124,13 @@ public class Client extends AbstractUrlClient {
 
     int httpStatusCode = invokeServlet(ctxtAllMethodsAllowedAnno, "POST");
     if (httpStatusCode != 200) {
-      TestUtil.logMsg("Accessing " + ctxtAllMethodsAllowedAnno
-          + "  (POST) returns = " + httpStatusCode);
+      logger.error("Accessing {} (POST) returns = {}", ctxtAllMethodsAllowedAnno, httpStatusCode);
       throw new Exception("testAllMethodsAllowedAnno : FAILED");
     }
 
     httpStatusCode = invokeServlet(ctxtAllMethodsAllowedAnno, "GET");
     if (httpStatusCode != 200) {
-      TestUtil.logMsg("Accessing " + ctxtAllMethodsAllowedAnno
-          + "  (GET) returns = " + httpStatusCode);
+      logger.error("Accessing {} (GET) returns = {}", ctxtAllMethodsAllowedAnno, httpStatusCode);
       throw new Exception("testAllMethodsAllowedAnno : FAILED");
     }
 
@@ -332,11 +330,11 @@ public class Client extends AbstractUrlClient {
    * header and they will be encoded using the BASE64Encoder class. returns the
    * http status code.
    */
-  private int invokeServlet(String sContext, String requestMethod) {
+  private int invokeServlet(String sContext, String requestMethod) throws Exception {
     int code = 200;
 
-    if (!sContext.startsWith("/")) {
-      sContext = "/" + sContext;
+    if (sContext.startsWith("/")) {
+      sContext = sContext.substring(1);
     }
 
     String url = getURLString("http", hostname, portnum, sContext);
@@ -347,12 +345,12 @@ public class Client extends AbstractUrlClient {
       // hint: make sure username and password are valid for your
       // (J2EE) security realm otherwise you recieve http 401 error.
       String authData = username + ":" + password;
-      TestUtil.logMsg("authData : " + authData);
+      logger.debug("authData : {}", authData);
 
       BASE64Encoder encoder = new BASE64Encoder();
 
       String encodedAuthData = encoder.encode(authData.getBytes());
-      TestUtil.logMsg("encoded authData : " + encodedAuthData);
+      logger.debug("encoded authData : {}", encodedAuthData);
 
       // open URLConnection
       HttpURLConnection conn = (HttpURLConnection) newURL.openConnection();
@@ -360,16 +358,15 @@ public class Client extends AbstractUrlClient {
       // set request property
       conn.setDoOutput(true);
       conn.setDoInput(true);
-      conn.setRequestProperty("Authorization",
-          "Basic " + encodedAuthData.trim());
+      conn.setRequestProperty("Authorization", "Basic " + encodedAuthData.trim());
       conn.setRequestMethod(requestMethod); // POST or GET etc
       conn.connect();
 
-      TestUtil.logMsg("called HttpURLConnection.connect() for url: " + url);
+      logger.debug("called HttpURLConnection.connect() for url: {}", url);
       code = conn.getResponseCode();
-      TestUtil.logMsg("Got response code of: " + code);
+      logger.debug("Got response code of: {}", code);
       String str = conn.getResponseMessage();
-      TestUtil.logMsg("Got response string of: " + str);
+      logger.debug("Got response string of: {}", str);
       /*
        * // not used right now but left here in case we need it InputStream
        * content = (InputStream)conn.getInputStream(); BufferedReader in = new
@@ -380,10 +377,9 @@ public class Client extends AbstractUrlClient {
        */
 
     } catch (Exception e) {
-      TestUtil.logMsg(
-          "Abnormal return status encountered while invoking " + sContext);
-      TestUtil.logMsg("Exception Message was:  " + e.getMessage());
-      // e.printStackTrace();
+      logger.error("Abnormal return status encountered while invoking {}", sContext);
+      logger.error("Exception Message was:  " + e.getMessage(), e);
+      throw e;
     }
 
     return code;
