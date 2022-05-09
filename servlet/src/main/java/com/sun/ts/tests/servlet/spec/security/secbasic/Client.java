@@ -26,7 +26,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 
-import java.util.Properties;
 
 /*
  * This  class uses the SecBasicClient to do most of its actual testing.  
@@ -50,8 +49,10 @@ public class Client extends SecBasicClient {
   @Deployment(testable = false)
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_sec_secbasic_web.war")
-            .addClasses(GuestPageAnnoTestServlet.class, RoleReverseAnnoTestServlet.class,
-                    ServletSecAnnoTestServlet.class, UnProtectedAnnoTestServlet.class)
+            .addClasses(GuestPageAnnoTestServlet.class, GuestPageTestServlet.class,
+                    RoleReverseAnnoTestServlet.class, RoleReverseTestServlet.class,
+                    ServletSecAnnoTestServlet.class, ServletSecTestServlet.class, UnProtectedAnnoTestServlet.class,
+                    UnProtectedTestServlet.class)
             .setWebXML(Client.class.getResource("servlet_sec_secbasic_web.xml"));
   }
 
