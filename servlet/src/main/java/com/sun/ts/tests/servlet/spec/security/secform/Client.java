@@ -52,8 +52,12 @@ public class Client extends SecformClient {
     return ShrinkWrap.create(WebArchive.class, "servlet_sec_secform_web.war")
             .addAsWebResource("spec/security/secform/login.jsp", "login.jsp")
             .addAsWebResource("spec/security/secform/error.jsp", "error.jsp")
-            .addClasses(GuestPageAnnoTestServlet.class, RoleReverseAnnoTestServlet.class,
-                    ServletSecAnnoTestServlet.class, UnProtectedAnnoTestServlet.class)
+            .addClasses(allRolesTestServlet.class, ControlServlet.class, ForwardedServlet.class, GuestPageAnnoTestServlet.class,
+                    GuestPageTestServlet.class, IncludedServlet.class, OneTestServlet.class, RoleReverseTestServlet.class,
+                    RoleReverseAnnoTestServlet.class, SampleTestServlet.class, ServletProgrammaticAuthen.class,
+                    ServletProgrammaticLogin.class, ServletProgrammaticLogout.class,
+                    ServletSecAnnoTestServlet.class, ServletSecTestServlet.class, TwoTestServlet.class,
+                    UnProtectedAnnoTestServlet.class, UnProtectedTestServlet.class)
             .setWebXML(Client.class.getResource("servlet_sec_secform_web.xml"));
   }
 
