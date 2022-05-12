@@ -205,8 +205,8 @@ public class Client extends AbstractUrlClient {
       throw new Exception(testName + " failed.");
     }
 
-    if (response.content.indexOf(expected) < 0) {
-      logger.info("Expected: {}", expected);
+    if (!response.content.contains(expected)) {
+      logger.error("Expected: {} but found {}", expected, response.content);
       throw new Exception(testName + " failed.");
     }
   }
@@ -263,12 +263,12 @@ public class Client extends AbstractUrlClient {
         throw new Exception("TrailerTest failed.");
       }
 
-      if (response.toLowerCase().indexOf("mytrailer=foo") < 0) {
+      if (!response.toLowerCase().contains("mytrailer=foo")) {
         logger.error("failed to get trailer field: mytrailer=foo");
         throw new Exception("TrailerTest failed.");
       }
 
-      if (response.toLowerCase().indexOf("mytrailer2=bar") < 0) {
+      if (!response.toLowerCase().contains("mytrailer2=bar")) {
         logger.error("failed to get trailer field: mytrailer=foo");
         throw new Exception("TrailerTest failed.");
       }
