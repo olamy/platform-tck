@@ -89,7 +89,9 @@
 
             <properties>
                 <glassfish.root>${project.build.directory}/glassfish-root</glassfish.root>
-                <glassfish.bin.directory>${glassfish.root}/glassfish7/bin</glassfish.bin.directory>
+                <glassfish.bin.directory>${glassfish.home}/bin</glassfish.bin.directory>
+                <!-- home depends on version number -->
+                <glassfish.home>${glassfish.root}/glassfish6</glassfish.home>
                 <glassfish.version>6.2.5</glassfish.version>
                 <classesNamesTests></classesNamesTests>
                 <http2.timeout></http2.timeout>
@@ -150,7 +152,7 @@
                                 <dependenciesToScan>jakartatck:servlet</dependenciesToScan>
                             </dependenciesToScan>
                             <systemPropertyVariables>
-                                <glassfish.home>${glassfish.root}/glassfish7</glassfish.home>
+                                <glassfish.home>${glassfish.home}</glassfish.home>
                                 <test>${test}</test>
                                 <failIfNoTests>${failIfNoTests}</failIfNoTests>
                                 <http2.timeout>${http2.timeout}</http2.timeout>
