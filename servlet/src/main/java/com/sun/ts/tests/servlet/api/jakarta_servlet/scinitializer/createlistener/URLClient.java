@@ -19,6 +19,9 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.scinitializer.createlistener;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.scinitializer.addlistener.SCAttributeListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.scinitializer.addlistener.SRAttributeListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.scinitializer.addlistener.SRListener;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import com.sun.ts.tests.servlet.api.jakarta_servlet.scinitializer.addlistener.SCListener;
@@ -44,7 +47,8 @@ public class URLClient extends AbstractUrlClient {
             .addAsResource(URLClient.class.getResource("jakarta.servlet.ServletContainerInitializer"),
                     "META-INF/services/jakarta.servlet.ServletContainerInitializer")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
-            .addClasses(TCKServletContainerInitializer.class, TestListener.class, TestServlet.class, SCListener.class)
+            .addClasses(TCKServletContainerInitializer.class, TestListener.class, TestServlet.class, SCListener.class,
+                    SCAttributeListener.class, SRListener.class, SRAttributeListener.class)
             .setWebXML(URLClient.class.getResource("servlet_sci_createlistener_web.xml"));
   }
 
