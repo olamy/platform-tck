@@ -19,6 +19,17 @@
  */
 package com.sun.ts.tests.servlet.api.jakarta_servlet.registration;
 
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterNotFound;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddFilterString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletClass;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletNotFound;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.AddServletString;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadFilter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadListener;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.BadServlet;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateFilter;
+import com.sun.ts.tests.servlet.api.jakarta_servlet.servletcontext30.CreateServlet;
 import com.sun.ts.tests.servlet.common.client.AbstractUrlClient;
 import com.sun.ts.tests.servlet.common.servlets.CommonServlets;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -42,7 +53,10 @@ public class URLClient extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_js_registration_web.war")
             .addAsLibraries(CommonServlets.getCommonServletsArchive())
-            .addClasses(TestListener.class, TestServlet.class)
+            .addClasses(TestListener.class, TestServlet.class, AddServletString.class, AddFilterString.class,
+                    AddServletClass.class, AddFilterClass.class, CreateServlet.class, CreateFilter.class,
+                    AddServletNotFound.class, AddFilterNotFound.class, BadServlet.class, BadFilter.class,
+                    BadListener.class)
             .setWebXML(URLClient.class.getResource("servlet_js_registration_web.xml"));
   }
 
