@@ -114,7 +114,7 @@
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>unpack</id>
+                                <id>unpack-glassfish</id>
                                 <phase>generate-test-resources</phase>
                                 <goals>
                                     <goal>unpack</goal>
@@ -134,14 +134,8 @@
                                     </artifactItems>
                                 </configuration>
                             </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
                             <execution>
-                                <id>unpack</id>
+                                <id>unpack-certificates</id>
                                 <phase>generate-test-resources</phase>
                                 <goals>
                                     <goal>unpack</goal>
@@ -191,11 +185,13 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <argLine>${fork.argLine} -Duser.language=en -Duser.country=US -Djava.locale.providers=COMPAT,CLDR
+                            <argLine>
+                                ${fork.argLine} -Duser.language=en -Duser.country=US -Djava.locale.providers=COMPAT,CLDR
                                 -Djava.protocol.handler.pkgs=javax.net.ssl
                                 -Djavax.net.ssl.keyStore=${project.build.testOutputDirectory}/certificates/clientcert.jks
                                 -Djavax.net.ssl.keyStorePassword=changeit
-                                -Djavax.net.ssl.trustStore=${project.build.directory}/cacerts.jks</argLine>
+                                -Djavax.net.ssl.trustStore=${project.build.directory}/cacerts.jks
+                            </argLine>
                             <failIfNoTests>false</failIfNoTests>
                             <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
                             <includeJUnit5Engines>
@@ -220,8 +216,6 @@
                                     delete-file-user --passwordfile src/test/resources/javajoe.pass javajoe
                                     create-file-user --passwordfile src/test/resources/javajoe.pass --groups VP:Manager javajoe
                                     list-file-users
-
-
                                     set configs.config.server-config.network-config.protocols.protocol.http-listener-2.security-enabled=true
                                     set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls-enabled=true
                                     set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls11-enabled=true
