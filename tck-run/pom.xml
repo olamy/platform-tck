@@ -95,6 +95,7 @@
                 <glassfish.version>6.2.5</glassfish.version>
                 <classesNamesTests></classesNamesTests>
                 <http2.timeout></http2.timeout>
+                <fork.argLine>-Xmx4g -Xms4g</fork.argLine>
             </properties>
 
             <dependencies>
@@ -137,8 +138,64 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>jakartatck</groupId>
+                                            <artifactId>libutil</artifactId>
+                                            <type>jar</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.build.testOutputDirectory}/</outputDirectory>
+                                            <includes>**/**cts_cert,**/**clientcert.jks,**/**clientcert.p12</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-maven-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>importCertificate</goal>
+                                </goals>
+                                <phase>process-test-resources</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- "$JAVA_HOME/bin/keytool -import -noprompt -alias cts -dname \"CN=CTS, OU=Java Software, O=Sun Microsystems Inc., L=Burlington, ST=MA, C=US\"
+                            -file servlet-tck/bin/certificates/cts_cert -storetype JKS  -keystore cacerts.jks -storepass changeit -keypass changeit" -->
+                            <noprompt>true</noprompt>
+                            <alias>cts</alias>
+                            <dname>CN=CTS, OU=Java Software, O=Sun Microsystems Inc., L=Burlington, ST=MA, C=US</dname>
+                            <file>${project.build.testOutputDirectory}/certificates/cts_cert</file>
+                            <storetype>JKS</storetype>
+                            <keystore>${glassfish.home}/glassfish/domains/domain1/config/cacerts.jks</keystore>
+                            <storepass>changeit</storepass>
+                            <keypass>changeit</keypass>
+                            <skipIfExist>true</skipIfExist>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <argLine>${fork.argLine} -Duser.language=en -Duser.country=US -Djava.locale.providers=COMPAT,CLDR
+                                -Djava.protocol.handler.pkgs=javax.net.ssl
+                                -Djavax.net.ssl.keyStore=${project.build.testOutputDirectory}/certificates/clientcert.jks
+                                -Djavax.net.ssl.keyStorePassword=changeit
+                                -Djavax.net.ssl.trustStore=${project.build.directory}/cacerts.jks</argLine>
                             <failIfNoTests>false</failIfNoTests>
                             <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
                             <includeJUnit5Engines>
@@ -163,12 +220,23 @@
                                     delete-file-user --passwordfile src/test/resources/javajoe.pass javajoe
                                     create-file-user --passwordfile src/test/resources/javajoe.pass --groups VP:Manager javajoe
                                     list-file-users
+
+
+                                    set configs.config.server-config.network-config.protocols.protocol.http-listener-2.security-enabled=true
+                                    set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls-enabled=true
+                                    set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls11-enabled=true
+                                    set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls12-enabled=true
+                                    set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls13-enabled=true
+
                                 </glassfish.postBootCommands>
+                                <!-- set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.cert-nickname=cts -->
                                 <tck.servlet.username>j2ee</tck.servlet.username>
                                 <tck.servlet.password>j2ee</tck.servlet.password>
                                 <tck.servlet.unauth.username>javajoe</tck.servlet.unauth.username>
                                 <tck.servlet.unauth.password>javajoe</tck.servlet.unauth.password>
                                 <tck.servlet.realm></tck.servlet.realm>
+                                <securedWebServicePort>8181</securedWebServicePort>
+                                <client.cert.test.jdk.tls.client.protocols>TLSv1.3</client.cert.test.jdk.tls.client.protocols>
                             </systemPropertyVariables>
                         </configuration>
                         <dependencies>

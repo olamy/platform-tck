@@ -50,6 +50,7 @@ public class Client extends AbstractUrlClient {
   @TargetsContainer("https")
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "clientcert_web.war")
+            .addClasses(ServletSecTestServlet.class)
             .setWebXML(Client.class.getResource("clientcert_web.xml"));
   }
 
@@ -102,10 +103,9 @@ public class Client extends AbstractUrlClient {
     }
 
     p.setProperty(webHostProp, hostname);
-
-    portnum = urlHttps.getPort();// Integer.parseInt(p.getProperty("securedWebServicePort"));
+    portnum = Integer.getInteger("securedWebServicePort", urlHttps.getPort());// Integer.parseInt(p.getProperty("securedWebServicePort"));
     p.setProperty("securedWebServicePort", Integer.toString(portnum));
-    tlsVersion = p.getProperty("client.cert.test.jdk.tls.client.protocols");
+    tlsVersion = System.getProperty("client.cert.test.jdk.tls.client.protocols", p.getProperty("client.cert.test.jdk.tls.client.protocols"));
 
     logger.info("securedWebServicePort = {}", p.getProperty("securedWebServicePort"));
 
