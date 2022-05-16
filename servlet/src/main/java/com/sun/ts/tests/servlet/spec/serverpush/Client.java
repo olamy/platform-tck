@@ -65,6 +65,8 @@ public class Client extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "servlet_spec_serverpush_web.war")
             .addAsWebResource("spec/serverpush/index.html")
+            .addClasses(TestServlet.class, TestServlet2.class, TestServlet3.class, TestServlet4.class,
+                    TestServlet5.class, TestServlet6.class, TestServlet7.class)
             .setWebXML(Client.class.getResource("servlet_spec_serverpush_web.xml"));
   }  
 
