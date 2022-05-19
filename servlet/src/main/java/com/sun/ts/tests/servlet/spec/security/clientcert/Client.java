@@ -51,6 +51,8 @@ public class Client extends AbstractUrlClient {
   public static WebArchive getTestArchive() throws Exception {
     return ShrinkWrap.create(WebArchive.class, "clientcert_web.war")
             .addClasses(ServletSecTestServlet.class)
+            .addAsWebInfResource("com/sun/ts/tests/servlet/spec/security/clientcert/clientcert_web.war.sun-web.xml",
+                    "sun-web.xml")
             .setWebXML(Client.class.getResource("clientcert_web.xml"));
   }
 

@@ -155,15 +155,36 @@
                             </execution>
                         </executions>
                     </plugin>
+<!--                    <plugin>-->
+<!--                        <groupId>org.apache.maven.plugins</groupId>-->
+<!--                        <artifactId>maven-antrun-plugin</artifactId>-->
+<!--                        <version>3.1.0</version>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <id>clean-certificate</id>-->
+<!--                                <phase>process-test-resources</phase>-->
+<!--                                <goals>-->
+<!--                                    <goal>run</goal>-->
+<!--                                </goals>-->
+<!--                                <configuration>-->
+<!--                                    <target>-->
+<!--                                        <delete file="${glassfish.home}/glassfish/domains/domain1/config/cacerts.jks"-->
+<!--                                                verbose="true"/>-->
+<!--                                    </target>-->
+<!--                                </configuration>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                    </plugin>-->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>keytool-maven-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <goals>
                                     <goal>importCertificate</goal>
                                 </goals>
+                                <id>import-certificate</id>
                                 <phase>process-test-resources</phase>
                             </execution>
                         </executions>
@@ -178,7 +199,8 @@
                             <keystore>${glassfish.home}/glassfish/domains/domain1/config/cacerts.jks</keystore>
                             <storepass>changeit</storepass>
                             <keypass>changeit</keypass>
-                            <skipIfExist>true</skipIfExist>
+                            <skipIfExist>false</skipIfExist>
+                            <verbose>true</verbose>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -190,7 +212,7 @@
                                 -Djava.protocol.handler.pkgs=javax.net.ssl
                                 -Djavax.net.ssl.keyStore=${project.build.testOutputDirectory}/certificates/clientcert.jks
                                 -Djavax.net.ssl.keyStorePassword=changeit
-                                -Djavax.net.ssl.trustStore=${project.build.directory}/cacerts.jks
+                                -Djavax.net.ssl.trustStore=${glassfish.home}/glassfish/domains/domain1/config/cacerts.jks
                             </argLine>
                             <failIfNoTests>false</failIfNoTests>
                             <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
@@ -215,14 +237,22 @@
                                     create-file-user --passwordfile src/test/resources/j2ee.pass --groups Administrator:Employee j2ee
                                     delete-file-user --passwordfile src/test/resources/javajoe.pass javajoe
                                     create-file-user --passwordfile src/test/resources/javajoe.pass --groups VP:Manager javajoe
+                                    delete-file-user "CN=CTS, OU=Java Software, O=Sun Microsystems Inc., L=Burlington, ST=MA, C=US="
+                                    create-file-user -passwordfile src/test/resources/admin.pass -groups Administrator "CN=CTS, OU=Java Software, O=Sun Microsystems Inc., L=Burlington, ST=MA, C=US="
                                     list-file-users
+
+                                </glassfish.postBootCommands>
+                                <!--
+                                    delete-file-user "CN=CTS, OU=Java Software, O=Sun Microsystems Inc., L=Burlington, ST=MA, C=US="
+                                    create-file-user -passwordfile src/test/resources/admin.pass -groups Administrator "CN=CTS, OU=Java Software, O=Sun Microsystems Inc., L=Burlington, ST=MA, C=US="
+                                -->
+                                <!--
                                     set configs.config.server-config.network-config.protocols.protocol.http-listener-2.security-enabled=true
                                     set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls-enabled=true
                                     set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls11-enabled=true
                                     set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls12-enabled=true
                                     set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.tls13-enabled=true
-
-                                </glassfish.postBootCommands>
+                                -->
                                 <!-- set configs.config.server-config.network-config.protocols.protocol.http-listener-2.ssl.cert-nickname=cts -->
                                 <tck.servlet.username>j2ee</tck.servlet.username>
                                 <tck.servlet.password>j2ee</tck.servlet.password>
@@ -230,7 +260,9 @@
                                 <tck.servlet.unauth.password>javajoe</tck.servlet.unauth.password>
                                 <tck.servlet.realm></tck.servlet.realm>
                                 <securedWebServicePort>8181</securedWebServicePort>
-                                <client.cert.test.jdk.tls.client.protocols>TLSv1.3</client.cert.test.jdk.tls.client.protocols>
+                                <glassfish.debug>true</glassfish.debug>
+                                <glassfish.suspend>true</glassfish.suspend>
+<!--                                <client.cert.test.jdk.tls.client.protocols>TLSv1.3</client.cert.test.jdk.tls.client.protocols>-->
                             </systemPropertyVariables>
                         </configuration>
                         <dependencies>
