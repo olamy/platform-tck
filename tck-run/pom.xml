@@ -96,6 +96,8 @@
                 <classesNamesTests></classesNamesTests>
                 <http2.timeout></http2.timeout>
                 <fork.argLine>-Xmx4g -Xms4g</fork.argLine>
+                <glassfish.debug>false</glassfish.debug>
+                <glassfish.suspend>false</glassfish.suspend>
             </properties>
 
             <dependencies>
@@ -260,8 +262,8 @@
                                 <tck.servlet.unauth.password>javajoe</tck.servlet.unauth.password>
                                 <tck.servlet.realm></tck.servlet.realm>
                                 <securedWebServicePort>8181</securedWebServicePort>
-                                <glassfish.debug>true</glassfish.debug>
-                                <glassfish.suspend>true</glassfish.suspend>
+                                <glassfish.debug>${glassfish.debug}</glassfish.debug>
+                                <glassfish.suspend>${glassfish.suspend}</glassfish.suspend>
 <!--                                <client.cert.test.jdk.tls.client.protocols>TLSv1.3</client.cert.test.jdk.tls.client.protocols>-->
                             </systemPropertyVariables>
                         </configuration>
