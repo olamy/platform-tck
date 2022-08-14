@@ -42,7 +42,7 @@ jobs:
           cache: 'maven'
 
       - name: Install legacy javatest jar
-        run: mvn  -ntp install:install-file -Dfile=./lib/javatest.jar -DgroupId=javatest -DartifactId=javatest -Dversion=5.0 -Dpackaging=jar
+        run: mvn -ntp install:install-file -Dfile=./lib/javatest.jar -DgroupId=javatest -DartifactId=javatest -Dversion=5.0 -Dpackaging=jar
 
       - name: Build TCK Run with Maven
         run: mvn -V -B -U -am clean verify -e -pl :tck-run -am  -Pglassfish-ci-managed  -B -Dmaven.test.failure.ignore=true
