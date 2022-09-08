@@ -15,6 +15,9 @@ pipeline {
             choices: ['olamy','eclipse-ee4j']
     )
     string( defaultValue: 'jdk11', description: 'JDK to use', name: 'JDKBUILD' )
+
+    string( defaultValue: 'jetty-11.0.x', description: 'GIT branch name to build Jetty (jetty-11.0.x)',
+            name: 'JETTY_BRANCH' )
   }
 
   stages {
