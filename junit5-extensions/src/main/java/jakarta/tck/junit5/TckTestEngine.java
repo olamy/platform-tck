@@ -110,18 +110,6 @@ public class TckTestEngine implements TestEngine {
         );
         LOGGER.info("TCK Tests:" + testClassesAndMethods.size());
 
-//        try (LauncherSession session = LauncherFactory.openSession()) {
-//            Launcher launcher = session.getLauncher();
-//
-//            LauncherDiscoveryRequest launcherDiscoveryRequest = LauncherDiscoveryRequestBuilder.request()
-//                    .selectors(
-//                            testClassesAndMethods.stream().map(s -> DiscoverySelectors.selectMethod(s)).collect(Collectors.toUnmodifiableList())
-//                    ).listeners(new MyDiscoveryListener(engine, uniqueId))
-//                    .build();
-//            TestPlan testPlan = launcher.discover(launcherDiscoveryRequest);
-//            testPlan.getConfigurationParameters();
-//        }
-
         return engine;
 
     }
@@ -148,7 +136,6 @@ public class TckTestEngine implements TestEngine {
                 TCKDescriptor tckDescriptor = new TCKDescriptor(uid, methodSource.toString(), methodSource);
                 jupiterEngineDescriptor.addChild(tckDescriptor);
             }
-
         }
     }
 
