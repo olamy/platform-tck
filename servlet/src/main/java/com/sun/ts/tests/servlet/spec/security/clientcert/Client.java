@@ -26,15 +26,43 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.time.Duration;
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
+
+import static org.apache.commons.io.FileUtils.readFileToByteArray;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Raja Perumal
@@ -43,17 +71,90 @@ public class Client extends AbstractUrlClient {
 
   // TOFIX
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
+
   /**
    * Deployment for the test
    */
   @Deployment(testable = false, name = "webapp-https")
   @TargetsContainer("https")
   public static WebArchive getTestArchive() throws Exception {
+
+    {
+      // specific glassfish
+      File clientKeyStoreFile = new File("target/test-classes/certificates/clientcert.jks");
+      assertTrue(clientKeyStoreFile.exists());
+
+      File clientPublicCertFile = new File("target/test-classes/certificates/cts_cert");
+      assertTrue(clientPublicCertFile.exists());
+
+      Path trustStorePath = Paths.get(System.getProperty("keystore.path"));
+      assertNotNull(trustStorePath);
+      assertTrue(Files.exists(trustStorePath));
+
+      Collection<? extends Certificate> clientPublicCertificates;
+      try {
+        clientPublicCertificates = CertificateFactory.getInstance("X.509")
+                .generateCertificates(new ByteArrayInputStream(readFileToByteArray(clientPublicCertFile)));
+      } catch (CertificateException | IOException e) {
+        throw new IllegalStateException(e);
+      }
+
+      for (Certificate certificate : clientPublicCertificates) {
+        addCertificateToContainerTrustStore("tcktest", certificate);
+      }
+
+      LOGGER.info("Using truststore from: {}", trustStorePath.toAbsolutePath());
+
+      System.setProperty("javax.net.ssl.keyStore", clientKeyStoreFile.getAbsolutePath());
+      System.setProperty("javax.net.ssl.keyStorePassword", "changeit");
+      System.setProperty("javax.net.ssl.trustStore", trustStorePath.toAbsolutePath().toString());
+      System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
+    }
     return ShrinkWrap.create(WebArchive.class, "clientcert_web.war")
             .addClasses(ServletSecTestServlet.class)
             .addAsWebInfResource("com/sun/ts/tests/servlet/spec/security/clientcert/clientcert_web.war.sun-web.xml",
                     "sun-web.xml")
             .setWebXML(Client.class.getResource("clientcert_web.xml"));
+  }
+
+  public static void addCertificateToContainerTrustStore(String alias, Certificate clientCertificate) {
+
+    Path cacertsPath = Paths.get(System.getProperty("keystore.path"));
+    String domain = System.getProperty("domain1");
+
+    if (!cacertsPath.toFile().exists()) {
+      throw new IllegalStateException("The container trust store at " + cacertsPath.toAbsolutePath() + " does not exists");
+    }
+
+
+    LOGGER.info("*** Adding certificate to container trust store: " + cacertsPath.toAbsolutePath());
+
+    KeyStore keyStore = null;
+    try (InputStream in = new FileInputStream(cacertsPath.toAbsolutePath().toFile())) {
+      keyStore = KeyStore.getInstance("JKS");
+      keyStore.load(in, "changeit".toCharArray());
+
+      Certificate existingCertificate = keyStore.getCertificate(alias);
+      if (!clientCertificate.equals(existingCertificate)) {
+        keyStore.setCertificateEntry(alias, clientCertificate);
+        keyStore.store(new FileOutputStream(cacertsPath.toAbsolutePath().toFile()), "changeit".toCharArray());
+        //restartDomain();
+      } else {
+        System.out.println("Server's truststore already contains certificate");
+      }
+    } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  public static Path getAdminCliJar() {
+    return Paths.get(System.getProperty("glassfish.home") , "glassfish/modules/admin-cli.jar");
+  }
+  private static void restartDomain() throws IOException {
+    ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar",
+            getAdminCliJar().toAbsolutePath().toString(), "restart-domain", "domain1").inheritIO();
+    processBuilder.start();
   }
 
   @ArquillianResource
@@ -160,7 +261,16 @@ public class Client extends AbstractUrlClient {
 
     URL newURL = new URL(url);
 
-    // open HttpsURLConnection using TSHttpsURLConnection
+    logger.debug("use url: {}", newURL);
+
+    HttpRequest httpRequest = HttpRequest.newBuilder(new URI(url)).timeout(Duration.ofSeconds(5)).build();
+
+    HttpResponse<String> response = HttpClient.newHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofString());
+    logger.debug("response: {}", response.body());
+
+
+
+            // open HttpsURLConnection using TSHttpsURLConnection
     URLConnection httpsURLConn = getHttpsURLConnection(newURL);
     try (InputStream content = httpsURLConn.getInputStream();
          BufferedReader in = new BufferedReader(new InputStreamReader(content))) {
@@ -191,6 +301,7 @@ public class Client extends AbstractUrlClient {
       verifyTestOutput(output.toString(), testName);
 
     } catch (Exception e) {
+      logger.error(e.getMessage(), e);
       throw new Exception(testName + ": FAILED", e);
     }
 
