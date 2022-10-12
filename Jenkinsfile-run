@@ -16,8 +16,6 @@ pipeline {
     )
     string( defaultValue: 'jdk11', description: 'JDK to use', name: 'JDKBUILD' )
 
-    string( defaultValue: 'jetty-11.0.x', description: 'GIT branch name to build Jetty (jetty-11.0.x)',
-            name: 'JETTY_BRANCH' )
   }
 
   stages {
@@ -37,23 +35,6 @@ pipeline {
                   sh "mvn -ntp -s $GLOBAL_MVN_SETTINGS -V -B -U -pl :tck-run -am clean install -Dmaven.test.failure.ignore=true -e -Pglassfish-ci-managed -T2"
                 }
               }
-            }
-          }
-        }
-      }
-      post {
-        always {
-          ws('run-tck') {
-            junit testResults: '**/tck-tests-reports/TEST-**.xml'
-            script {
-              def built = build(job: 'tck-servlet-arquillian-experiment', propagate: false,
-                      parameters: [string(name: 'TCK_BRANCH', value: "${TCK_BRANCH}"),
-                                   string(name: 'JETTY_BRANCH', value: "${JETTY_BRANCH}"),
-                                   string(name: 'ARQUILLIAN_JETTY_BRANCH', value: "master"),
-                                   string(name: 'JETTY_VERSION', value: "SNAPSHOT"),
-                                   string(name: 'GITHUB_ORG_ARQUILLIAN', value: "arquillian"),
-                                   string(name: 'JDKBUILD', value: "${JDKBUILD}"),
-                                   string(name: 'GITHUB_ORG_TCK', value: 'olamy')])
             }
           }
         }
