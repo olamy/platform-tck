@@ -42,6 +42,11 @@ pipeline {
           }
         }
       }
+      post {
+        always {
+          junit testResults: '**/tck-tests-reports/TEST-**.xml'
+        }
+      }
     }
   }
 }
