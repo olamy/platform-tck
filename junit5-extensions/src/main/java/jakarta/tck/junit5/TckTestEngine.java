@@ -224,7 +224,7 @@ public class TckTestEngine implements TestEngine {
         if (summary.getTestsFoundCount() != (summary.getTestsSucceededCount() + summary.getTestsFailedCount()
                 + summary.getTestsAbortedCount() + summary.getTestsSkippedCount() )) {
             String message = "tests count is not correct";
-            throw new RuntimeException(message);
+            LOGGER.error(message);
         }
         if (summary.getTestsFoundCount() < 1 && Boolean.getBoolean("failIfNoTests") ) {
             String message = "No tests found";
