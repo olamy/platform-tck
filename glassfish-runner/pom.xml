@@ -31,10 +31,10 @@
         <jakarta.rest.version>3.1.0</jakarta.rest.version>
         <tck.artifactId>jakarta-restful-ws-tck</tck.artifactId>
         
-        <glassfish.container.version>7.0.0-M8</glassfish.container.version>
+        <glassfish.container.version>7.0.3</glassfish.container.version>
         <glassfish.toplevel.dir>glassfish7</glassfish.toplevel.dir>
         
-        <junit.jupiter.version>5.7.2</junit.jupiter.version>
+        <junit.jupiter.version>5.9.1</junit.jupiter.version>
         
     </properties>
 
