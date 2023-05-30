@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.System.Logger;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -43,6 +44,9 @@ import jakarta.websocket.ClientEndpointConfig.Configurator;
 import jakarta.websocket.Endpoint;
 import jakarta.websocket.Session;
 import jakarta.websocket.WebSocketContainer;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * The common client that contains common methods
@@ -113,6 +117,10 @@ public abstract class WebSocketCommonClient {
 	 * that expects the exception to be thrown
 	 */
 	protected boolean logExceptionOnInvoke = true;
+
+	@ArquillianResource
+	@OperateOnDeployment("_DEFAULT_")
+	public URL url;
 
 	/**
 	 * Entity of type T, where T is the type of WebSocketTestCase, e.g. String by
@@ -551,6 +559,10 @@ public abstract class WebSocketCommonClient {
 		logger.log(Logger.Level.DEBUG,"[WebSocketCommonClient] Test cleanup OK");
 	}
 
+	public void setup() throws Exception {
+		// TODO remove this method in subclasses
+	}
+
 	/**
 	 * <code>setup</code> to initialize the tests.
 	 * 
@@ -558,10 +570,11 @@ public abstract class WebSocketCommonClient {
 	 * @param p    a <code>Properties</code> value
 	 * @exception Exception if an error occurs
 	 */
-	public void setup() throws Exception {
+	@BeforeEach
+	public void setupServer() throws Exception {
 		logger.log(Logger.Level.TRACE,"setup method WebSocketCommonClient");
-		String hostname = System.getProperty(SERVLETHOSTPROP);
-		String portnum = System.getProperty(SERVLETPORTPROP);
+		String hostname = url.getHost(); // System.getProperty(SERVLETHOSTPROP);
+		String portnum = Integer.toString(url.getPort()); // System.getProperty(SERVLETPORTPROP);
 		String wswait = System.getProperty(WSWAIT);
 
 		assertFalse(isNullOrEmpty(hostname), "[WebSocketCommonClient] 'webServerHost' was not set in the properties.");

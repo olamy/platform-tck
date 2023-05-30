@@ -321,7 +321,9 @@
                                 <additionalClasspathElement>${project.build.directory}/${glassfish.toplevel.dir}/glassfish/modules/tyrus-container-grizzly-client.jar</additionalClasspathElement>
                                 <additionalClasspathElement>${project.build.directory}/${glassfish.toplevel.dir}/glassfish/modules/tyrus-spi.jar</additionalClasspathElement>
                             </additionalClasspathElements>
-                            <dependenciesToScan>jakartatck:websocket-tck</dependenciesToScan> 
+                            <dependenciesToScan>
+                                <dependenciesToScan>jakartatck:websocket-tck</dependenciesToScan>
+                            </dependenciesToScan>
                             <systemPropertyVariables>
                                 <GLASSFISH_HOME>${project.build.directory}/${glassfish.toplevel.dir}</GLASSFISH_HOME>
                                 <webServerHost>localhost</webServerHost>

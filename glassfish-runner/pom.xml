@@ -79,5 +79,6 @@
         <module>jsonp-tck</module>
         <module>jsonb-tck</module>
         <module>servlet-tck</module>
+        <module>websocket-tck</module>
     </modules>
 </project>
