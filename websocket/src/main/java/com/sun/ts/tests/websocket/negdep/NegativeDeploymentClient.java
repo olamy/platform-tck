@@ -28,21 +28,7 @@ import com.sun.ts.tests.websocket.common.client.WebSocketCommonClient;
 public class NegativeDeploymentClient extends WebSocketCommonClient {
 
 	private static final long serialVersionUID = 111;
-
-	protected String lib_name;
-
-	@Override
-	public void setup() throws Exception {
-		super.setup();
-		lib_name = System.getProperty("lib.name");
-		assertFalse(isNullOrEmpty(lib_name), "'lib.name' was not set in the properties.");
-	}
-
-	protected void throwWhenCts() throws Exception {
-		if (lib_name.equalsIgnoreCase("cts"))
-			throwDeploymentDidNotFail();
-	}
-
+	
 	protected void throwValidEndpointMustBeRemoved() throws Exception {
 		String msg = "Test Failed - a deployment error raised during the deployment process must halt the deployment of the application, any well formed endpoints deployed prior to the error being raised must be removed from service and no more websocket endpoints from that application may be deployed by the container, even if they are valid";
 		throw new Exception(msg);
